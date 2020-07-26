@@ -1,0 +1,37 @@
+Feature: Validating Functionality Related To MSO_Benchmark_Store_Locator
+
+Background:
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Macro Space Optimization" Link
+		And From MSO Page, Click On "Insights" Link
+
+Scenario:  MSO_Insights_TC001# For Insights
+		When From MSO_Insights Page, Click On "store" Button Id
+		And From MSO_Insights Page, Select "STORE" With "Store ID"
+		And From MSO_Insights Page, Validate Text For "P301_STORE_NAME" As "STORE_NAME"
+		And From MSO_Insights Page, Validate Text For "P301_STORE_SEGMENT" As "STORE_SEGMENT"
+		And From MSO_Insights Page, Click On "Show Results" Button
+		And From MSO_Insights Page, Click On "Full Report" Button
+		And Validate Downloaded XLSX File Name As "Insight Prediction Matrix"
+		And From MSO_Insights Page, Click On "Graph Data" Button
+		And Validate Downloaded XLSX File Name As "Insight Graph"
+		And Clear the download folder
+		And From MSO_Insights Page, Click On Label "Store Segment(s)" Button
+		And From MSO_Insights Page, Click On "Show Results" Button
+		And From MSO_Insights Page, Click On "Full Report" Button
+		And Validate Downloaded XLSX File Name As "Insight Prediction Matrix"
+		And From MSO_Insights Page, Click On "Graph Data" Button
+		And Validate Downloaded XLSX File Name As "Insight Graph"
+		And Clear the download folder
+		And From MSO_Insights Page, Click On Label "Company" Button
+		And From MSO_Insights Page, Click On "Show Results" Button
+		And From MSO_Insights Page, Click On "Full Report" Button
+		And Validate Downloaded XLSX File Name As "Insight Prediction Matrix"
+		And From MSO_Insights Page, Click On "Graph Data" Button
+		And Validate Downloaded XLSX File Name As "Insight Graph"
+		
+		
+		
+		

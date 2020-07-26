@@ -1,0 +1,53 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexNotification extends CommonPage{
+	
+	private By successfullMsgContent = By.xpath("//span[@id='APEX_SUCCESS_MESSAGE']//h2[contains(text(),'Record(s) Updated Successfully')]");
+	private By successfullMsgcloseIcon = By.xpath("//span[@id='APEX_SUCCESS_MESSAGE']//span[contains(@class,'icon-close')]");
+	private By errorNotificationHeader	= By.xpath("//div[@class='a-Notification a-Notification--error']/h2");
+	private By errorNotificationContent	= By.xpath("//div[@class='a-Notification a-Notification--error']//ul");
+	private By errorNotificationClose	= By.xpath("//button[contains(@class, 'closeAlert')]");
+	
+	
+	
+	public ApexNotification(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+	
+	public void validateRecordsUpdatedSuccessfullyMessage() throws Exception {
+		waitForPresenceOfElement("Notification", "UpdatedSuccessfullyMessage", successfullMsgContent);
+	}
+	
+	public void validateSuccessfulMessage(String messageContent) throws Exception {
+		By successfullMsgContent = By.xpath("//span[@id='APEX_SUCCESS_MESSAGE' and not(contains(@class, 'hidden'))]//h2[contains(text(),'"+messageContent+"')]");
+		waitForPresenceOfElement("Notification", "UpdatedSuccessfullyMessage", successfullMsgContent);
+	}
+	
+	public String getSuccessfulMessageContent() throws Exception {
+		By successfullMsgContent = By.xpath("//span[@id='APEX_SUCCESS_MESSAGE' and not(contains(@class, 'hidden'))]//h2");
+		return getElementText("Notification", "UpdatedSuccessfullyMessage", successfullMsgContent);
+	}
+	
+	
+	public void removeRecordsUpdatedSuccessfullyMessage() throws Exception {
+		clickOnElement("Notification", "Close Icon", successfullMsgcloseIcon);
+	}
+	
+	
+	public void verifyErrorMessageHeaderText(String txt) throws Exception {
+		validateTextEquals("ApexErrorNotification", "ErrorNotificationHeader", errorNotificationHeader, txt);
+	}
+	
+	public void verifyErrorMessageContent(String txt) throws Exception {
+		validateTextContains("ApexErrorNotification", "ErrorNotificationHeader", errorNotificationContent, txt);
+	}
+	
+	public void removeErrorMessage() throws Exception {
+		clickOnElement("ApexErrorNotification", "ApexErrorNotificationClose", errorNotificationClose);
+	}
+}

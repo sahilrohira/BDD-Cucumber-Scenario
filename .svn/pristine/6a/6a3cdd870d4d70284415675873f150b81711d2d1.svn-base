@@ -1,0 +1,40 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+public class PORTAL_Table extends CommonDB {
+
+	public PORTAL_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+
+	public int getPlanogramCount() throws Exception {
+		String planogram_Count_SQL = "Select count(*) as Count from (SELECT DISTINCT store,pog_code,pog_version FROM (Select * FROM sm_floor_plan_dtl WHERE bu_id = '" + AppData.buId + "' MINUS SELECT * FROM sm_floor_plan_dtl WHERE bu_id = '" + AppData.buId + "' and eff_end_date<ax_utility_sql.get_vdate))";
+		storeColumnNameAndValue(planogram_Count_SQL);
+		return Integer.parseInt(getTempData("COUNT"));
+	}
+	
+	public void getLivePOGToBeImplemented() throws Exception {
+		String Lplanogram_Implemented_SQL = "SELECT sfpd.store, sfpd.FP_VERSION, sfpd.location_id, sfpd.pog_module, sfpd.pog_code, sfpd.pog_version, TO_CHAR(sfpd.eff_start_date,'"+AppData.appDateFormat+"') as eff_start_date, TO_CHAR(sfpd.eff_end_date,'"+AppData.appDateFormat+"') as eff_end_date, sp.pog_type, sp.pog_name, sp.REAL_POG_IND,sp.file_name FROM sm_floor_plan_dtl sfpd INNER JOIN sm_pog sp on ( sfpd.bu_id=sp.bu_id and sfpd.pog_code=sp.pog_code and sfpd.pog_version=sp.pog_version) WHERE sfpd.bu_id = '" + AppData.buId + "' and sfpd.IMPL_IND='N' and file_name !='-' AND sfpd.eff_start_date>ax_utility_sql.get_vdate-100 AND sfpd.eff_end_date>ax_utility_sql.get_vdate";
+		storeColumnNameAndValue(Lplanogram_Implemented_SQL);
+	}
+	
+	public void getPlannedPOGToBeImplemented() throws Exception {
+		String Pplanogram_Implemented_SQL = "SELECT sfpd.store, sfpd.FP_VERSION, sfpd.location_id, sfpd.pog_module, sfpd.pog_code, sfpd.pog_version, TO_CHAR(sfpd.eff_start_date,'"+AppData.appDateFormat+"') as eff_start_date,TO_CHAR(sfpd.eff_end_date,'"+AppData.appDateFormat+"') as eff_end_date, sp.pog_type, sp.pog_name, sp.REAL_POG_IND FROM sm_floor_plan_dtl sfpd INNER JOIN sm_pog sp on ( sfpd.bu_id=sp.bu_id and sfpd.pog_code=sp.pog_code and sfpd.pog_version=sp.pog_version) WHERE sfpd.bu_id = '" + AppData.buId + "' and  sfpd.eff_start_date>ax_utility_sql.get_vdate and sfpd.IMPL_IND='N'";
+		storeColumnNameAndValue(Pplanogram_Implemented_SQL);
+	}
+	
+	
+	 public void getPlannedFloorPlanToBeImplemented() throws Exception {
+		String PFP_Implemented_SQL = "SELECT sfp.store, sfp.fp_version, TO_CHAR(sfp.eff_start_date,'"+AppData.appDateFormat+"') as eff_start_date, TO_CHAR(sfp.eff_end_date,'"+AppData.appDateFormat+"') as eff_end_date,NVL(sfld.remarks,'-') as REMARKS FROM sm_floor_plan sfp INNER JOIN sm_floor_layout_dwg sfld ON (sfld.bu_id=sfp.bu_id and sfld.store=sfp.store and sfld.fp_version=sfp.fp_version) WHERE sfp.bu_id = '" + AppData.buId + "' ANd sfp.eff_start_date> ax_utility_sql.get_vdate and sfp.IMPL_IND='N'";
+		storeColumnNameAndValue(PFP_Implemented_SQL);
+	}
+	 
+	 public void getLiveFloorPlanToBeImplemented() throws Exception {
+			String LFP_Implemented_SQL = "SELECT sfp.store, sfp.fp_version, TO_CHAR(sfp.eff_start_date,'"+AppData.appDateFormat+"') as eff_start_date, TO_CHAR(sfp.eff_end_date,'"+AppData.appDateFormat+"') as eff_end_date, NVL(sfld.remarks,'-') as REMARKS FROM sm_floor_plan sfp INNER JOIN sm_floor_layout_dwg sfld ON (sfld.bu_id=sfp.bu_id and sfld.store=sfp.store and sfld.fp_version=sfp.fp_version) WHERE sfp.bu_id = '" + AppData.buId + "' AND ax_utility_sql.get_vdate BETWEEN sfp.eff_start_date AND sfp.eff_end_date and sfp.IMPL_IND='N'";
+			storeColumnNameAndValue(LFP_Implemented_SQL);
+		}
+}

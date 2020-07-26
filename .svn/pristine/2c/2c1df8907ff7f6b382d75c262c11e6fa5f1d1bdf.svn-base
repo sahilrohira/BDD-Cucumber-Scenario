@@ -1,0 +1,61 @@
+package pages.Reports;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+import utils.AppData;
+
+public class Reports_All_Reports_Page extends CommonPage {
+
+	protected WebDriver driver;
+	protected String testCaseId;
+	private String pageName = "List of Reports";
+
+	public Reports_All_Reports_Page(WebDriver driver, String testCaseId) {
+		super(driver, testCaseId);
+	}
+
+	public void verifyTextLabelPresent(String text) throws Exception {
+		By textlabel = By.xpath("//td[text()='" + text + "']");
+		waitForPresenceOfElement("All Reports", text, textlabel);
+	}
+
+	public void switchToFrameWithTitle(String title) throws Exception {
+		switchToFrame(title);
+	}
+	
+	public void waitThenSwitchToFrameWithTitle(String title) throws Exception {
+		waitThenSwitchToFrame(title);
+	}
+	
+
+	public void selectStoreStoreListVal(String fieldName, String text, String windowTitle, String Item)
+			throws Exception {
+		if (getTempData(Item) != null) {
+			text = getTempData(Item);
+		}
+		By textLabel = By.xpath("//td[text()='" + text + "']//ancestor::tr//span//a[contains(@class,'popupLOV')]");
+		By textField = By.xpath("//input[@name='p_filter']");
+		By searchBtn = By.xpath("//input[@value ='Search']");
+		By firstLnk = By.xpath("//div[@class='t-PopupLOV-links']//a[1]");
+		clickOnElement(pageName, fieldName, textLabel);
+		switchToWindowWithTitleContaining(windowTitle);
+		enterText(pageName, fieldName, textField, Item);
+		clickOnElement(pageName, fieldName, searchBtn);
+		clickOnElement(pageName, fieldName, firstLnk);
+		switchToWindowWithTitleContaining("List of Reports");
+
+	}
+
+	public void enterPOGCodesInExtentReportsFrame(String fieldName) throws Exception {
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 999);
+		String newPOGVal = "New_POG" + ranNum;
+		String oldPOGVal = "Old_POG" + ranNum;
+		By newPOG = By.xpath("//input[@id='POG_CODE_NEW']");
+		By currentPOG = By.xpath("//input[@id='POG_CODE_CURRENT']");
+		enterText(pageName, fieldName, newPOG, newPOGVal);
+		enterText(pageName, fieldName, currentPOG, oldPOGVal);
+	}
+
+}

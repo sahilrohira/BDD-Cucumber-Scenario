@@ -1,0 +1,40 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import pages.apex.ApexPageHeader;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class Masters extends SuperStepdefs {
+
+	private String pageName = "Master Page";
+	private ApexPageHeader apexPageHeader;
+	
+	public Masters(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+	}
+    
+    /**
+     * @author Vinay.Kumar
+     	
+     	From Masters Page, Click On "Product" Link
+     	From Masters Page, Click On "Fixture" Link
+     	From Masters Page, Click On "Store" Link
+     	From Masters Page, Click On "POG Hierarchy" Link
+     	From Masters Page, Click On "POG Category" Link
+     	From Masters Page, Click On "User Defined Attributes" Link
+     	From Masters Page, Click On "Store List" Link
+     	From Masters Page, Click On "Fixture Label" Link
+     	From Masters Page, Click On "Location Config" Link
+     	From Masters Page, Click On "RMS OSD Mapping" Link
+
+     	
+     */
+    @Then("^From Masters Page, Click On \"(.*)\" Link$")
+    public void clickOnLink(String linkName) throws Exception {
+    	apexPageHeader.clickOnHeader3Link(pageName, linkName);
+    	logger.pass("From "+pageName+", Click On "+bold(linkName)+" Link");
+    }      
+
+}

@@ -1,0 +1,226 @@
+package stepdefs.POGManagement;
+
+import java.util.Random;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_BU_SYSPRM_Table;
+import db.SM_GENERAL_Table;
+import db.SM_POG_ITEM_Table;
+import db.SM_VIRTUAL_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import pages.apex.ApexAlert;
+import pages.apex.ApexButton;
+import pages.apex.ApexDropDown;
+import pages.apex.ApexFrame;
+import pages.apex.ApexLabel;
+import pages.apex.ApexLink;
+import pages.apex.ApexListOfValue;
+import pages.apex.ApexNotification;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+import utils.AppDateUtil;
+
+public class POGM_VirtualPOGPageSteps extends SuperStepdefs {
+
+	private String pageName = "Virtual POG";
+	private String tableLabel = "virtul_pog";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_GENERAL_Table sm_general_table;
+	private SM_VIRTUAL_Table sm_virtual_pog;
+	private ApexDropDown apexDropDown;
+	private ApexTextField apexTextField;
+	private ApexListOfValue apexListOfValue;
+	private ApexLabel apexLabel;
+	private SM_BU_SYSPRM_Table sm_bu_sysprm;
+	private ApexFrame apexFrame;
+	private CommonPageSteps commonPageSteps;
+	private ApexLink apexLink;
+	private SM_POG_ITEM_Table sm_pog_item;
+	private ApexNotification apexNotification;
+	private ApexAlert apexAlert;
+
+	public POGM_VirtualPOGPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_general_table = new SM_GENERAL_Table(con, testCaseId);
+		sm_virtual_pog = new SM_VIRTUAL_Table(con, testCaseId);
+		apexTextField = new ApexTextField(driver, testCaseId);
+		apexListOfValue=new ApexListOfValue(driver, testCaseId);
+		apexLabel=new ApexLabel(driver, testCaseId);
+		sm_bu_sysprm=new SM_BU_SYSPRM_Table(con, testCaseId);
+		apexDropDown=new ApexDropDown(driver, testCaseId);
+		apexFrame=new ApexFrame(driver,testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		apexLink=new ApexLink(driver, testCaseId);
+		sm_pog_item=new SM_POG_ITEM_Table(con,testCaseId);
+		apexNotification=new ApexNotification(driver, testCaseId);
+		apexAlert =new ApexAlert(driver, testCaseId);
+	}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Virtual POG Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@When("^From Virtual POG Page, Validate Record Count from Database$")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount = sm_virtual_pog.getVirtualPOGCount();
+		apexTable.validateTableRowCount(pageName, tableLabel, expectedRowCount);
+		logger.pass("From Virtual POG Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+
+	@When("^Add Virtual POG with all required details$")
+	public void addVirtualPOG() throws Exception {
+		sm_general_table.getDivisionNameTrim();
+		sm_general_table.getDepartmentNameTrim();
+		String POG_Code_Ind=sm_bu_sysprm.getSysConfValue("POG_CODE_EDITABLE");
+		apexDropDown.selectDropDownValue(pageName, "P127_POG_DIVISION", "TDIVISION_NAME");
+		apexDropDown.selectDropDownValue(pageName, "P127_POG_DEPT", "TDEPART_NAME");
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 99999);
+		storeTempData("VPOG", "VPOG_" + ranNum);
+		if (POG_Code_Ind.equalsIgnoreCase("Y")){
+		apexTextField.enterText(pageName, "P127_POG_CODE", "VPOG");
+		}
+		apexDropDown.selectDropDownValue(pageName, "P127_POG_TYPE", "Promotion");
+		apexTextField.validateTextFieldValue(pageName, "P127_POG_VERSION", AppDateUtil.getAppdateinPOGVersionFormat(0));
+		apexTextField.enterText(pageName, "P127_POG_NAME", "VPOGNAME_" + ranNum);
+		apexTextField.enterText(pageName, "P127_POG_LOCAL_NAME", "LOCAL_" + ranNum);
+		apextButton.clickOnButton(pageName, "Add");
+		logger.pass("Created a Virtual POG with POG as" + bold("VPOG_" + ranNum));
+	}
+
+	@When("^Enter the module as a Random Alphabet and Remarks as \"(.*)\"$")
+	public void enterRandomodule(String remarks) throws Exception {
+		String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		String fullalphabet = alphabet + alphabet.toLowerCase() + "123456789";
+		Random random = new Random();
+		char code = fullalphabet.charAt(random.nextInt(9));
+		storeTempData("VMODULE", Character.toString(code));
+		apexTextField.enterText(pageName, "P131_POG_MODULE", Character.toString(code));
+		apexTextField.enterTextArea(pageName, "P131_REMARKS", remarks);
+		logger.pass("Entered Module as " + bold(Character.toString(code))+" and Remarks as "+ bold(remarks));
+	}
+	
+	@When("^Add an item to the module from DB$")
+	public void additemfromDB() throws Exception {
+		sm_virtual_pog.storeItemAndRequiredDepartment();
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, "virtual_pog_item", 1, "Group","GROUP_NAME");
+		apextButton.clickOnButtonwithTable(pageName, "ig_virtual_pog_item_ig_toolbar", "Actions");
+		apextButton.clickOnButtonwithTable(pageName, "ig_virtual_pog_item_ig_toolbar", "Actions");
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, "virtual_pog_item", 1, "Department","DEPARTMENT_NAME");
+		apextButton.clickOnButtonwithTable(pageName, "ig_virtual_pog_item_ig_toolbar", "Actions");
+		apextButton.clickOnButtonwithTable(pageName, "ig_virtual_pog_item_ig_toolbar", "Actions");
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, "virtual_pog_item", 1, "Class","CLASS_NAME");
+		apextButton.clickOnButtonwithTable(pageName, "ig_virtual_pog_item_ig_toolbar", "Actions");
+		apextButton.clickOnButtonwithTable(pageName, "ig_virtual_pog_item_ig_toolbar", "Actions");
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, "virtual_pog_item", 1, "Subclass","SUBCLASS_NAME");
+		apextButton.clickOnButtonwithTable(pageName, "ig_virtual_pog_item_ig_toolbar", "Actions");
+		apextButton.clickOnButtonwithTable(pageName, "ig_virtual_pog_item_ig_toolbar", "Actions");
+		apexListOfValue.selectFromLOV(pageName, "", getTempData("ITEM_DESC"), "Search Dialog");
+		//apexListOfValue.selectFromLOV_InTable(pageName, "ITEM", "ITEM_NAME", 2);
+		/*apexDropDown.selectDropDownValue(pageName, "f02_0001", "GROUP_NAME");
+		apexDropDown.selectDropDownValue(pageName, "f03_0001", "DEPARTMENT_NAME");
+		apexDropDown.selectDropDownValue(pageName, "f04_0001", "CLASS_NAME");
+		apexDropDown.selectDropDownValue(pageName, "f05_0001", "SUBCLASS_NAME");
+		apexListOfValue.selectFromLOV_InTable(pageName, "ITEM", "ITEM_NAME", 2);*/
+		apexFrame.apexSwitchToFrame("Manage Virtual POG Details");
+		apextButton.clickOnButton(pageName, "Apply changes");
+		Thread.sleep(3000);
+		apextButton.clickOnButton(pageName, "Close");
+		apextButton.clickOnButton(pageName, "Save");
+		
+		logger.pass("Added Item" + bold(getTempData("ITEM_NAME"))+" in VPOG");
+	}
+	
+	@Then("^Validate the Preview functionality for added VPOG$")
+	public void validatedeletefunctionality() throws Exception {
+		String Total_Units=sm_bu_sysprm.getSysConfValue("DEFAULT_TOTAL_UNIT");
+		sm_pog_item.fetchItemPOGBrandName("ITEM_NAME");
+		sm_virtual_pog.storeVirtualItemDetails("ITEM_NAME");
+		commonPageSteps.clickOnLinkText("Preview Items");
+		commonPageSteps.switchToFrameWithTitle("Preview Virtual POG Items");
+		apexTable.validateTableRowCount("Preview Virtual POG Items", "virtual_pog_item_region", 1);
+		apexTable.validateScrollingTableCellValue(pageName,"virtual_pog_item_region", 1, "Item", "ITEM_NAME");
+		apexTable.validateScrollingTableCellValue(pageName,"virtual_pog_item_region", 1, "Brand Name", "BRAND_NAME");
+		apexTable.validateScrollingTableCellValue(pageName,"virtual_pog_item_region", 1, "Description", "DESCRIPTION");
+		apexTable.validateScrollingTableCellValue(pageName,"virtual_pog_item_region", 1, "Total Units", Total_Units);
+		commonPageSteps.clickOnButton("Cancel");
+		/*apexLink.clickonLinkwithText(pageName,getTempData("VMODULE"));
+		commonPageSteps.switchToFrameWithTitle("Manage Virtual POG Details");
+		apexTable.clickOnTableCell(pageName,"region_ig_summary", 1, "");
+		apextButton.clickOnButton(pageName, "Delete");
+		apexMessage.clickOnButton("Ok");
+		apextButton.clickOnButton(pageName, "Apply changes");
+		apextButton.clickOnButton(pageName, "Close");*/
+		//apextButton.clickOnButton(pageName, "Delete");
+		//apexMessage.clickOnButton("Ok");
+		
+		logger.pass("Added Item" + bold(getTempData("ITEM_NAME"))+" in VPOG");
+	}
+	
+	
+	@When("^Validate the search functionality")
+	public void searchitemfromDB() throws Exception {
+		apextButton.clickOnButton(pageName, "Search");
+		apexDropDown.selectDropDownValue(pageName, "P131_GROUP", "GROUP_NAME");
+		apexDropDown.selectDropDownValue(pageName, "P131_DEPARTMENT", "DEPARTMENT_NAME");
+		apexDropDown.selectDropDownValue(pageName, "P131_CLASS", "CLASS_NAME");
+		apexDropDown.selectDropDownValue(pageName, "P131_SUBCLASS", "SUBCLASS_NAME");
+		apexTextField.enterText(pageName, "P131_ITEM", "ITEM_NAME");
+		apextButton.clickOnButton(pageName, "Search");
+		apexLabel.validateLabelText(pageName, "Active Filters","virtual_pog" , "Active Filter: Group : "+getTempData("GROUP_NAME")+" Department : "+getTempData("DEPARTMENT_NAME")+"Class : "+getTempData("CLASS_NAME")+"Subclass : "+getTempData("SUBCLASS_NAME")+"Item : "+getTempData("ITEM_NAME"));
+		apexTextField.validateTextFieldValue(pageName,  "f08_0001", getTempData("ITEM_DESC"));
+		logger.pass("Validated Filter Functionality Successfully");
+	}
+	
+	@When("^Validate the Import Functionality for file \"(.*)\"$")
+	public void validateImportItemfunctionality(String filename) throws Exception {
+		apexLink.clickonLinkwithText(pageName,getTempData("VMODULE"));
+		commonPageSteps.switchToFrameWithTitle("Manage Virtual POG Details");
+		apextButton.clickOnButton(pageName, "Import");
+		filename=AppData.buId+"_"+filename;
+		commonPageSteps.enterPathinPopup("Floor Plan", filename);
+		apexNotification.validateRecordsUpdatedSuccessfullyMessage();
+		apexTable.validateTableRowCount("Preview Virtual POG Items", "virtual_pog_item", 50);
+		apexTextField.enterTextArea(pageName, "P131_REMARKS", "Testing1");
+		apextButton.clickOnButton(pageName, "Apply changes");
+		Thread.sleep(3000);
+		apextButton.clickOnButton(pageName, "Close");
+		apexTable.validateScrollingTableCellValue(pageName, "ig_module", 1, "Remarks", "Testing1");
+		logger.pass("Validated Filter Functionality Successfully");
+	}
+	
+	@When("Validate Copy From Excel Functionality for file \"(.*)\"$")
+	public void validateCopyFromExcelfunctionality(String filename) throws Exception {
+		apexLink.clickonLinkwithText(pageName,getTempData("VMODULE"));
+		commonPageSteps.switchToFrameWithTitle("Manage Virtual POG Details");
+		apextButton.clickOnButton(pageName, "Copy From Excel");
+		filename=AppData.buId+"_"+filename;
+		commonPageSteps.enterPathinPopup("Floor Plan", filename);
+		apexAlert.verifAlertTitle("All items are imported successfully.\nTotal items in excel = 49.\nTotal imported = 49.\nTotal skipped = 0.");
+		apexTable.validateTableRowCount("Preview Virtual POG Items", "virtual_pog_item", 49);
+		apextButton.clickOnButton(pageName, "Apply changes");
+		Thread.sleep(3000);
+		apextButton.clickOnButton(pageName, "Close");
+		logger.pass("Validated Filter Functionality Successfully");
+	}
+	
+	@Then("^From Virtual POG Page, Filter Table content for Column \"([^\"]*)\" ascending With Value \"([^\"]*)\"$")
+	public void from_Virtual_Pog_Page_Filter_Table_content_for_Column_With_AscValue(String columnName, String filterValue) throws Throwable {
+		if(getTempData(filterValue)!=null) filterValue=getTempData(filterValue);
+		Thread.sleep(2000);
+		apexTable.filterScrollingTableContent(pageName,tableLabel, columnName, filterValue);
+    	logger.pass("From Virtual POG Page, Filter Table content for Column "+bold(columnName)+" With Value  "+bold(filterValue));
+	}
+}

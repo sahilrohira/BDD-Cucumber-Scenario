@@ -1,0 +1,117 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_GENERAL_Table;
+import db.SM_STORE_Table;
+import pages.apex.ApexButton;
+import pages.apex.ApexTable;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppDateUtil;
+
+public class Masters_StoreListPageSteps extends SuperStepdefs {
+
+	private String pageName = "Masters_StoreList";
+
+	private String tableLabel = "store_list_ig";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_GENERAL_Table sm_general_table;
+	private SM_STORE_Table sm_store_table;
+	private CommonPageSteps commonpagesteps;
+	
+
+	public Masters_StoreListPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_general_table=new SM_GENERAL_Table(con, testCaseId);
+		sm_store_table=new SM_STORE_Table(con, testCaseId);
+		commonpagesteps=new CommonPageSteps(hook);
+		}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Master_StoreList Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+
+	@Then("^From Master_StoreList Page, Validate Record Count from Database$")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount= sm_general_table.getStoreListCount();
+		apexTable.validateTableRowCount(pageName,tableLabel,expectedRowCount);
+		logger.pass("From Masters Store List Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+	
+	@Then("^Validate Row Count on Screen \"(.*)\" as \"(.*)\"$")
+	public void validateRecordCountOnPopup(String PopupName,int expectedRowCount) throws Exception {
+		apexTable.validateTableRowCount(PopupName,tableLabel,expectedRowCount);
+		logger.pass("From "+PopupName+" Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+	
+	
+	@Then("^From Master_StoreList Page, For Row \"(.*)\", Enter Text For Column \"(.*)\" As \"(.*)\"$")
+	public void enterText(int rowNo, String headerName, String value) throws Exception {
+		/*if(headerName.equals("Fixture ID")) {
+			int ranNum = AppData.getRandomNumberBetweenRange(1,99999);
+			value= "Auto_Fixture_"+ranNum;
+			storeTempData("Fixture_ID", value);
+		}*/
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		if(value.toLowerCase().contains("vdate")) 
+		{String varindays=value.substring(5);
+			value=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		Thread.sleep(1000);
+		apexTable.clearAndTypeCellTextAfterDoubleClick(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_StoreList Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master_StoreList Page, For Row \"(.*)\", Select Drop Down Value For Column \"(.*)\" As \"(.*)\"$")
+	public void selectDropDownValue(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		apexTable.selectCellDropDownValue(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_StoreList Page, For Row "+bold(rowNo)+", Select Drop Down Value For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@When("Store the List Id generated from database for description as \"(.*)\"$")
+	public void storListID(String desc) throws Exception {
+		sm_general_table.storeListId(desc);
+		logger.pass("From Master_StoreList Page, Saved the List ID value in temporary file");
+	}
+	
+	@When("Fetch the details for Store List Details,UDA List of Values, UDA Free Text and UDA Dates")
+	public void fecthStoreDetails() throws Exception {
+		sm_store_table.fetchStoreListDetails();
+		logger.pass("From Master_StoreList Page, Saved the List ID value in temporary file");
+	}
+	
+	@Then("Enter all required deatils for adding a store")
+	public void enterallStoreDetails() throws Exception {
+		commonpagesteps.selectDropDownValue("P39_CHAIN", "CHAIN");
+		commonpagesteps.selectDropDownValue("P39_AREA", "AREA");
+		commonpagesteps.selectDropDownValue("P39_REGION", "REGION");
+		commonpagesteps.selectDropDownValue("P39_DISTRICT", "DISTRICT");
+		commonpagesteps.selectDropDownValue("P39_STORE", "STORE");
+		commonpagesteps.selectDropDownValue("P39_UDA_LOV_ID_1", "UDA_LOV");
+		commonpagesteps.selectDropDownValue("P39_UDA_LOV_VALUE_1", "UDA_VALUE");
+		commonpagesteps.selectDropDownValue("P39_UDA_FF_ID_1", "UDA_FF");
+		commonpagesteps.selectDropDownValue("P39_UDA_DT_ID_1", "UDA_DATE");
+		commonpagesteps.enterTextFieldValue("P39_UDA_DT_DATE_1", AppDateUtil.newDateInUIFormat(10));
+		logger.pass("Entered all store related details for store "+bold(getTempData("STORE")));
+	}
+	
+	@Then("^Apply Filter for \"(.*)\" to get unique record$")
+	public void applyCapacityFilter(String listID) throws Exception {
+		apexTable.filterScrollingTableContent(pageName, tableLabel, "List ID", "LIST_ID");
+		logger.pass("Applied Filter for List ID as "+bold(getTempData("LIST_ID")));
+	}
+	 
+}
+

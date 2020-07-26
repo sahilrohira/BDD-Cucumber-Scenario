@@ -1,0 +1,151 @@
+package stepdefs.batch;
+
+import cucumber.api.java.en.Then;
+import db.AX_PROGRAM_MASTER_Table;
+import pages.apex.ApexAlert;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.SFTPFunctions;
+import utils.SHHFunctions;
+
+public class DownLoadSteps extends SuperStepdefs
+{
+	public ApexAlert apexAlert;
+
+	public DownLoadSteps(final Hook hook) {
+		super(hook);
+		this.apexAlert = new ApexAlert(this.driver, this.testCaseId);
+	}
+
+	@Then("^Download Interface For Batch \"(.*)\"$")
+	public void downloadInterface(String jobName) throws Exception {
+		jobName = jobName.toLowerCase();
+
+		AX_PROGRAM_MASTER_Table ax_PROGRAM_MASTER_Table = new AX_PROGRAM_MASTER_Table(con, testCaseId);
+		String[] bu_id = ax_PROGRAM_MASTER_Table.getBU_Ids(jobName);
+		String username = envData.get("Unix_username");
+		String pass = envData.get("Unix_password");
+		String ipAddress = envData.get("Unix_host");
+		int port = Integer.parseInt(envData.get("Unix_port"));
+
+		String unixScriptPath = envData.get("Unix_script_path");
+		String unix_outbox_path = envData.get("Unix_outbox_path");
+		try {
+
+			SHHFunctions shhFunctions = new SHHFunctions();
+			SFTPFunctions sftpFunctions = new SFTPFunctions();
+
+			shhFunctions.openSHHConnection(username, pass, ipAddress, port);
+
+			String refreshCommand = unixScriptPath+ "ax_refresh_program.sh "+jobName;
+			shhFunctions.sendCommand(refreshCommand,1);
+
+			String runCommand = unixScriptPath + "ax_run_program.sh "+jobName;
+			shhFunctions.sendCommand(runCommand,5);
+
+			sftpFunctions.getSFTPConnection(username, pass, ipAddress, port);
+			final String downloadFolderPath = "Test_Reports/" + this.testCaseId + "/Server_File/";
+
+			if(bu_id==null) {
+				String downloadFilePrefix = getDownloadFileName(jobName)+"_";
+				String downloadedFileName = sftpFunctions.getLatestFile(downloadFilePrefix);
+				sftpFunctions.downloadSFTPFile(unix_outbox_path+downloadedFileName, downloadFolderPath);
+			}else {
+				for(int i=0; i< bu_id.length;i++) {
+					String downloadFilePrefix = getDownloadFileName(jobName)+bu_id[i]+"_";
+					String downloadedFileName = sftpFunctions.getLatestFile(downloadFilePrefix);
+					sftpFunctions.downloadSFTPFile(unix_outbox_path+downloadedFileName, downloadFolderPath);
+				}
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	@Then("^Run Batch \"(.*)\" irrespective of BU_ID$")
+	public void runBatchJob(String jobName) throws Exception {
+		jobName = jobName.toLowerCase();
+		String username = envData.get("Unix_username");
+		String pass = envData.get("Unix_password");
+		String ipAddress = envData.get("Unix_host");
+		int port = Integer.parseInt(envData.get("Unix_port"));
+		String unixScriptPath = envData.get("Unix_script_path");
+		try {
+			SHHFunctions shhFunctions = new SHHFunctions();
+			shhFunctions.openSHHConnection(username, pass, ipAddress, port);
+			String refreshCommand = unixScriptPath+ "ax_refresh_program.sh "+jobName;
+			shhFunctions.sendCommand(refreshCommand,1);
+			String runCommand = unixScriptPath + "ax_run_program.sh "+jobName;
+			shhFunctions.sendCommand(runCommand,5);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String getDownloadFileName(String jobName) {
+		String downloadFileName = "";
+
+		switch(jobName.toUpperCase()) {
+		case "BO_FIXTURE_MASTER_DNLD":			downloadFileName = "SPACE_BOSPACE_FIXTURE_";    break;
+		case "BO_ITEM_MASTER_DNLD":				downloadFileName = "SPACE_BOSPACE_ITEM_";    break;
+		case "BO_POG_MASTER_DNLD":				downloadFileName = "SPACE_BOSPACE_POG_";    break;
+		case "BO_POG_MODULE_MASTER_DNLD":       downloadFileName = "SPACE_BOSPACE_PACKAGE_WTC_"; break;
+		case "BO_STORE_ATTR_MASTER_DNLD":		downloadFileName = "SPACE_BOSPACE_STORE_ATTR_"; break;
+		case "BO_STORE_ATTR_VAL_MASTER_DNLD":	downloadFileName = "SPACE_BOSPACE_STORE_ATTR_VAL_"; break;
+		case "BO_STORE_MASTER_DNLD":			downloadFileName = "SPACE_BOSPACE_STORE_"; break;
+		case "POG_MASTER_JSON_DNLD":			downloadFileName = "SPACE_IMANAGE_POG_ITEM_"; break;
+		case "RETEK_POG_MASTER_DNLD":			downloadFileName = "space_retek_pog_WTC";    break;
+		case "BO_FLOOR_LAYOUT_DNLD":			downloadFileName = "SPACE_BOSPACE_FLR_LAYOUT_";    break;
+		case "BO_FLOOR_PLAN_DNLD":				downloadFileName = "SPACE_BOSPACE_POG_FIX_FLR_";    break;
+		case "BO_ITEM_PACK_DNLD":       		downloadFileName = "SPACE_BOSPACE_ITEM_PACK_WTC_"; break;// takes 30+ min
+		case "BO_ITEM_UDA_DNLD":				downloadFileName = "SPACE_BOSPACE_ITEM_UDA_"; break; 
+		case "BO_STORE_ATTR_DNLD":				downloadFileName = "SPACE_BOSPACE_ATTR_STORE_"; break;
+		case "BO_POG_MODULE_DNLD":				downloadFileName = "SPACE_BOSPACE_POG_MOD_WTC_"; break;
+		case "BO_STORE_UDA_DNLD":				downloadFileName = "SPACE_BOSPACE_STORE_UDA_"; break;
+
+		case "BO_UDA_VALUES_DNLD":				downloadFileName = "SPACE_BOSPACE_UDA_VALUES_";    break;
+		case "DAILY_STORE_OSD_DNLD":			downloadFileName = "WTC_SP_OSD_Daily_";    break; //.csv file
+		case "DNLD_DWG_PDF":					downloadFileName = "";    break; //no file created 
+		case "DNLD_FLOOR_PLAN_PDF":       		downloadFileName = ""; break; // some test file downloaded 
+		case "DNLD_LIVE_FP_PDF":				downloadFileName = "WTC_LIVE_FP_"; break;
+		case "DNLD_LIVE_POG_PDF":				downloadFileName = "WTC_LIVE_POG_"; break;
+		case "DNLD_LIVE_POG_PDF_DELTA":			downloadFileName = ""; break; //no file created 
+		case "DNLD_POG_PDF":					downloadFileName = ""; break; //no file created 
+		case "POG_HIER_JSON_DNLD":				downloadFileName = "SPACE_IMANAGE_POG_HIER_";    break;
+		case "POGC_STORE_TARGET_JSON_DNLD":		downloadFileName = "SPACE_IMANAGE_STORE_POGC_TARGET_";    break;
+		case "PPTM_PRICE_TAG_DNLD":				downloadFileName = "";    break; //no file created
+		case "PROM_STORE_OSD_DNLD":       		downloadFileName = ""; break;//no file created
+		case "RETEK_POG_ITEM_DNLD":				downloadFileName = "BUY_PLNPROD_DATA_WTCHK_20191105101823.dat"; break; //bat file
+		case "RETEK_POG_ITEM_MY_DNLD":			downloadFileName = ""; break; //no file created
+		case "RETEK_POG_ITEM_SG_DNLD":			downloadFileName = "BUY_PLNPROD_DATA_WTC_20191105102146.dat"; break;
+		case "RETEK_POG_ITEM_TW_DNLD":			downloadFileName = "WTC_hs_fullrange_wtc"; break;
+
+		case "RETEK_POG_STORE_DNLD":			downloadFileName = "BUY_PLNSTORE_DATA_WTCHK_20191105103056.dat";    break;
+		case "RETEK_POG_STORE_MY_DNLD":			downloadFileName = "";    break; //no file created
+		case "RETEK_POG_STORE_SG_DNLD":			downloadFileName = "BUY_PLNSTORE_DATA_WTC_20191105103325.dat";    break;  
+		case "RETEK_PRICE_TAB_ERR_DNLD":       	downloadFileName = ""; break; //no file created
+		case "RETEK_STORE_ITEM_DETAIL_DNLD":	downloadFileName = "WTC_xx_rsa_upload_"; break;
+		case "RETEK_STORE_ITEM_DTL_DNLD_PH":	downloadFileName = ""; break;//no file created
+		case "RSIM_PRICE_TAG_DNLD":				downloadFileName = "WTC_TAG_PLANO_"; break; //100+ file created
+		case "RSIM_PRICE_TAG_DNLD_DELTA":		downloadFileName = "WTC_TAG_PLANO_DELTA_"; break; 
+		case "RSIM_PRICE_TAG_DNLD_FL":			downloadFileName = "WTC_TAG_PLANO_";    break;  //100+ file created
+		case "RSIM_PRICE_TAG_DNLD_MFL":			downloadFileName = "WTCTH_TAG_";    break;
+		case "SPACE_RK_FIXTURE_DNLD":			downloadFileName = "RK_FIXTURE_";    break;
+		case "SPACE_RK_POG_DNLD":       		downloadFileName = "RK_POG_WTC"; break;
+		case "SPACE_RK_POG_MODULE_DNLD":		downloadFileName = "RK_POG_MODULE_WTC_"; break;
+		case "SPACE_RK_PROD_STORE_DNLD":		downloadFileName = "RK_PROD_STORE_"; break; 
+		case "SPACE_RK_STORE_FIXTURE_DNLD":		downloadFileName = "RK_STORE_FIXTURE_WTC_"; break;
+		case "SPACE_RK_STORE_POG_MODULE_DNLD":	downloadFileName = "RK_STORE_POG_MODULE_WTC_"; break;
+
+		case "SPACE_RK_STORE_POG_PROD_DNLD":	downloadFileName = "RK_STORE_POG_PROD_WTC_";    break;  
+		case "SPACEMAN_ITEM_DIM_DNLD":			downloadFileName = "space_item_dim_WTC_";    break;
+		case "SPACEMAN_ITEM_MAS_DNLD":			downloadFileName = "space_item_master_";    break;
+		case "SPACEMAN_POG_STORE_DNLD":       	downloadFileName = "SPACE_MAN_WTC_"; break;
+		case "STORE_FIXTURE_POG_JSON_DNLD":		downloadFileName = "SPACE_IMANAGE_STORE_POG_"; break;
+		case "STORE_PORTAL_POG_DNLD":			downloadFileName = "WTC_POG_REGULAR_"; break; 
+		}
+		return downloadFileName;
+	}
+
+}

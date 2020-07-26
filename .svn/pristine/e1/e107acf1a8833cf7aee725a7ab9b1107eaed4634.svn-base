@@ -1,0 +1,22 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+
+public class SM_DEFAULT_LOC_Table extends CommonDB {
+
+	public SM_DEFAULT_LOC_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "sm_default_loc_tmpl";
+
+	public int getLocCount() throws Exception {
+		String loc_Count_SQL = "select * from  " + tableName + " where bu_id='" + AppData.buId + "'";
+		int loc_Count = getRowCount(loc_Count_SQL);
+		return loc_Count;
+	}
+	
+}

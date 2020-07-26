@@ -1,0 +1,27 @@
+#HeaderNo     # Heade Name
+1	=	
+2	=	DC Code
+3	=	Storer
+4	=	Order No
+5	=	Ext Order No
+6	=	Order Type
+7	=	Sub Type
+8	=	Order Status
+9	=	PA Req.
+10	=	Comments
+11	=	Delivery Date
+12	=	Order Date
+13	=	Expiry Date
+14	=	Appointment Date
+15	=	Appointment No
+16	=	Consignee
+17	=	Approval ID
+18	=	Allow Auto Receipt
+19	=	Lottable Match Required
+20	=	RF Flag
+21	=	Updated Datetime
+22	=	Updated By
+23	=	Created Datetime
+24	=	Created By
+
+HeaderCount = 24

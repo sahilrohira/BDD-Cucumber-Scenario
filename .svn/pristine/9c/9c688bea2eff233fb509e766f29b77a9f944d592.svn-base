@@ -1,0 +1,15 @@
+package utils;
+
+import dataProviders.EnvironmentFileReader;
+
+public class AppData {
+	
+	public static String buId = new EnvironmentFileReader().getBU_ID();
+	public static String appDate;
+	public static String appDateFormat;
+	public static int getRandomNumberBetweenRange(int min, int max){
+	    int x = (int) (Math.random()*((max-min)+1))+min;
+	    return x;
+	}
+	
+}

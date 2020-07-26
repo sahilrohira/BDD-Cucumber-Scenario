@@ -1,0 +1,97 @@
+package utils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+public class MyList {
+	
+	
+	public  static boolean isListContentMatching(List<String> one, List<String> two){     
+	    if (one == null && two == null){
+	        return true;
+	    }
+
+	    if((one == null && two != null) 
+	      || one != null && two == null
+	      || one.size() != two.size()){
+	        return false;
+	    }
+
+	    one = new ArrayList<String>(one); 
+	    two = new ArrayList<String>(two);   
+
+	    Collections.sort(one);
+	    Collections.sort(two);      
+	    return one.equals(two);
+	}
+	
+	public  static void validateTableRowsPresentOnUI(List<Map<String, String>> actualValue, List<Map<String, String>> uiValues ) throws Exception{     
+	    
+	    for (Map<String, String> uiValue : uiValues) {
+	    	System.out.println("Validating :- "+uiValue);
+			
+	    	if(isTableRowPresentInDB(actualValue, uiValue)) {
+				System.out.println("Validation Successful :- "+uiValue);
+			}else {
+				throw new Exception("Validation Failed :- "+uiValue + " Not Found In DB/CSV");
+			}
+		}
+	   
+	}
+	
+	public  static boolean isTableRowPresentInDB(List<Map<String, String>> dbValues, Map<String, String> uiValue ){     
+	    Boolean matchFound=false;
+	    
+	    for (Map<String, String> dbValue : dbValues) {
+			if(dbValue.equals(uiValue)) {
+				matchFound=true;
+				break;
+			}
+		}
+		return matchFound;
+	   
+	}
+	
+	
+	public  static String toStringForSQL(List<String> input){ 
+		String output ="";
+	   
+		if (input == null) {
+	    	return output;
+	    }
+		
+		if (input.size() == 0) {
+	    	return output;
+	    }
+
+		for (String in : input) {
+			output = output + " '" + in + "', ";
+		}
+		output = output.substring(0,output.length()-2); 
+		
+	    return output;
+	}
+	
+	public  static String toStringForSQLDate(List<String> input){ 
+		String output ="";
+	   
+		if (input == null) {
+	    	return output;
+	    }
+		
+		if (input.size() == 0) {
+	    	return output;
+	    }
+
+		for (String in : input) {
+			
+			output = output + " to_date('"+in+"','yyyy-MM-DD'), ";
+		}
+		output = output.substring(0,output.length()-2); 
+		
+	    return output;
+	}
+
+}

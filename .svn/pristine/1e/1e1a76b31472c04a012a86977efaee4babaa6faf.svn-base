@@ -1,0 +1,129 @@
+package db;
+
+import java.sql.Connection;
+import java.util.Map;
+
+import utils.AppData;
+
+public class SM_STORE_Table extends CommonDB {
+
+	public SM_STORE_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "SM_STORE";
+
+	public int getStoreCount() throws Exception {
+		String store_Count_SQL = "select * from  " + tableName + " where bu_id='" + AppData.buId + "'";
+		int store_count = getRowCount(store_Count_SQL);
+		return store_count;
+	}
+
+	public void storeStoreNameAndNumWithPdf() throws Exception {
+		String store_sql = "Select sms.store as STORE, sms.store_name as STORE_NAME from " + tableName + " sms "
+				+ "INNER JOIN sm_floor_plan_pdf sfpp ON ( sms.store = sfpp.store AND sms.bu_id = sfpp.bu_id ) "
+				+ "WHERE sms.bu_id = '" + AppData.buId + "' GROUP BY sms.store ,"
+				+ "sms.store_name HAVING COUNT(*) > 1 FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(store_sql);
+	}
+
+	public void fetchStoreDetails() throws Exception {
+		String store_master_sql = "Select sms.store_name10   AS SHORT_NAME,    sms.store_name3  AS ABBR,    sms.Store_ADD1   As ADDRESS1,    sms.Store_ADD2   As ADDRESS2,    sms.Store_City   As CITY,    smd.district_name AS DISTRICT,    sms.STATE,    sms.country_ID       AS COUNTRY,    sms.phone_number  AS PHONE_NUMBER,    'Class '||sms.Store_Class  AS STORE_CLASS,    to_char(sms.Store_Open_DATE,'"
+				+ AppData.appDateFormat + "')  AS OPEN_DATE,    to_char(sms.Store_Close_DATE,'" + AppData.appDate
+				+ "')  AS CLOSE_DATE,    sms.EMAIL,    sms.TOTAL_SQUARE_FT,    sms.SELLING_SQUARE_FT,    sms.STORE_FORMAT FROM sm_store sms INNER JOIN sm_district smd ON (smd.district=sms.district and sms.bu_id=smd.bu_id) WHERE sms.bu_id = '"
+				+ AppData.buId + "' and sms.store=" + getTempData("STORE");
+		storeColumnNameAndValue(store_master_sql);
+	}
+
+	public String getStorePDFCount(String store) throws Exception {
+		String store_pdf_count = "select count(*)as PDF_COUNT  from sm_store sms inner join sm_floor_plan_pdf sfpp "
+				+ "on (sms.store=sfpp.store and sms.bu_id=sfpp.bu_id)  where sms.store =" + store + "and sms.bu_id='"
+				+ AppData.buId + "' group by sms.store";
+		storeColumnNameAndValue(store_pdf_count);
+		return getTempData("PDF_COUNT");
+	}
+
+	public String getSystemUDAAttributesCount(String store) throws Exception {
+		String Sys_UDA_Count_SQL = "select count(su.description) as AttributeSet_Count from sm_uda_values suv "
+				+ " right outer join sm_store_uda_lov ssul on (ssul.uda_id=suv.uda_id and suv.uda_value=ssul.uda_value) "
+				+ " right outer join sm_uda su on (su.uda_id = ssul.uda_id and su.bu_id=ssul.bu_id) where ssul.store="
+				+ store + " and suv.bu_id='" + AppData.buId
+				+ "' and su.uda_type='R'  and su.module='S' ORDER BY su.description";
+		Map<String, String> UDA_Column = getColumnNameAndValue(Sys_UDA_Count_SQL);
+		String uda_count = UDA_Column.get("ATTRIBUTESET_COUNT");
+		return uda_count;
+	}
+
+	public String getSpaceUDAAttributesCount(String store) throws Exception {
+		String Space_UDA_Count_SQL = " select Count(distinct(su.uda_id)) as SPACEUDA_COUNT from sm_uda su "
+				+ " left outer join sm_store_uda_ff ssuf on (su.uda_id=ssuf.uda_id and ssuf.store=" + store + ") "
+				+ " left outer join sm_store_uda_date ssud on (su.uda_id=ssud.uda_id and ssud.store=" + store + ") "
+				+ " left outer join sm_store_uda_lov ssul on (su.uda_id=ssul.uda_id and ssul.store=" + store + ")"
+				+ " where su.uda_type='S' and su.module ='S' and su.bu_id='" + AppData.buId
+				+ "' ORDER BY su.description";
+		Map<String, String> UDA_Column = getColumnNameAndValue(Space_UDA_Count_SQL);
+		String space_uda_count = UDA_Column.get("SPACEUDA_COUNT");
+		return space_uda_count;
+	}
+
+	public int getFixtureCount(String store) throws Exception {
+		String Fixture_Count_SQL = " SELECT sfl.fixture_code, sf.description, NVL (scdv.description, sf.family) family, NVL (scdv1.description, sf.fixture_type) fixture_type, NVL (sfl.equiv_meterage, sf.fixture_meterage) meterage, COUNT (1) fixture_count, NVL (sfl.equiv_meterage, sf.fixture_meterage) * COUNT (1) total FROM sm_floor_plan fp INNER JOIN sm_floor_layout sfl ON ( fp.bu_id = sfl.bu_id AND fp.store = sfl.store AND fp.fp_version = sfl.fp_version AND sfl.dummy_ind = 'N') INNER JOIN sm_fixture sf ON (sfl.bu_id = sf.bu_id AND sfl.fixture_code = sf.fixture_code) LEFT OUTER JOIN ax_code_detail_vw scdv ON (scdv.code_type = 'FMFT' AND scdv.code = sf.family) LEFT OUTER JOIN ax_code_detail_vw scdv1 ON ( scdv1.code_type = 'FTY' || sf.family AND scdv1.code = sf.fixture_type) WHERE fp.bu_id = '"
+				+ AppData.buId + "' AND fp.store = " + store
+				+ " AND TO_DATE (TO_CHAR(ax_utility_sql.get_vdate,'YYYY/MM/DD'),'RRRR/MM/DD') BETWEEN fp.eff_start_date AND fp.eff_end_date GROUP BY sfl.fixture_code, sf.description, sf.family, sf.fixture_type, scdv.description, scdv1.description, NVL (sfl.equiv_meterage, sf.fixture_meterage)";
+		return getRowCount(Fixture_Count_SQL);
+	}
+
+	public int getProductCount(String store) throws Exception {
+		String Product_Count_SQL = " Select distinct sim.item from sm_item_master sim Inner join sm_pog_item spi on (sim.bu_id=spi.bu_id and sim.item=spi.item)\r\n"
+				+ "Inner Join Sm_floor_plan_dtl sfpd on (sfpd.bu_id=spi.bu_id and sfpd.pog_code=spi.pog_code and sfpd.pog_version=spi.pog_version)\r\n"
+				+ "where sim.bu_id='" + AppData.buId + "' and sfpd.store=" + store
+				+ "  and ax_utility_sql.get_vdate BETWEEN sfpd.eff_start_date AND sfpd.eff_end_date";
+		return getRowCount(Product_Count_SQL);
+	}
+
+	public int getFloorPlanCount(String store) throws Exception {
+		String Product_Count_SQL = " Select * from sm_floor_plan where store=" + store + " and bu_id='" + AppData.buId
+				+ "'";
+		return getRowCount(Product_Count_SQL);
+	}
+
+	public void fetchStoreListDetails() throws Exception {
+		String store_detail_query = "SELECT ( sc.chain || ' - ' || sc.chain_name ) AS CHAIN, ( sa.area || ' - ' || sa.area_name ) AS AREA, ( sr.region || ' - ' || sr.region_name ) AS REGION, ( sd.district || ' - ' || sd.district_name ) AS DISTRICT, ( sas.store || ' - ' || sas.store_name ) AS STORE FROM sm_chain sc INNER JOIN sm_area sa ON ( sc.chain = sa.chain AND sc.bu_id = sa.bu_id ) INNER JOIN sm_region sr ON ( sa.area = sr.area AND sa.bu_id = sr.bu_id ) INNER JOIN sm_district sd ON ( sr.region = sd.region AND sr.bu_id = sd.bu_id ) INNER JOIN sm_active_stores sas ON ( sd.district = sas.district AND sd.bu_id = sas.bu_id ) WHERE sc.bu_id = '"
+				+ AppData.buId + "' FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(store_detail_query);
+		String uda_lov_query = "SELECT uda_id ,UDA_LOV FROM ( SELECT DISTINCT ( su.uda_id ), ( su.uda_id || ' - ' || su.description ) AS UDA_LOV FROM sm_store_uda_lov ssul INNER JOIN sm_uda su ON ( ssul.uda_id = su.uda_id ) AND su.module = 'S' AND su.bu_id = '"
+				+ AppData.buId + "' AND ROWNUM = 1 ORDER BY su.uda_id ASC)";
+		storeColumnNameAndValue(uda_lov_query);
+		uda_lov_query = "SELECT '1 - '||description as UDA_VALUE FROM sm_uda_values WHERE uda_id = "
+				+ getTempData("UDA_ID") + " AND bu_id = '" + AppData.buId + "' AND ROWNUM = 1";
+		storeColumnNameAndValue(uda_lov_query);
+		String uda_ff_query = "SELECT UDA_FF FROM ( SELECT DISTINCT ( su.uda_id ), ( su.uda_id || ' - ' || su.description ) AS UDA_FF FROM sm_store_uda_ff ssuf INNER JOIN sm_uda su ON ( ssuf.uda_id = su.uda_id ) AND su.module = 'S' AND su.bu_id = '"
+				+ AppData.buId + "' AND ROWNUM = 1 ORDER BY su.uda_id ASC )";
+		storeColumnNameAndValue(uda_ff_query);
+		String uda_dates_query = "SELECT UDA_DATE FROM ( SELECT DISTINCT ( su.uda_id ), ( su.uda_id || ' - ' || su.description ) AS UDA_DATE FROM sm_store_uda_date ssud INNER JOIN sm_uda su ON ( ssud.uda_id = su.uda_id ) AND su.module = 'S' AND su.bu_id = '"
+				+ AppData.buId + "' AND ROWNUM = 1 ORDER BY su.uda_id ASC )";
+		storeColumnNameAndValue(uda_dates_query);
+	}
+
+	public void storeClosedStore() throws Exception {
+		String closed_Store_SQL = "select distinct(store) as Closed_Store  from sm_store_uda_date where bu_id='"
+				+ AppData.buId
+				+ "' AND uda_date<ax_utility_sql.get_vdate ORDER BY dbms_random.value  fetch first 1 rows only";
+		storeColumnNameAndValue(closed_Store_SQL);
+	}
+
+	public void storeNameAndNum() throws Exception {
+		String store_sql = "Select sms.store as STORE, sms.store_name as STORE_NAME, sms.store_add1 as STORE_ADDRESS,"
+				+ " sms.store_format as STORE_SEGMENT, sms.total_square_ft as STORE_TOTAL_AREA, sms.selling_square_ft as "
+				+ "STORE_TRADING_AREA from SM_STORE sms WHERE sms.bu_id ='" + AppData.buId
+				+ "' FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(store_sql);
+	}
+
+	public void getRandomStore() throws Exception {
+		String store_sql = "select STORE from sm_store where bu_id = '" + AppData.buId
+				+ "' ORDER BY dbms_random.value fetch first 1 rows only";
+		storeColumnNameAndValue(store_sql);
+
+	}
+}

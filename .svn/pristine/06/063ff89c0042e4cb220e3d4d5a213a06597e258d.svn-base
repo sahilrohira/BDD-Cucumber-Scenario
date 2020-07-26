@@ -1,0 +1,42 @@
+
+Feature: Validating Functionality Related To Store POG Module under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Store POG Module" Link
+@run
+Scenario Outline: POGM_StorePOGModule_TC001#Store POG Module
+   
+		When From Store POG Module Page, Click On "Cancel" Button
+		And From Store POG Module Page, Click On "Modify Search" Button
+		And Retreive the Store POG Module details from DB with Status as "<Status>"
+		When Type the parameters Store as "STORE",POG Code as "POG_CODE" and POG Version "POG_VERSION" as to search for the Store POG Module with status as "<Status>"
+		And From Store POG Module Page, Click On "Reset" Button
+		Then Validate all fields set to Default on Search Popup for Store POG Module
+		When Enter Text Field "P20_STORE" Value As "974586543848846585"
+		And From Store POG Module Page, Click On "Search" Button
+	  Then Validate No data Found on Screen "Store POG Module" for table "store_pog_module"
+	  When From Store POG Module Page, Click On "Modify Search" Button
+	  And From Store POG Module Page, Click On "Reset" Button
+		When Type the parameters Store as "STORE",POG Code as "POG_CODE" and POG Version "POG_VERSION" as to search for the Store POG Module with status as "<Status>"
+		And From Store POG Module Page, Click On "Search" Button
+		And Wait For "3" Second
+		And Apply Filter for Column "POG Module" with value "POG_MODULE"
+		And Wait For "3" Second
+		And Apply Filter for Column "Actual POG Start Date" with value "ACTUAL_POG_START_DATE"
+		And Click On Link with text "STORE"
+		Then Validate Breadcrumb Header with Value as "Store Master Details"
+		And From Store POG Module Page, Click On "Back" Button
+		And Click On Link with text "STORE_NAME"
+		And Switch To Frame with Title "Floor Plan PDF Management"
+		And From Store POG Module Page, Click On "Cancel" Button
+		Then Validate all Store POG Module details from database for selected "POG_CODE" with status as "<Status>"
+		
+			Examples:-
+		| Status |
+    | H  |
+		

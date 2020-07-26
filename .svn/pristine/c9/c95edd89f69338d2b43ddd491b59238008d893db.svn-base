@@ -1,0 +1,41 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+
+public class SM_FIXTURE_Table extends CommonDB {
+
+	public SM_FIXTURE_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "SM_FIXTURE";
+
+	public int getFixtureCount() throws Exception {
+		String fixture_Count_SQL = "select * from  " + tableName + " where bu_id='" + AppData.buId + "'";
+		int fixture_count = getRowCount(fixture_Count_SQL);
+		return fixture_count;
+	}
+	
+	public void getFixtureFamilyandType() throws Exception {
+		String fixture_sql = "SELECT cd.description as Family,sft.description as Fixture_Type" + 
+				"    FROM sm_fixture_types sft ,ax_code_detail cd" + 
+				"   WHERE sft.bu_id = '"+AppData.buId+ "' AND sft.family = cd.code and cd.code_type = 'FMFT'" + 
+				"fetch next 1 rows only";
+		storeColumnNameAndValue(fixture_sql);
+	}
+	
+	public void getFixtureMasterdetails(String fixtureID) throws Exception {
+		String fixtureID_sql = "Select INNER_VOLUME,INNER_AREA,TO_CHAR(fixture_meterage,(SELECT sys_conf_value FROM ax_bu_sysprm WHERE sys_conf_name = 'POG_METERAGE_FORMAT'" + 
+				"    AND bu_id ='"+AppData.buId+"')) as FIXTURE_METERAGE from sm_fixture where bu_id='"+AppData.buId+"' "
+				+ "and fixture_Code='"+fixtureID+"'";
+		storeColumnNameAndValue(fixtureID_sql);
+	}
+	
+	public void getFixtureCode() throws Exception {
+		String fixture_code_sql = "select FIXTURE_CODE from  " + tableName + " where dummy_ind='Y' and bu_id='"+AppData.buId+"'  and rownum=1 order by fixture_code" +"";
+		storeColumnNameAndValue(fixture_code_sql);
+	}
+}

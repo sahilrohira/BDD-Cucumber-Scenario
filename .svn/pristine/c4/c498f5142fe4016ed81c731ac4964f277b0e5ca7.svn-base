@@ -1,0 +1,11 @@
+
+Feature: AAA
+
+
+@run
+Scenario: AAA 
+    Given Open Browser
+    And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Virtual Host" Link
+    And Test

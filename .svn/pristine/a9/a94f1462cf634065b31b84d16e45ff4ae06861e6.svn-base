@@ -1,0 +1,52 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexLink extends CommonPage {
+	
+	public ApexLink(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+
+	public void validateLinkIsPresent(String pageName, String linkName) throws Exception {
+		By buttonLink 			= By.xpath("//a[text()='"+linkName+"']");
+		waitForPresenceOfElement(pageName, linkName+" Link",buttonLink);
+	}
+	
+	public void validateLinkIsNotPresent(String pageName, String linkName) throws Exception {
+		By buttonLink 			= By.xpath("//a[text()='"+linkName+"']");
+		validateElementIsNotPresent(pageName, linkName+" Link",buttonLink);
+	}
+	
+	public void clickonLinkwithText(String pageName, String linkName) throws Exception {
+		if(getTempData(linkName)!=null) {linkName=getTempData(linkName);}
+		By linkObj		= By.xpath("//a[text()='"+linkName+"']");
+		clickOnElement(pageName, linkName+" Link", linkObj);
+	}
+	
+	public void clickonLinkwithContainsText(String pageName, String linkName) throws Exception {
+		if(getTempData(linkName)!=null) {linkName=getTempData(linkName);}
+		By linkObj		= By.xpath("//a[contains(text(),'"+linkName+"')]");
+		clickOnElement(pageName, linkName+" Link", linkObj);
+	}
+	
+	public void clickonLinkwithTextSpanContains(String pageName, String linkName) throws Exception {
+		if(getTempData(linkName)!=null) {linkName=getTempData(linkName);}
+		By linkObj		= By.xpath("//a/span[contains(text(),'"+linkName+"')]");
+		clickOnElement(pageName, linkName+" Link", linkObj);
+	}
+	
+	public void validateTableCellContainsPropertyWithColumnValue(String pageName,  String tableLabel, String columnName, String columnValue, String attributeName, String expAttrValue) throws Exception {
+		By tableHeaderLocator = By.xpath("//div[contains(@aria-labelledby,'"+tableLabel+"')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator 	= "//div[contains(@aria-labelledby,'"+tableLabel+"')]//div[@class='a-GV-w-scroll']/table";
+		int headerNo = getElementNo(pageName,"TableHeader_"+columnName, tableHeaderLocator, columnName);
+		By cell = By.xpath(tableLocator+"/tbody/tr/td[contains(.,'"+columnValue+"') and position()='"+headerNo+"']//a");
+		if(getTempData(expAttrValue)!=null) {expAttrValue=getTempData(expAttrValue);}
+		if(getTempData(columnValue)!=null) {columnValue=getTempData(columnValue);}
+		validateElementAttributeContains(pageName, attributeName, cell, attributeName, expAttrValue);
+	}
+	
+} 

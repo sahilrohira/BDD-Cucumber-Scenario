@@ -1,0 +1,20 @@
+package pages.Master;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import pages.commom.CommonPage;
+
+public class MasterStore extends CommonPage {
+	
+	private String pageName = "Masters Store";
+	
+	public MasterStore(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+	
+	public void validatePaginationCount(String fieldname,String xpath,String expText) throws Exception {
+		By pagination= By.xpath(xpath);
+		validateTextContains(pageName, fieldname, pagination, expText);
+	}
+	
+}

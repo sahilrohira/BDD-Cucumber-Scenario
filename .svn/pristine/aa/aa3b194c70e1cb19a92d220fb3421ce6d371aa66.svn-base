@@ -1,0 +1,80 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_POG_CATEGORY_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexButton;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+import utils.AppDateUtil;
+
+public class Masters_POGCategoryPageSteps extends SuperStepdefs {
+
+	private String pageName = "Masters_POGCategory";
+	private String tableLabel = "ig_grid";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_POG_CATEGORY_Table sm_pog_category_table;
+	
+
+	public Masters_POGCategoryPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_pog_category_table=new SM_POG_CATEGORY_Table(con, testCaseId);
+	}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Master POGCategory Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+
+	@When("^From Master POGCategory Page, Validate Record Count from Database")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount= sm_pog_category_table.getPOGCatCount();
+		apexTable.validateTableRowCount(pageName,tableLabel,expectedRowCount);
+		logger.pass("From Masters POGCategory Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+
+	@Then("^From Master POGCategory Page, For Row \"(.*)\", Enter Text Description For Column \"(.*)\" As \"(.*)\"$")
+	public void enterTextDescription(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		if(value.toLowerCase().contains("vdate")) 
+		{String varindays=value.substring(5);
+			value=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		apexTable.enterCellTextDescription(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master POGCategory Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master POGCategory Page, For Row \"(.*)\", Enter Text For Column \"(.*)\" As \"(.*)\"$")
+	public void enterText(int rowNo, String headerName, String value) throws Exception {
+		if(headerName.equals("Category Code") && !value.equalsIgnoreCase("Category_Code")) {
+			int ranNum = AppData.getRandomNumberBetweenRange(1,99999);
+			storeTempData("Category_Code", "Auto_"+ranNum);
+			value= "Auto_"+ranNum;
+		}
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		apexTable.enterCellText(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master POGCategory Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	   @When("^Validate added POG Category \"(.*)\" in Database$")
+	    public void getCategorynameusingCategorycode(String catcode) throws Exception {	    	
+		   sm_pog_category_table.storeCatName(catcode);
+	    	logger.pass("Successfully able to store Category name from DB for Category Code as "+bold(getTempData(catcode)));
+	    }
+	   @Then("^Validate Category Code and Category Name from Database")
+		public void validatecatCodeCatName() throws Exception {
+			apexTable.validateScrollingTableCellValue(pageName, "ig_grid", 1, "Category Code", "Category_Code");
+			apexTable.validateScrollingTableCellValue(pageName, "ig_grid",1, "Category Name", "CATEGORY_NAME");
+			logger.pass("Validated Category Code and Category Name");
+		}
+}

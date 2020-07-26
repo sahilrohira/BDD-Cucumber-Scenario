@@ -1,0 +1,31 @@
+package stepdefs.MSO;
+
+import cucumber.api.java.en.Then;
+import pages.apex.ApexPageHeader;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class MacroSpaceOptimization extends SuperStepdefs {
+
+	public ApexPageHeader apexPageHeader;
+	
+	public MacroSpaceOptimization(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+	}
+    
+    /**
+     * @author Chitresh.Goyal
+     	
+     	From Home Page, Click On "Insights" Link
+     	From Home Page, Click On "Optimization" Link
+     	From Home Page, Click On "Summary & Comparison" Link
+     	
+     */
+    @Then("^From MSO Page, Click On \"(.*)\" Link$")
+    public void clickOnLink(String linkName) throws Exception {
+    	apexPageHeader.clickOnHeader3Link("MSO Page", linkName);
+    	logger.pass("From MSO Page, Click On "+bold(linkName)+" Link");
+    }      
+
+}

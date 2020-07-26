@@ -1,0 +1,304 @@
+package stepdefs.POGManagement;
+
+import java.io.File;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_GENERAL_Table;
+import db.SM_SMART_TEMPLATE_Table;
+import db.SPACE_PLANNING_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import pages.POGManagement.SPACE_Template;
+import pages.apex.ApexButton;
+import pages.apex.ApexFrame;
+import pages.apex.ApexMessage;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+import utils.AppDateUtil;
+
+public class POGM_SpacePlanningPageSteps extends SuperStepdefs {
+
+	private String pageName = "Space Planning";
+	private String tableLabel = "ig_grid";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SPACE_PLANNING_Table space_planning_table;
+	private ApexTextField apexTextField;
+	private SM_GENERAL_Table sm_general_table;
+	private ApexFrame apexFrame;
+	private SPACE_Template spaceTemp;
+	private ApexMessage apexMessage;
+	private SM_SMART_TEMPLATE_Table sm_smart_temp;
+
+	public POGM_SpacePlanningPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		space_planning_table=new SPACE_PLANNING_Table(con, testCaseId);
+		apexTextField=new ApexTextField(driver, testCaseId);
+		sm_general_table=new SM_GENERAL_Table(con, testCaseId);
+		apexFrame=new ApexFrame(driver, testCaseId);
+		spaceTemp=new SPACE_Template(driver, testCaseId);
+		apexMessage=new ApexMessage(driver,testCaseId);
+		sm_smart_temp=new SM_SMART_TEMPLATE_Table(con, testCaseId);
+	}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Space Planning Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@When("^From Space Planning Page, Validate Record Count from Database$")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount= space_planning_table.getSpacePlanningCount();
+		if (expectedRowCount!=0) {
+		apexTable.validateTableRowCount(pageName,tableLabel,expectedRowCount);}
+		else {
+			apexTable.validateTableIsEmpty(pageName, tableLabel);
+		}
+		logger.pass("From Space Planning Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+	
+	@When("^Validate Hidden Text Field \"(.*)\" Value As \"(.*)\"$")
+	public void validateRecordCount(String fieldName, String fieldValue) throws Exception {
+		apexTextField.validateHiddenTextFieldValue(pageName, fieldName, fieldValue);
+    	logger.pass("Validate Text Field " + bold(fieldName) + " Value As "+bold(fieldValue));
+	}
+	
+	
+	@Then("^In Pomotion details Enter Text Field \"(.*)\" Value As \"(.*)\"$")
+	public void enterTextFieldValue(String fieldName,String fieldValue) throws Exception {
+		if(fieldName.equals("PROM_NO")) {
+			int ranNum = AppData.getRandomNumberBetweenRange(11111111,99999999);
+			storeTempData("PROM_NUM", String.valueOf(ranNum));
+			fieldValue= String.valueOf(ranNum);
+		}
+		if(getTempData(fieldValue)!=null) {fieldValue=getTempData(fieldValue);}
+		if(fieldValue.toLowerCase().contains("vdate")) 
+		{String varindays=fieldValue.substring(5);
+		fieldValue=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		Thread.sleep(2000);
+		apexTextField.enterText(pageName, fieldName, fieldValue);
+    	logger.pass("Enter Text Field " + bold(fieldName) + " Value As "+bold(fieldValue));
+	}
+	
+	@Then("^Extract any Promotion POG$")
+	public void extractandStorePromotionPOG() throws Exception {
+		sm_general_table.getPromotionPOG();
+		logger.pass("Promotion POG Code " + bold(getTempData("PROM_POG")) + "with Version As "+bold(getTempData("PROM_POG_VER"))+" is extracted from Database");
+	}
+	
+	@Then("^Extract any Promotion POG except POG code \"(.*)\" and pog Version \"(.*)\"$")
+	public void extractandStorePromotionPOGexcept(String pogCode,String pogVer) throws Exception {
+		sm_general_table.getPromotionPOGexceptPOG(pogCode, pogVer);
+		logger.pass("Promotion POG Code " + bold(getTempData("PROM_POG2")) + "with Version As "+bold(getTempData("PROM_POG_VER2"))+" is extracted from Database");
+	}
+	
+	@Then("^Extract any Promotion POG with two version$")
+	public void ExtractPromotionPOGwith2Version() throws Throwable {
+		sm_general_table.getPromotionPOGWith2Version();
+		logger.pass("Extracted Promotion POG "+bold(getTempData("PROMPOG_2VER")) +" with Version V1 as "+bold(getTempData("PROM_VER1")) +" with Version V1 as "+bold(getTempData("PROM_VER2")));
+	}
+	
+	
+	@Then("Create and Tag the Promotion POG \"(.*)\" with ChildSpace \"(.*)\" for Store \"(.*)\" from start date \"(.*)\" to end date \"(.*)\" at location \"(.*)\"$")
+	public void createandtagPromotion(String promPOG,String childSpaceMod,String store,String startDate,String endDate,String loc) throws Exception{ 
+		Thread.sleep(3000);
+		clickOnButton("Add");
+		enterTextFieldValue("PROM_NO","RANDOM_NUM");
+		enterTextFieldValue("P38_PROM_THEME","AUTO_PROMO_THEME");
+		enterTextFieldValue("P38_EFF_START_DATE", startDate);
+		enterTextFieldValue("P38_EFF_END_DATE", endDate);
+		enterTextFieldValue("P38_PROM_DESC", "AUTO_PROMO_DESCRIPTION");
+		clickOnButton("Add");
+		Thread.sleep(1000);
+		clickOnButton("Add");
+		apexFrame.apexSwitchToFrame("Store Search");
+		Thread.sleep(3000);
+		apexTable.filterScrollingTableContent(pageName,"store_search_ig_grid", "Store", store);
+		Thread.sleep(3000);
+		apexTable.clickOnTableCell(pageName, "store_search_ig_grid", 1, "");
+		clickOnButton("Add");
+		clickOnButton("Save");
+		clickOnButton("Template");
+		Thread.sleep(2000);
+		spaceTemp.clickonButton("Template", "//div[@id='prom_template_dialog']//button[span[text()='Template']]");
+		space_planning_table.getPlanIDforPromotion("AUTO_PROMO_DESCRIPTION",getTempData("PROM_NUM"));
+		String fileName="Promotion_"+getTempData("PLAN_ID");
+		fileName=System.getProperty("user.dir") + File.separator +"Test_Reports"+File.separator +testCaseId+File.separator +"Download"+File.separator+fileName;
+		spaceTemp.tagInNewSpaceTemplate(fileName, getTempData(promPOG), getTempData(store), getTempData(loc), getTempData(childSpaceMod));
+		logger.pass("Promotion POG Code " + bold(getTempData(promPOG)) + "is updated in Template for module"+bold(getTempData(childSpaceMod)));
+	}
+	
+	@Then("Update the Space New Template for tagging Promotion POG \"(.*)\" on location \"(.*)\" against ChildSpaceModule \"(.*)\" and store \"(.*)\"$")
+	public void updateNewPromotionTemplate(String promPOG,String loc,String childSpaceMod,String store) throws Exception{ 
+		Thread.sleep(3000);
+		if (promPOG.contains("Test8585")){
+			space_planning_table.getPlanIDforPromotionforbu_id("AUTO_PROMO_DESCRIPTION",getTempData("PROM_NUM"),"WTCTH");
+		}
+		else {space_planning_table.getPlanIDforPromotion("AUTO_PROMO_DESCRIPTION",getTempData("PROM_NUM"));}
+		String fileName="Promotion_"+getTempData("PLAN_ID");
+		fileName=System.getProperty("user.dir") + File.separator +"Test_Reports"+File.separator +testCaseId+File.separator +"Download"+File.separator+fileName;
+		if (getTempData(promPOG) != null) {
+			promPOG = getTempData(promPOG);
+		}
+		if (getTempData(store) != null) {
+			store = getTempData(store);
+		}
+		if (getTempData(loc) != null) {
+			loc = getTempData(loc);
+		}
+		if (getTempData(childSpaceMod) != null) {
+			childSpaceMod = getTempData(childSpaceMod);
+		}
+		spaceTemp.tagInNewSpaceTemplate(fileName, promPOG, store, loc, childSpaceMod);
+		logger.pass("Promotion POG Code " + bold(promPOG) + "is updated in Template for module"+bold(childSpaceMod));
+	}
+	
+	@Then("Update the Space Update Template for tagging Promotion POG \"(.*)\" Version \"(.*)\" on location \"(.*)\" against ChildSpaceModule \"(.*)\" and store \"(.*)\" with Action as \"(.*)\"$")
+	public void updateUpdatedPromotionTemplate(String promPOG,String version,String loc,String childSpaceMod,String store,String action) throws Exception{ 
+		Thread.sleep(3000);
+		
+		if (promPOG.contains("Test8585")){
+			space_planning_table.getPlanIDforPromotionforbu_id("AUTO_PROMO_DESCRIPTION",getTempData("PROM_NUM"),"WTCTH");
+		}else{space_planning_table.getPlanIDforPromotion("AUTO_PROMO_DESCRIPTION",getTempData("PROM_NUM"));}
+		String fileName="Promotion_"+getTempData("PLAN_ID");
+		fileName=System.getProperty("user.dir") + File.separator +"Test_Reports"+File.separator +testCaseId+File.separator +"Download"+File.separator+fileName;
+		if (getTempData(promPOG) != null) {
+			promPOG = getTempData(promPOG);
+		}
+		if (getTempData(store) != null) {
+			store = getTempData(store);
+		}
+		if (getTempData(loc) != null) {
+			loc = getTempData(loc);
+		}
+		if (getTempData(version) != null) {
+			version = getTempData(version);
+		}
+		if (getTempData(childSpaceMod) != null) {
+			childSpaceMod = getTempData(childSpaceMod);
+		}
+		spaceTemp.tagInUpdateSpaceTemplate(fileName, promPOG,version, store, loc,childSpaceMod,action);
+		logger.pass("Promotion POG Code " + bold(promPOG) + "is updated in Template for module"+bold(childSpaceMod));
+	}
+	
+	@When("Delete the promotion with Plan ID as \"(.*)\" and Promotion Number as \"(.*)\"$")
+	public void deletePromotionwithPlanID(String planID,String promNum) throws Exception {
+		Thread.sleep(3000);
+		apexTable.filterScrollingTableContent(pageName, tableLabel, "Plan ID", planID);
+		Thread.sleep(2000);
+		apexTable.clickOnTableCellWithHyperlink(pageName, tableLabel, getTempData(promNum));
+		apextButton.clickOnButton(pageName, "Delete");
+		apexMessage.clickOnButton("Ok");
+    	logger.pass("Deleted Promotion Number " + bold(getTempData(promNum)) + " with Plan ID as "+bold(getTempData(planID)));
+	}
+	
+	@Then("^From Space Planning Page, Filter Table content for Column \"([^\"]*)\" With Value \"([^\"]*)\"$")
+	public void from_Space_Planning_Page_Filter_Table_content_for_Column_With_Value(String columnName, String filterValue) throws Throwable {
+		Thread.sleep(2000);
+		if(getTempData(filterValue)!=null) {filterValue=getTempData(filterValue);}
+		apexTable.filterScrollingTableContent(pageName,tableLabel, columnName, filterValue);
+		logger.pass("From Space Planning Page, Filter Table content for Column "+bold(columnName)+" With Value "+bold(filterValue));
+	}
+	
+	@Then("^From Space Planning Page, For Row \"(.*)\", Enter Text For Column \"(.*)\" As \"(.*)\"$")
+	public void enterText(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		if(value.toLowerCase().contains("vdate")) 
+		{String varindays=value.substring(5);
+		value=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		Thread.sleep(2000);
+		apexTable.enterCellText(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_LocationConfig Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Space Planning Page, For Row \"(.*)\", Enter Text after double click For Column \"(.*)\" As \"(.*)\"$")
+	public void enterTextafterDoubleClick(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		if(value.toLowerCase().contains("vdate")) 
+		{String varindays=value.substring(5);
+		value=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		Thread.sleep(2000);
+		apexTable.clearAndTypeCellTextAfterDoubleClick(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_LocationConfig Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^Extract the Plan ID for Promotion Description \"([^\"]*)\" and Promotion Number \"([^\"]*)\"$")
+	public void extractPlanIDFromDB(String promDesc, String promNum) throws Throwable {
+		space_planning_table.getPlanIDforPromotion(promDesc,getTempData(promNum));
+		logger.pass("Extracted Plan ID is "+bold("plan_id"));
+	}
+	
+	@Then("^Extract the Plan ID for Promotion Description \"([^\"]*)\" and Promotion Number \"([^\"]*)\" for BU_ID \"([^\"]*)\"$")
+	public void extractPlanIDFromDBforbu_id(String promDesc, String promNum,String bu_id) throws Throwable {
+		space_planning_table.getPlanIDforPromotionforbu_id(promDesc,getTempData(promNum),bu_id);
+		logger.pass("Extracted Plan ID is "+bold("plan_id"));
+	}
+	
+	@Then("^Add Store \"([^\"]*)\" for Promotion Tagging$")
+	public void addstoreforPromotion(String store) throws Throwable {
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		clickOnButton("Add");
+		Thread.sleep(5000);
+		apexFrame.apexSwitchToFrame("Store Search");
+		apexTable.filterScrollingTableContent(pageName,"store_search_ig_grid", "Store", store);
+		Thread.sleep(5000);
+		apexTable.clickOnTableCell(pageName, "store_search_ig_grid", 1, "");
+		clickOnButton("Add");
+		clickOnButton("Save");
+		logger.pass("Selected store "+bold(store)+" for Promotion tagging");
+	}
+	
+	@Then("^Extract the Child Space location to be tagged in Promotion Space for store \"(.*)\"$")
+	public void getLocationwithChildSpaceForPromotionTagginginStore(String store) throws Exception {
+		sm_smart_temp.getLocForEmptyChildSpacePOGInStoreForPromTaggingInStore(store);
+		logger.pass("Extracted location " + bold(getTempData("EMPTY_CSLOC")) + "with Child Space as "+bold(getTempData("CS_MODULE")));
+	}
+	
+	@Then("^Extract an Single Floor Plan Store$")
+	public void extractSingleFloorPlanStore() throws Exception {
+		sm_smart_temp.getStoreWithSingleFloorPlan();
+		logger.pass("Extracted Single Floor Plan store as " + bold(getTempData("SFP_STORE")));
+	}
+	
+	@Then("^Extract Double Floor Plan Store with Current Floor Plan end date$")
+	public void extractMultipleFloorPlanStore() throws Exception {
+		sm_smart_temp.getStoreWithDoubleFloorPlan();
+		logger.pass("Extracted Multiple Floor Plan store as " + bold(getTempData("MFP_STORE")));
+	}
+	
+	@Then("^From Space Planning Page, Download Template for asOfDate \"(.*)\"$")
+	public void downloadTemplateforasOFDate(String asOfDate) throws Exception {
+		clickOnButton("Template");
+		Thread.sleep(2000);
+		enterTextFieldValue("P38_AS_OF_DATE",asOfDate);
+		spaceTemp.clickonButton("Template", "//div[@id='prom_template_dialog']//button[span[text()='Template']]");
+		logger.pass("Downloaded Template for As of date" + bold(asOfDate));
+	}
+	
+	@Then("^Extract Empty Location for Store \"(.*)\" With mutiple Floor Plan$")
+	public void getEmpotyLocationwithDoubleFloorPlanforStore(String store) throws Exception {
+		sm_smart_temp.getEmptyLocforStoreWithMultipleFP(store);
+		logger.pass("Extracted location " + bold(getTempData("MFP_EMPTY_LOC")));
+	}
+	
+	@Then("^Extract the Store,Location ID to validate GON fixture Label entry in Promotion template$")
+	public void getStorerLocForFixtureLabelasGONforWTCTH() throws Exception {
+		space_planning_table.getStorerLocForFixtureLabelGONforWTCTH();
+		logger.pass("Extracted location " + bold(getTempData("WTCTH_EMPTY_LOC")));
+	}
+	
+	@Then("^Update Query To Set Prom Indicator Flag to \"(.*)\" and Fixture Label to \"(.*)\" for bu_Id as \"(.*)\"$")
+    public void setPromFlagYandFixLbltoGON(String flagVal, String bu_Id, String fixture_Label) throws Exception {
+        space_planning_table.updateQueryPromotionFlagforFixtureLabel(flagVal, bu_Id, fixture_Label);
+        logger.pass("Update Query executed successfully");
+    }
+}

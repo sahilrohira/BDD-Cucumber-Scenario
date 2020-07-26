@@ -1,0 +1,56 @@
+package stepdefs.login;
+
+import org.apache.commons.codec.binary.Base64;
+
+import cucumber.api.java.en.When;
+import dataProviders.EnvironmentFileReader;
+import pages.login.LoginPage;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class LoginPageSteps extends SuperStepdefs {
+
+	public LoginPage loginPage;
+	
+	public LoginPageSteps(Hook hook) {
+		super(hook);
+		loginPage =  new LoginPage(driver,testCaseId);
+	}
+    
+	/**
+	 * @author Vinay.Kumar
+		
+		From Login Page, Enter User Name As "user1" and Password As "pass1"
+		
+	 */
+    @When("^From Login Page, Enter User Name As \"(.*)\" and Password As \"(.*)\"$")
+    public void enterCredential(String userName, String password) throws Throwable {
+    	loginPage.enterCredential(userName, password);
+    	
+    	//ensure password is encoded in report file
+    	byte[] passwordEncodedValue = Base64.encodeBase64(password.getBytes());
+        logger.pass("From Login Page, Enter User Name As "+bold(userName)+" and Password As " + bold(passwordEncodedValue));
+    }
+    
+    /**
+	 * @author Vinay.Kumar
+		
+		Log In To Application With Provided Credential
+		
+	 */
+    @When("^Log In To Application With Provided Credential$")
+    public void enterCredential() throws Throwable {
+    	String url = new EnvironmentFileReader().getUrl();
+    	String userName = new EnvironmentFileReader().getUserName();
+    	String password = new EnvironmentFileReader().getPassword();
+    			
+    	loginPage.goTo(url);
+    	loginPage.enterCredential(userName, password);
+    	
+    	//ensure password is encoded in report file
+    	byte[] passwordEncodedValue = Base64.encodeBase64(password.getBytes());
+        logger.pass("From Login Page, Enter User Name As "+bold(userName)+" and Password As " + bold(passwordEncodedValue));
+    }
+
+    
+}

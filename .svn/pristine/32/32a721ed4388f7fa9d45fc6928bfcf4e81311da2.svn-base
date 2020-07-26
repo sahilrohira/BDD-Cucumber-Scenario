@@ -1,0 +1,39 @@
+Feature: Validating Functionality Related To Floor Plan under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "POG Brand Group" Link
+@run
+Scenario: POGM_BrandGroup_TC001#Brand Group
+		When From Brand Group Page, Validate Record Count from Database
+		And From Brand Group Page, Click On "Add" Button
+		And From Brand Group Page, Enter Text Field "BRAND_GROUP_NAME" Value As "RANDOM"
+		And From Brand Group Page, Click On "Add" Button
+		Then Validate Successful Message As "Record(s) Added Successfully."
+		And Remove Successful Message Notification
+		And From Brand Group Page, Click On "Add Brand Name" Button
+		Then Switch To Frame with Title "Brand Name Master"
+		And Extract the Brand Name from Database
+		And From Brand Group Page, Filter Table content for Column "Brand Name" With Value "BRAND_NAME"
+		And From Brand Group Page, Click On "Add" Button
+		And From Brand Group Page, Click On "Save" Button
+		Then Validate Successful Message As "Record(s) Updated Successfully."
+		And Validate Text Field "BRAND_GROUP_NAME" Value As "BRAND_NAME"
+		Then Delete the added Brand Name
+		And Validate Successful Message As "Record(s) Deleted Successfully."
+		And Check the checkbox for Overridename
+		And From Brand Group Page, Enter Text Field "BRAND_GROUP_NAME" Value As "RANDOM"
+		And From Brand Group Page, Click On "Add Brand Name" Button
+		Then Switch To Frame with Title "Brand Name Master"
+		And Remove Existing Filter
+		And Extract the Brand Name from Database
+		And From Brand Group Page, Filter Table content for Column "Brand Name" With Value "BRAND_NAME"
+		And From Brand Group Page, Click On "Add" Button
+		And From Brand Group Page, Click On "Save" Button
+		Then Validate Successful Message As "Record(s) Updated Successfully."
+		And From Brand Group Page, Click On "Refresh" Button
+		And Validate Text Field "BRAND_GROUP_NAME" Value As "BRANDGRPNAME"

@@ -1,0 +1,25 @@
+
+Feature: Validating Functionality Related To RMS OSD Mapping under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "RMS OSD Mapping" Link
+@run
+Scenario: Masters_RMS OSD Mapping_TC001#RMS OSD Mapping 
+    
+		When From Master_RMSOSDMap Page, Validate Record Count from Database
+		Then Validate Downloaded XLSX File Content with File Name As "RMS OSD Mapping" and Tablename as "rms_osd_mapping"
+		When From Master_RMSOSDMap Page, Click On "Add Row" Button
+		And From Master_RMSOSDMap Page, For Row "2", Enter Text For Column "OSD Code" As "RANDOM"
+		And From Master_RMSOSDMap Page, For Row "2", Enter Text For Column "OSD Type" As "Auto Script"
+		And From Master_RMSOSDMap Page, For Row "2", Enter Text For Column "OSD Description" As "Auto Script"
+		And From Master_RMSOSDMap Page, For Row "2", Select Drop Down Value For Column "OSD Group" As "SG" 
+		And From Master_RMSOSDMap Page, For Row "2", Enter Text Description For Column "Short Description" As "Auto Script"
+		And From Master_RMSOSDMap Page, For Row "2", Enter Text For Column "Sort Sequence" As "220"
+		And Enter Text Field "search_field" Value As "OSD_Code"  
+		And From Master_RMSOSDMap Page, Click On "Save" Button
+		Then Validate Successful Message As "Changes saved"

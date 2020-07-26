@@ -1,0 +1,102 @@
+package utils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.openqa.selenium.WebDriver;
+
+import com.jcraft.jsch.*;
+
+public class SHHFunctions  {
+
+	private static SHHFunctions SFTPFileTrancsfer;
+	private JSch jsch = null;
+	private Session shhsession = null;
+	private Channel shhChannel = null;
+	private InputStream shhInput = null;
+	private OutputStream shhOutput = null;
+
+	public static SHHFunctions getSFTP(WebDriver driver, String testCaseId) {
+		return (SFTPFileTrancsfer == null) ? new SHHFunctions() : SFTPFileTrancsfer;
+	}
+
+	public boolean openSHHConnection(String username, String pass, String ipAddress, int port) throws Throwable {
+		boolean result = false;
+		this.jsch = new JSch();
+		this.shhsession = this.jsch.getSession(username, ipAddress, port);
+		this.shhsession.setConfig("StrictHostKeyChecking", "no");
+		this.shhsession.setPassword(pass);
+		this.shhsession.connect(30000);
+		this.shhChannel = this.shhsession.openChannel("shell");
+		this.shhChannel.connect();
+		this.shhInput = this.shhChannel.getInputStream();
+		this.shhOutput = this.shhChannel.getOutputStream();
+		result = true;
+
+		return result;
+	}
+
+	public void sendCommand(String com, int maxWaitTimeInMinute) throws Throwable {
+		String command=com+"\n";
+		System.out.println("Command Used " + com);
+		if (this.shhOutput != null) {
+			this.shhOutput.write(command.getBytes());
+			this.shhOutput.flush();
+			Thread.sleep(6000);
+			boolean isCompletedSuccessful = false;
+			if (command.contains("run_p")) {
+				for (int i = 0; i <= maxWaitTimeInMinute*6; i++) {
+					String recdata = recData();
+					System.out.println("Record data= "+recdata);
+					if (recdata.contains("Completed")) {
+						System.out.println("Batch Completed sucessfully= " + command);
+						isCompletedSuccessful = true;
+						break;
+					}else if (recdata.contains("Error in running program")) {
+						System.out.println("Batch Not Completed After Iteration ["+(i+1)+"]");
+						break;
+					}
+					Thread.sleep(10000);
+				}
+				
+				if (isCompletedSuccessful == false) {
+					throw new Exception("Batch did not run sucessfully After  ["+maxWaitTimeInMinute+"] Minutes");
+				}
+			}else {
+				String recdata = recData();
+				System.out.println("Record data= "+recdata);
+			}
+		}
+	}
+
+	public String recData() throws Throwable {
+		String data = "";
+		if (this.shhInput != null) {
+			int available = this.shhInput.available();
+			while (available > 0) {
+				byte[] byteAvailable = new byte[available];
+				int ibyteRead = this.shhInput.read(byteAvailable);
+				available = available - ibyteRead;
+				data += new String(byteAvailable);
+			}
+		}
+		return data;
+	}
+
+	public void closeSHHConnection() throws IOException {
+		if (this.shhsession != null) {
+			this.shhsession.disconnect();
+		}
+		if (this.shhChannel != null) {
+			this.shhChannel.isClosed();
+		}
+		if (this.shhInput != null) {
+			this.shhInput.close();
+		}
+		if (this.shhOutput != null) {
+			this.shhOutput.close();
+		}
+		this.jsch = null;
+	}
+}

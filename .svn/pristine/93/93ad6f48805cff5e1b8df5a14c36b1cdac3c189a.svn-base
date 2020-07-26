@@ -1,0 +1,31 @@
+package db;
+
+import java.sql.Connection;
+
+public class AX_PROGRAM_MASTER_Table extends CommonDB
+{
+
+    //private static final String tableName = "AX_SYSPRM";
+
+    public AX_PROGRAM_MASTER_Table(Connection con, String testCaseId)
+    {
+        super(con, testCaseId);
+    }
+
+    public String[] getBU_Ids(String programName) throws Exception{
+    	String[] columnValues = null;
+    	
+    	//String sqlQuery = "select BU_ID_TAB from  AX_PROGRAM_MASTER WHERE PROGRAM_NAME='"+programName+"'";
+    	String sqlQuery = "SELECT listagg(COLUMN_VALUE,',') as BU_ID  FROM TABLE (SELECT BU_ID_TAB FROM AX_PROGRAM_MASTER WHERE PROGRAM_NAME='"+programName+"')";
+        String columnValue = getSingleCellValue(sqlQuery);
+        //SPCPRD.AX_BU_ID_TAB_TYPE('WTC', 'WTCMY')
+        if(columnValue == null) {
+        	return null;
+        }
+        
+        columnValues = columnValue.split(",");
+        
+        return columnValues;
+    }
+
+}

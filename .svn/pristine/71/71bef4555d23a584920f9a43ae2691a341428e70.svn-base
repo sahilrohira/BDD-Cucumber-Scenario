@@ -1,0 +1,27 @@
+url															=	http://10.32.186.148:7005/ords/f?p=105
+
+username													=	SHGPH
+password													=  	asw12345
+
+BU_ID														=	WTCPH
+												
+DB_URL 													    =	jdbc:oracle:thin:@10.32.186.148:1522/hbs2spc
+DB_UserName												    =	spcoper
+DB_Password												    =	spcoper2019
+Unix_username												= 	spcsit
+Unix_password												= 	148@SM3
+Unix_host   												= 	10.32.186.148
+Unix_port													= 	22
+
+Unix_script_path											= /u01/spc_sit_db/hbs2spc/scripts/
+Unix_outbox_path											= /u01/spc_sit_db/hbs2spc/ifiles/outbox/
+Unix_inbox_path												= /u01/spc_sit_db/hbs2spc/ifiles/inbox/
+Unix_pog_file_path											= /u01/spc_sit_db/hbs2spc/ifiles/pog_pdf/ 
+
+#UAT
+#url													     =	http://10.32.186.150:7005/ords/f?p=105
+#username													 =	AUTO_WTCPH
+#password													 =  	asw12345
+#DB_URL 													 =	jdbc:oracle:thin:@10.32.186.149:1525/hbu2tspc
+#DB_UserName												 =	spcoper
+#DB_Password												 =	spcoper2019

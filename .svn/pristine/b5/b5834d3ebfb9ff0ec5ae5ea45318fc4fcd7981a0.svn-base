@@ -1,0 +1,30 @@
+package dataProviders;
+
+import java.util.Properties;
+
+public class EnvironmentData extends Properties
+{
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public EnvironmentData()
+    {
+    }
+
+    public String get(String key)
+        throws Exception
+    {
+        key = key.trim();
+        String value = getProperty(key);
+        if(value == null)
+        {
+            throw new Exception("["+key+"] Variable Is Not Defined In Environment File");
+        } else
+        {
+            return value.trim();
+        }
+    }
+}

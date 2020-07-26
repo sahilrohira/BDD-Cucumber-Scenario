@@ -1,0 +1,37 @@
+
+Feature: Validating Functionality Related To Virtual POG under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Virtual Host" Link
+@run
+Scenario: POGM_VirtualHost_TC001#Virtual Host
+		When From Virtual Host Page, Validate Record Count from Database
+		Then Validate Downloaded XLSX File Content with File Name As "Virtual Host" and Tablename as "loading_container"
+		And From Virtual Host Page, Click On "Add" Button
+		Then Switch To Frame with Title "Manage Virtual Host"
+		And Add a Virtual Host
+		And Validate Records Updated Successfully Message
+		And Remove Successful Message Notification
+		And Filter Column "POG Code" with value "VHOST_POG" by SearchIcon
+		Then Validate added Virtual Host details
+		And Validate Delete Funationality
+		And Validate No data Found on Screen "Virtual Host" for table "loading_container"
+		
+@run
+Scenario: POGM_TempVirtualHost_TC002#Virtual Host Temp
+		When From Virtual Host Page, Validate Record Count from Database
+		And From Virtual Host Page, Click On "Add" Button
+		Then Switch To Frame with Title "Manage Virtual Host"
+		And Add a Temp Virtual Host
+		And Validate Records Updated Successfully Message
+		And Remove Successful Message Notification
+		And Filter Column "POG Code" with value "VHOST_POG" by SearchIcon
+		Then Validate added Temp Virtual Host details
+		And Update and Validate the Temp POG details
+		And Validate Delete Funationality
+		And Validate No data Found on Screen "Virtual Host" for table "loading_container"

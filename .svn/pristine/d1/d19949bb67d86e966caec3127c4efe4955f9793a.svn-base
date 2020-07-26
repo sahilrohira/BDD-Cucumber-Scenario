@@ -1,0 +1,90 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+
+
+public class SM_POG_MASTER_Table extends CommonDB {
+	private SM_BU_SYSPRM_Table sm_bu_sysprm;
+
+	public SM_POG_MASTER_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+		sm_bu_sysprm = new SM_BU_SYSPRM_Table(con, testCaseId);
+	}
+	
+	public void fetchPOGSearchAttri(String pogStatus) throws Exception {
+		String POG_sql=null;
+		switch(pogStatus) {
+		case "L":
+			POG_sql = "SELECT sp.pog_code, sp.pog_version FROM sm_pog sp INNER JOIN sm_pog_item spi ON ( spi.bu_id = sp.bu_id AND spi.pog_code = sp.pog_code AND spi.pog_version = sp.pog_version ) INNER JOIN sm_pog_module spm ON (spi.pog_module = spm.pog_module AND spi.bu_id = spm.bu_id AND spi.pog_code = spm.pog_code AND spi.pog_version = spm.pog_version) INNER JOIN sm_floor_plan_dtl sfpd ON (sfpd.pog_module = spm.pog_module AND sfpd.bu_id = spm.bu_id AND sfpd.pog_code = spm.pog_code AND sfpd.pog_version = spm.pog_version) " + 
+					"WHERE sp.bu_id = '"+AppData.buId+"' AND ROWNUM <= 1 AND sp.file_name != '-' and ax_utility_sql.get_vdate BETWEEN sfpd.eff_start_date AND sfpd.eff_end_date AND sp.mimetype IS NOT NULL GROUP BY sp.pog_code, sp.pog_version " + 
+					"HAVING COUNT(spm.pog_module) > '0' AND COUNT(spi.item) > '0'";
+		break;
+		case "P":
+			POG_sql = "Select * from (SELECT sp.pog_code, sp.pog_version FROM sm_pog sp INNER JOIN sm_pog_item spi ON ( spi.bu_id = sp.bu_id AND spi.pog_code = sp.pog_code AND "
+					+ "spi.pog_version = sp.pog_version ) INNER JOIN sm_pog_module spm ON ( spi.pog_module = spm.pog_module AND spi.bu_id = spm.bu_id AND spi.pog_code = spm.pog_code "
+					+ "AND spi.pog_version = spm.pog_version ) INNER JOIN sm_floor_plan_dtl sfpd ON ( sfpd.bu_id = spm.bu_id AND sfpd.pog_code = spm.pog_code AND "
+					+ "sfpd.pog_module = spm.pog_module AND sfpd.pog_version = spm.pog_version ) WHERE sp.bu_id = '"+AppData.buId+"' AND sp.file_name != '-' AND sfpd.eff_start_date > ax_utility_sql.get_vdate "
+					+ "AND sp.mimetype IS NOT NULL GROUP BY sp.pog_code, sp.pog_version HAVING COUNT(spm.pog_module) > '0' AND COUNT(spi.item) > '0'"
+					+ " minus SELECT sp.pog_code, sp.pog_version FROM sm_pog sp INNER JOIN sm_pog_item spi ON ( spi.bu_id = sp.bu_id AND spi.pog_code = sp.pog_code "
+					+ "AND spi.pog_version = sp.pog_version ) INNER JOIN sm_pog_module spm ON ( spi.pog_module = spm.pog_module AND spi.bu_id = spm.bu_id AND spi.pog_code = spm.pog_code "
+					+ "AND spi.pog_version = spm.pog_version ) INNER JOIN sm_floor_plan_dtl sfpd ON ( sfpd.bu_id = spm.bu_id AND sfpd.pog_code = spm.pog_code AND "
+					+ "sfpd.pog_module = spm.pog_module AND sfpd.pog_version = spm.pog_version ) WHERE sp.bu_id = '"+AppData.buId+"' AND sp.file_name != '-' AND ax_utility_sql.get_vdate between sfpd.eff_start_date and sfpd.eff_end_date "
+					+ "AND sp.mimetype IS NOT NULL GROUP BY sp.pog_code, sp.pog_version HAVING COUNT(spm.pog_module) > '0' AND COUNT(spi.item) > '0') WHERE ROWNUM =1";
+		break;
+		case "N":
+			POG_sql = "SELECT sp.pog_code, sp.pog_version FROM sm_pog sp WHERE sp.bu_id = '"+AppData.buId+"' AND sp.mimetype IS NOT NULL AND sp.file_name != '-' AND NOT EXISTS ( SELECT 1 FROM sm_floor_plan_dtl sfpd WHERE sfpd.pog_code = sp.pog_code AND sfpd.pog_version = sp.pog_version AND sfpd.bu_id = sp.bu_id ) FETCH FIRST 1 ROWS ONLY";
+		break;
+		case "H":
+			POG_sql = "Select * from (SELECT sp.pog_code, sp.pog_version FROM sm_pog sp INNER JOIN sm_pog_item spi ON ( spi.bu_id = sp.bu_id AND spi.pog_code = sp.pog_code AND "
+					+ "spi.pog_version = sp.pog_version ) INNER JOIN sm_pog_module spm ON ( spi.pog_module = spm.pog_module AND spi.bu_id = spm.bu_id AND spi.pog_code = spm.pog_code "
+					+ "AND spi.pog_version = spm.pog_version ) INNER JOIN sm_floor_plan_dtl sfpd ON ( sfpd.bu_id = spm.bu_id AND sfpd.pog_code = spm.pog_code AND "
+					+ "sfpd.pog_module = spm.pog_module AND sfpd.pog_version = spm.pog_version ) WHERE sp.bu_id = '"+AppData.buId+"' AND sp.file_name != '-' AND sfpd.eff_end_date < ax_utility_sql.get_vdate "
+					+ "AND sp.mimetype IS NOT NULL GROUP BY sp.pog_code, sp.pog_version HAVING COUNT(spm.pog_module) > '0' AND COUNT(spi.item) > '0'"
+					+ " minus SELECT sp.pog_code, sp.pog_version FROM sm_pog sp INNER JOIN sm_pog_item spi ON ( spi.bu_id = sp.bu_id AND spi.pog_code = sp.pog_code "
+					+ "AND spi.pog_version = sp.pog_version ) INNER JOIN sm_pog_module spm ON ( spi.pog_module = spm.pog_module AND spi.bu_id = spm.bu_id AND spi.pog_code = spm.pog_code "
+					+ "AND spi.pog_version = spm.pog_version ) INNER JOIN sm_floor_plan_dtl sfpd ON ( sfpd.bu_id = spm.bu_id AND sfpd.pog_code = spm.pog_code AND "
+					+ "sfpd.pog_module = spm.pog_module AND sfpd.pog_version = spm.pog_version ) WHERE sp.bu_id = '"+AppData.buId+"' AND sp.file_name != '-' AND sfpd.eff_start_date >= ax_utility_sql.get_vdate "
+					+ "AND sp.mimetype IS NOT NULL GROUP BY sp.pog_code, sp.pog_version HAVING COUNT(spm.pog_module) > '0' AND COUNT(spi.item) > '0') WHERE ROWNUM =1";
+		break;
+		}
+		storeColumnNameAndValue(POG_sql);
+	}
+	
+	public void fetchPOGMasterdetails() throws Exception {
+		String POG_Meterage_Format=sm_bu_sysprm.getSysConfValue("POG_METERAGE_FORMAT");
+		String POG_dtl_sql="SELECT sm.pog_name, DECODE(sm.real_pog_ind,'Y','N','Y') virtual, sm.pog_type, COUNT(DISTINCT spm.pog_module) AS view_modulecnt, COUNT(DISTINCT spi.item) AS prod_count," + 
+				" TRIM(TO_CHAR(sm.meterage,'"+POG_Meterage_Format+"') ) AS meterage, sm.pog_height, sm.pog_width, sm.pog_depth, ( sm.division || '-'|| spd.division_name ) AS division_name," + 
+				" ( sm.dept || '-' || spdt.dept_name ) AS department_name, TO_CHAR(sm.eff_start_date,'"+AppData.appDateFormat+"') AS pog_start_date, NVL (svh.temp_ind, 'N') temp_POG," + 
+				" sm.posd_ind FROM sm_pog sm INNER JOIN sm_pog_division spd ON spd.bu_id = sm.bu_id AND spd.division = sm.division INNER JOIN sm_pog_dept spdt ON spdt.bu_id = sm.bu_id" + 
+				" AND spdt.division = sm.division AND spdt.dept = sm.dept INNER JOIN sm_pog_item spi ON ( spi.bu_id = sm.bu_id AND spi.pog_code = sm.pog_code AND spi.pog_version = sm.pog_version )" + 
+				" INNER JOIN sm_pog_module spm ON spi.pog_module = spm.pog_module AND spi.bu_id = spm.bu_id AND spi.pog_code = spm.pog_code AND spi.pog_version = spm.pog_version " + 
+				" LEFT OUTER JOIN sm_virtual_host svh ON (svh.bu_id = sm.bu_id AND svh.pog_code = sm.pog_code AND svh.pog_version = sm.pog_version) " + 
+				" WHERE sm.bu_id = '"+AppData.buId+"' AND sm.pog_code ='"+getTempData("POG_CODE")+"' AND sm.pog_version = "+getTempData("POG_VERSION")+" group by sm.pog_name, DECODE(sm.real_pog_ind,'Y','N','Y'), sm.pog_type," + 
+				" TRIM(TO_CHAR(sm.meterage,'"+POG_Meterage_Format+"') ), sm.pog_height, sm.pog_width, sm.pog_depth, ( sm.division || '-' || spd.division_name )," + 
+				" ( sm.dept || '-' || spdt.dept_name ), TO_CHAR(sm.eff_start_date,'"+AppData.appDateFormat+"'), NVL (svh.temp_ind, 'N'), sm.posd_ind";
+		storeColumnNameAndValue(POG_dtl_sql);
+	}
+	
+
+	public void fetchPOGMasterMinMaxdate() throws Exception {
+		String POGMaster_Date_sql="Select  DECODE(MIN(eff_start_date),NULL,'-',to_char(min(eff_start_date),'"+AppData.appDateFormat+"')) as EFF_START_DATE, DECODE(MAX(eff_end_date),NULL,'-',to_char(max(eff_end_date),'"+AppData.appDateFormat+"')) as EFF_END_DATE from sm_floor_plan_dtl where pog_code='"+getTempData("POG_CODE")+"'" + 
+				"and pog_version="+getTempData("POG_VERSION")+" and bu_id='"+AppData.buId+"'";
+		storeColumnNameAndValue(POGMaster_Date_sql);
+	}
+	
+	public void fetchPOGMasterStoreLivePlannedHistCount() throws Exception {
+		String POGMaster_LiveStoreCount_sql="Select count(distinct(store)) as Live_Count from sm_floor_plan_dtl where pog_code='"+getTempData("POG_CODE")+"'"+ 
+				" and pog_version="+getTempData("POG_VERSION")+" and bu_id='"+AppData.buId+"' and ax_utility_sql.get_vdate between eff_start_date and eff_end_date";
+		storeColumnNameAndValue(POGMaster_LiveStoreCount_sql);
+		String POGMaster_HistStoreCount_sql="Select count(distinct(store)) as Historical_count from sm_floor_plan_dtl where pog_code='"+getTempData("POG_CODE")+"'"+ 
+				" and pog_version="+getTempData("POG_VERSION")+" and bu_id='"+AppData.buId+"' and eff_end_date<ax_utility_sql.get_vdate";
+		storeColumnNameAndValue(POGMaster_HistStoreCount_sql);
+		String POGMaster_PlannedStoreCount_sql="Select count(distinct(store)) as Planned_Count from sm_floor_plan_dtl where pog_code='"+getTempData("POG_CODE")+"'"+ 
+				" and pog_version="+getTempData("POG_VERSION")+" and bu_id='"+AppData.buId+"' and eff_start_date>ax_utility_sql.get_vdate";
+		storeColumnNameAndValue(POGMaster_PlannedStoreCount_sql);
+	}
+	
+}

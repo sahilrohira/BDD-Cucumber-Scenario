@@ -1,0 +1,94 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexButton extends CommonPage {
+
+	public ApexButton(WebDriver driver, String testCaseId) {
+		super(driver, testCaseId);
+	}
+
+	public void validateButtonIsPresent(String pageName, String buttonName) throws Exception {
+		By buttonLink = By.xpath("//button[span[text()='" + buttonName + "']]");
+		waitForPresenceOfElement(pageName, buttonName + " Button", buttonLink);
+	}
+
+	public void validateButtonIsNotPresent(String pageName, String buttonName) throws Exception {
+		By buttonLink = By.xpath("//button[span[text()='" + buttonName + "']]");
+		validateElementIsNotPresent(pageName, buttonName + " Button", buttonLink);
+	}
+
+	public void clickOnButton(String pageName, String buttonName) throws Exception {
+		// By buttonLink = By.xpath("//button[span[text()='"+buttonName+"']]");
+		By buttonLink = By
+				.xpath("//button[span[text()='" + buttonName + "'] and not(contains(@style,'display: none;'))]");
+		clickOnElementThenWait(pageName, buttonName + " Button", buttonLink, 1);
+	}
+
+	public void clickOnLabelButton(String pageName, String buttonName) throws Exception {
+		By buttonLink = By.xpath("//div[label[text()='" + buttonName + "']]");
+		clickOnElementThenWait(pageName, buttonName + " Button", buttonLink, 1);
+	}
+
+	public void removeFilter(String pageName) throws Exception {
+		By filterLink = By.xpath("//button[@aria-label='Remove Filter']");
+		clickOnElementThenWait(pageName, "Filter_Button", filterLink, 3);
+	}
+
+	public void clickOnButtonwithTitle(String pageName, String titleName) throws Exception {
+		By buttonLink = By.xpath("//button[@title='" + titleName + "']");
+		clickOnElementThenWait(pageName, titleName + " Button", buttonLink, 1);
+	}
+
+	public void clickOnButtonwithTable(String pageName, String tableName, String buttonName) throws Exception {
+		By buttonLink = By.xpath("//div[@id='" + tableName + "']//button[span[text()='" + buttonName
+				+ "'] and not(contains(@style,'display: none;'))]");
+		clickOnElementThenWait(pageName, buttonName + " Button", buttonLink, 1);
+	}
+
+	public void clickOnButtonInSpan(String pageName, String buttonName) throws Exception {
+		By buttonLink = By
+				.xpath("//span[button[text()='" + buttonName + "'] and not(contains(@style,'display: none;'))]");
+		clickOnElementThenWait(pageName, buttonName + " Button", buttonLink, 1);
+	}
+
+	public void clickOnButtonInId(String pageName, String id) throws Exception {
+		By buttonLink = By.xpath("//div[@id='" + id + "']//button");
+		clickOnElementThenWait(pageName, id + " Button", buttonLink, 1);
+	}
+
+	public void clickOnButtonWithId(String pageName, String id) throws Exception {
+		By buttonLink = By.xpath("//button[@id='" + id + "']");
+		clickOnElementThenWait(pageName, id + " Button", buttonLink, 1);
+	}
+
+	public void clickOnSpanLabelButton(String pageName, String buttonName) throws Exception {
+		By buttonLink = By.xpath("//span/label[text()='" + buttonName + "']");
+		clickOnElementThenWait(pageName, buttonName + " Button", buttonLink, 1);
+	}
+
+	public void clickOnButtonWithText(String pageName, String text) throws Exception {
+		By buttonLink = By.xpath("//button[text()='" + text + "']");
+		clickOnElementThenWait(pageName, text + " Button", buttonLink, 1);
+	}
+
+	public void ClickOnHeaderUserNameLabelButton(String pageName) throws Exception {
+		By buttonLink = By
+				.xpath("//header[@id='t_Header']//li//span[@class='a-Icon icon-down-arrow']//ancestor::button");
+		clickOnElementThenWait(pageName, "UserName_Label_Button", buttonLink, 3);
+	}
+
+	public void clickOnDivLabelButton(String pageName, String buttonName) throws Exception {
+		By buttonLink = By.xpath("//div/label[text()='" + buttonName + "']");
+		clickOnElementThenWait(pageName, buttonName + " Button", buttonLink, 1);
+	}
+
+	public void clickOnSectionButton(String pageName, String buttonName) throws Exception {
+		By buttonLink = By.xpath("//section[@id='ax-message']//button[text()='" + buttonName + "']");
+		clickOnElementThenWait(pageName, buttonName + " Button", buttonLink, 1);
+	}
+
+}

@@ -1,0 +1,9 @@
+url															=	http://10.32.186.148:7004/ords/f?p=105
+username													=	auto_testing
+password													=  	asw12345
+
+BU_ID														=	WTCMY
+
+DB_URL 		=	jdbc:oracle:thin:@10.32.151.137:1524/gitdwin
+DB_UserName	=	wmsprd
+DB_Password	=	wmsdhk19

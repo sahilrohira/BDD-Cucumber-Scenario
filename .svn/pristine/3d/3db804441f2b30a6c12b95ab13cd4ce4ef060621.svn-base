@@ -1,0 +1,122 @@
+Feature: Validating Functionality Related To MSO_Benchmark_Store_Locator
+
+  Background: 
+    Given Open DB Connection
+    And Open Browser
+    And Log In To Application With Provided Credential
+    And From Home Page, Click On "Macro Space Optimization" Link
+    And From MSO Page, Click On "Optimization" Link
+    And From Optimization Page, Click On "Benchmark Store Locator" Link
+
+  @run
+  Scenario: MSO_Benchmark_Store_Locator_TC001# For Existing Store Latest Script
+    When From BSL_Store_Identifier Page, Click On Label "Existing" Button
+    Then From BSL_Store_Identifier Page, Click On "Next" Button
+    Then From Apex Error Dialog, Validate Error Message Header As "8 errors have occurred"
+    And From Apex Error Dialog, Validate Error Message Content As "Store Name must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Gross Area (Sq. Ft.) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Net Trading Area (Sq. Ft.) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Avg Weekly Sales (Target) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Avg Weekly Margin(Target) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Total Store Meterage (m) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Store segment must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Store cannot be blank"
+    And Remove Apex Error Dialog
+    And Verify Text Box "P311_STORE_ID_error"  Error Message as "Store cannot be blank"
+    And From BSL_Store_Identifier Page, Select "STORE" With "Store ID"
+    And Waiting for loader to dissappear
+    And Validate Store Informatio details with store name id as "P311_STORE_NAME" segment id as "P311_SEGMENT_ID" addressId as "P311_ADDRESS" grossAreaId as "P311_GROSS_AREA" netTradingId as "P311_NET_TRADING_AREA"
+    And Select Benchmark for field "STORE_CITY" and switch to frame "1" and filter column "Description" with text "STORE_CITY" for table "ig_filter_list"
+    And Wait For "1" Second
+    And Select Benchmark for field "REGION" and switch to frame "1" and filter column "Description" with text "" for table "ig_filter_list_ig_grid_vc"
+    And Wait For "1" Second
+    And Select Benchmark for field "DISTRICT" and switch to frame "1" and filter column "Description" with text "" for table "ig_filter_list_ig_grid_vc"
+    And Click On Span Label "Yes" Button
+    Then From BSL_Store_Identifier Page, Click On "Next" Button
+    And Wait For "2" Second
+    And From Store Selection page, Click On "store_information_heading" Button Icon
+    And Validate Store Selection details with store name id as "P312_STORE_NAME" segment id as "P312_SEGMENT_ID" addressId as "P312_ADDRESS" grossAreaId as "P312_GROSS_AREA" netTradingId as "P312_NET_TRADING_AREA"
+    And From Store Selection page, Click On "store_information_heading" Button Icon
+    And From Store Selection page, Click On "additional_uda_heading" Button Icon
+    And From Store Selection page, Click On "additional_uda_heading" Button Icon
+    Then Validate Downloaded XLSX File Content with File Name As "Benchmark Store Locator" and Tablename as "BenchmarkStoreLocator"
+    And From BSL_Store_Identifier Page, Select Checkbox "1"
+    And From BSL_Store_Identifier Page, Click On "View Insights" Button
+    And Waiting for loader to dissappear
+    And From BSL_Insights Page, Click On "Full Report" Button
+    And Wait For "5" Second
+    And Validate Downloaded XLSX File Name As "Insight Prediction Matrix"
+    And Wait For "5" Second
+    And From BSL_Insights Page, Click On "Graph Data" Button
+    And Wait For "5" Second
+    And Validate Downloaded XLSX File Name As "Insight Graph"
+    And Wait For "2" Second
+    And From Store Selection page, Click On "heading" Button Icon
+    And Validate Store Information on Insights with store name id as "P313_STORE_NAME" segment id as "P313_SEGMENT_ID" addressId as "P313_ADDRESS" grossAreaId as "P313_GROSS_AREA" netTradingId as "P313_NET_TRADING_AREA"
+    And From BSL_Insights Page, Click On "Benchmark Store(s) Profile" Button
+    And Switch To Frame with Title "Benchmark Store(s) Profile"
+    Then Close Window PopUp
+
+  @run
+  Scenario: MSO_Benchmark_Store_Locator_TC001# For New Store Latest Script
+    When From BSL_Store_Identifier Page, Click On Label "New" Button
+    And Wait For "1" Second
+    Then From BSL_Store_Identifier Page, Click On "Next" Button
+    Then From Apex Error Dialog, Validate Error Message Header As "8 errors have occurred"
+    And From Apex Error Dialog, Validate Error Message Content As "Store Name must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Gross Area (Sq. Ft.) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Net Trading Area (Sq. Ft.) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Avg Weekly Sales (Target) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Avg Weekly Margin(Target) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Total Store Meterage (m) must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Store segment must have some value."
+    And From Apex Error Dialog, Validate Error Message Content As "Store cannot be blank"
+    And Remove Apex Error Dialog
+    And Wait For "1" Second
+    And Verify Text Box "P311_NEW_STORE_ID_error"  Error Message as "Store cannot be blank"
+    And Enter Text Field "P311_NEW_STORE_ID" Value As "200"
+    And Click on Text Field "P311_STORE_NAME"
+    And Enter Text Field "P311_STORE_NAME" Value As "Auto_Store_Name"
+    And Click on Text Field "P311_ADDRESS"
+    And Execute query to fetch store details
+    And Select Benchmark for field "SEGMENT_ID" and switch to frame "1" and filter column "Description" with text "STORE_SEGMENT" for table "ig_filter_list"
+    And Enter Text Field "P311_ADDRESS" Value As "Auto_Address_Name"
+    And Click on Text Field "P311_GROSS_AREA"
+    And Enter Text Field "P311_GROSS_AREA" Value As "8057"
+    And Click on Text Field "P311_NET_TRADING_AREA"
+    And Wait For "1" Second
+    And Enter Text Field "P311_NET_TRADING_AREA" Value As "6668"
+    And Click on Text Field "P311_AVG_WEEK_SALES"
+    And Wait For "1" Second
+    And Enter Text Field "P311_AVG_WEEK_SALES" Value As "1167135"
+    And Click on Text Field "P311_AVG_WEEKLY_MARGIN"
+    And Wait For "1" Second
+    And Enter Text Field "P311_AVG_WEEKLY_MARGIN" Value As "358092"
+    And Click on Text Field "P311_TOTAL_STORE_METERAGE"
+    And Wait For "1" Second
+    And Enter Text Field "P311_TOTAL_STORE_METERAGE" Value As "342"
+    And Click on Text Field "P311_AVG_WEEKLY_MARGIN"
+    And Wait For "1" Second
+    Then From BSL_Store_Identifier Page, Click On "Next" Button
+    And Wait For "5" Second
+    And From Store Selection page, Click On "store_information_heading" Button Icon
+    And Validate Store Selection details for Store Id "P312_STORE_ID" having value "200" for Store Name Id "P312_STORE_NAME" having value "Auto_Store_Name" for Address Id "P312_ADDRESS" having value "Auto_Address_Name" for gross area Id "P312_GROSS_AREA" having value "8057" for net trading area "P312_NET_TRADING_AREA" having value "6668" for avg weekly sales "P312_AVG_WEEK_SALES" having value "1167135" for avg weekly margin "P312_AVG_WEEKLY_MARGIN" having value "358092" for total store meterage "P312_TOTAL_STORE_METERAGE" having value "342"
+    And From Store Selection Page, Validate Text For "P312_COMPARABLE_STORE_FLAG" As "N" for Hidden Text
+    And From BSL_Bench_Store_Locator Page, Validate Benchmark Store Count
+    Then Validate Downloaded XLSX File Content with File Name As "Benchmark Store Locator" and Tablename as "BenchmarkStoreLocator"
+    And From BSL_Store_Identifier Page, Select Checkbox "1"
+    And From BSL_Store_Identifier Page, Click On "View Insights" Button
+    And Waiting for loader to dissappear
+    And From BSL_Insights Page, Click On "Full Report" Button
+    And Wait For "5" Second
+    And Validate Downloaded XLSX File Name As "Insight Prediction Matrix"
+    And Wait For "5" Second
+    And From BSL_Insights Page, Click On "Graph Data" Button
+    And Wait For "5" Second
+    And Validate Downloaded XLSX File Name As "Insight Graph"
+    And Wait For "2" Second
+    And From Store Selection page, Click On "heading" Button Icon
+    And Validate Insightg details for Store Id "P313_STORE_ID" having value "200" for Store Name Id "P313_STORE_NAME" having value "Auto_Store_Name" for Address Id "P313_ADDRESS" having value "Auto_Address_Name" for gross area Id "P313_GROSS_AREA" having value "8057" for net trading area "P313_NET_TRADING_AREA" having value "6668" for avg weekly sales "P313_AVG_WEEK_SALES" having value "1167135" for avg weekly margin "P313_AVG_WEEKLY_MARGIN" having value "358092" for total store meterage "P313_TOTAL_STORE_METERAGE" having value "342"
+    And From BSL_Insights Page, Click On "Benchmark Store(s) Profile" Button
+    And Switch To Frame with Title "Benchmark Store(s) Profile"
+    Then Close Window PopUp

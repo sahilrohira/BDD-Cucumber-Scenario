@@ -1,0 +1,38 @@
+
+Feature: Validating Functionality Related To Location Config under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "Location Config" Link
+@run
+Scenario: Masters_LocationConfig_TC001#Location Config
+ 
+		When From Master_LocationConfig Page, Validate Record Count from Database
+		Then Validate Downloaded XLSX File Content with File Name As "Location Config" and Tablename as "ig"
+		When Fetch the values from database for Fixture Code
+		And Fetch the values from database for Division, Department, Sub Department and Fixture Label
+		And From Master_LocationConfig Page, Click On "Add Row" Button
+		And From Master_LocationConfig Page, For Row "2", Enter Text For Column "Location ID" As "RANDOM"
+		And From Master_LocationConfig Page, For Row "2", Select Drop Down Value For Column "Fixture Code" As "FIXTURE_CODE" 
+		And From Master_LocationConfig Page, For Row "2", Enter Text For Column "Floor" As "1"
+		And From Master_LocationConfig Page, For Row "2", Enter Text For Column "Eq. Meterage (m)" As "1"
+		And From Master_LocationConfig Page, For Row "2", Select Drop Down Value For Column "Division" As "DIVISION_NAME" 
+		And From Master_LocationConfig Page, For Row "2", Select Drop Down Value For Column "Dept" As "DEPART_NAME" 
+		And From Master_LocationConfig Page, For Row "2", Select Drop Down Value For Column "Subdept" As "SUB_DEPARTMENT"
+		And From Master_LocationConfig Page, For Row "2", Select Drop Down Value For Column "Fixture Label" As "FIXTURE_LABEL" 
+		And From Master_LocationConfig Page, For Row "2", Select Drop Down Value For Column "POG Assigned Ind" As "Yes"
+		And Enter Text Field "search_field" Value As "Location_ID"  
+		And From Master_Fixture Page, Click On "Save" Button
+		Then Validate Successful Message As "Changes saved"
+		When Enter Text Field "search_field" Value As "Location_ID"
+		And Click On "Go" Button
+		And Delete Row number "1" from table "ig"
+		And Validate Successful Message As "Changes saved"
+		And Remove Existing Filter
+		When Enter Text Field "search_field" Value As "Location_ID"
+		And Click On "Go" Button
+		Then Validate No data Found on Screen "Master Location Config" for table "ig"

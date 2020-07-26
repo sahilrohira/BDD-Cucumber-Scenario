@@ -1,0 +1,83 @@
+
+Feature: Validating Functionality Related To Virtual POG under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Virtual Host" Link
+@run
+Scenario: POGM_VirtualHost_TC001#Virtual Host
+		When From Virtual Host Page, Validate Record Count from Database
+		Then Validate Downloaded XLSX File Content with File Name As "Virtual Host" and Tablename as "loading_container"
+		And From Virtual Host Page, Click On "Add" Button
+		Then Switch To Frame with Title "Manage Virtual Host"
+		And Add a Virtual Host
+		And Validate Records Updated Successfully Message
+		And Remove Successful Message Notification
+		And Filter Column "POG Code" with value "VHOST_POG" by SearchIcon
+		Then Validate added Virtual Host details
+		And Validate Delete Funationality
+		And Validate No data Found on Screen "Virtual Host" for table "loading_container"
+		
+@run
+Scenario: POGM_TempVirtualHost_TC002#Virtual Host Temp
+		When From Virtual Host Page, Validate Record Count from Database
+		And From Virtual Host Page, Click On "Add" Button
+		Then Switch To Frame with Title "Manage Virtual Host"
+		And Add a Temp Virtual Host
+		And Validate Records Updated Successfully Message
+		And Remove Successful Message Notification
+		And Filter Column "POG Code" with value "VHOST_POG" by SearchIcon
+		Then Validate added Temp Virtual Host details
+		And Update and Validate the Temp POG details
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "POG Details" Link
+		And Extract empty location for a single floor plan store
+		When Switch To Frame with Title "POG Detail Store Search"
+		And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "SFP_STORE"
+		And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+1" and FixtureLabel ""
+		And From POG Details Page, Click On "Export" Button
+		Then Update the Template with vdate as "vdate+1", FixLabel "",POG Code "VHOST_POG", Version "", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+		And From POG Details Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+1"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Store POG Module" Link
+		Then Type the parameters Store as "SFP_STORE",POG Code as "VHOST_POG" and POG Version "" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Validate column "Effective Start Date" with value as "vdate+1"
+		And Validate column "Effective End Date" with value as "vdate+20"
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "POG Details" Link
+		When Switch To Frame with Title "POG Detail Store Search"
+		And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+1" and FixtureLabel ""
+		Then Update the Template with vdate as "vdate+1", FixLabel "",POG Code "", Version "", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+		And From POG Details Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+1"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Manage Planogram" Link
+		When From Manage Planogram Page, Click On "Template" Button
+		And Update the Template with Add_POG Code "VHOST_POG", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "",Del_POG Version "",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Store POG Module" Link
+		Then Type the parameters Store as "SFP_STORE",POG Code as "VHOST_POG" and POG Version "" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Validate column "Effective Start Date" with value as "vdate+1"
+		And Validate column "Effective End Date" with value as "vdate+20"
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Manage Planogram" Link
+		And Update the Template with Add_POG Code "", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "VHOST_POG",Del_POG Version "",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Virtual Host" Link
+		And Validate Delete Funationality
+		And Validate No data Found on Screen "Virtual Host" for table "loading_container"

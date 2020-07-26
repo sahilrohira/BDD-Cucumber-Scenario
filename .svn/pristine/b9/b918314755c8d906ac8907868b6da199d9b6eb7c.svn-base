@@ -1,0 +1,37 @@
+
+Feature: Validating Functionality Related To Item POG under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Item POG" Link
+@run
+Scenario Outline: POGM_ItemPOG_TC001#Item POG 
+		When From Item POG Page, Click On "Cancel" Button
+		And From Item POG Page, Click On "Modify Search" Button
+		And Retreive the Product Search details from DB for Item Status as "<ItemStatus>"
+		When Type the parameters to search for the item with status as "<ItemStatus>"
+		And From Item POG Page, Click On "Reset" Button
+		Then Verify all fields set to Default on Search Popup
+		When Enter Text Area "ITEM" Value As "974586543848846585"
+		And From Item POG Page, Click On "Search" Button
+	  Then Validate No data Found on Screen "Item POG" for table "product_planogram"
+	  When From Item POG Page, Click On "Modify Search" Button
+	  And From Item POG Page, Click On "Reset" Button
+		And Type the parameters to search for the item with status as "<ItemStatus>"
+		And From Item POG Page, Click On "Search" Button
+		#And Filter Column "Capacity" with value "CAPACITY" by SearchIcon
+		And Apply Filter for Column Capacity to get unique record
+		And Click On Link with text "ITEM"
+		Then Validate Breadcrumb Header with Value as "Product Details"
+		And From Item POG Page, Click On "Back" Button
+		And Validate all Product POG details from database for selected "ITEM" with status as "<ItemStatus>"
+		
+			Examples:-
+		| ItemStatus |
+    | L  |
+    | N  |
+		

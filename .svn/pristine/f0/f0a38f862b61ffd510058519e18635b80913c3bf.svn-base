@@ -1,0 +1,98 @@
+package stepdefs.home;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_GENERAL_Table;
+import db.SM_STORE_Table;
+import pages.apex.ApexButton;
+import pages.apex.ApexMessage;
+import pages.apex.ApexPageHeader;
+import pages.apex.ApexTable;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppDateUtil;
+
+public class FloorPlanRequestPageSteps extends SuperStepdefs {
+
+	private String pageName = "Floor Plan Request";
+	public ApexPageHeader apexPageHeader;
+	private ApexButton apextButton;
+	private SM_STORE_Table sm_store_table;
+	private CommonPageSteps commonPageSteps;
+	private ApexMessage apexMessage;
+	private ApexTable apexTable;
+	private SM_GENERAL_Table sm_general_table;
+	
+	public FloorPlanRequestPageSteps(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+		apextButton = new ApexButton(driver, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		sm_store_table=new SM_STORE_Table(con, testCaseId);
+		apexMessage =new ApexMessage(driver, pageName);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_general_table=new SM_GENERAL_Table(con, testCaseId);
+		
+	}
+    
+	@Then("^From Floor Plan Request Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		Thread.sleep(2000);
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+	
+	@When("^From Floor Plan Request Page, submit the request for Floor Plan PDF$")
+	public void searchStorewithFloorPlanPDF() throws Exception {
+		sm_store_table.storeStoreNameAndNumWithPdf();
+		String storenumber=getTempData("STORE");
+		commonPageSteps.enterTextAreaFieldValue("P109_STORE", storenumber);
+		commonPageSteps.enterTextFieldValue("P109_AS_OF_DATE", AppDateUtil.newDateInUIFormat(0));
+		commonPageSteps.selectDropDownValue("P109_REFRESH", "20");
+		Thread.sleep(1000);
+		commonPageSteps.clickOnButton("Submit");
+		Thread.sleep(2000);
+		commonPageSteps.apexRefreshCurrentWindow();
+		Thread.sleep(2000);
+		logger.pass("Successfully submitted the request for Floor Plan for Store "+bold(storenumber));
+	}
+
+	@When("^Validate the request added$")
+	public void validateRequestAdded() throws Exception {
+		String storenumber=getTempData("STORE");
+		String reqNo=sm_general_table.getFloorPlanRequestID(Integer.parseInt(storenumber));
+		Thread.sleep(1000);
+		apexTable.filterScrollingTableContent(pageName, "request_status", "Request No", reqNo);
+		apexTable.validateScrollingTableCellValue(pageName, "request_status", 1, "Store", storenumber);
+		apexTable.validateScrollingTableCellValue(pageName, "request_status", 1, "Request Status", "New");
+		apexTable.validateScrollingTableCellValue(pageName, "request_status", 1, "File Name", "");
+		apexTable.validateScrollingTableCellValue(pageName, "request_status", 1, "Error Message", "");
+		logger.pass("Validated new request added for store "+bold(storenumber));
+	}
+	
+	
+	@When("^Validate the file generated successfully$")
+	public void validateResponse() throws Exception {
+		commonPageSteps.apexRefreshCurrentWindow();
+		String storenumber=getTempData("STORE");
+		Thread.sleep(2000);
+		apexTable.validateScrollingTableCellValue(pageName, "request_status", 1, "Store", storenumber);
+		apexTable.validateScrollingTableCellValue(pageName, "request_status", 1, "Request Status", "Success");
+		//apexTable.validateScrollingTableCellValue(pageName, "request_status", 1, "File Name", "");
+		apexTable.validateScrollingTableCellValue(pageName, "request_status", 1, "Error Message", "");
+		logger.pass("Validated the file generated for request added for store "+bold(storenumber));
+	}
+	@When("^Delete the request$")
+	public void deleteReq() throws Exception {
+		String storenumber=getTempData("STORE");
+		apexTable.clickOnTableCell(pageName, "request_status", 1, "");
+		commonPageSteps.clickOnButton("Delete");
+		apexMessage.verifyMessageContent("Are you sure you want to delete?");
+		apexMessage.clickOnButton("Ok");
+		Thread.sleep(2000);
+		apexTable.validateTableIsEmpty(pageName, "request_status");
+		logger.pass("deleted the request sccessfully for store "+bold(storenumber));
+	}
+
+}

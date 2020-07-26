@@ -1,0 +1,22 @@
+#HeaderNo     # Heade Name
+1	=	Details
+2	=	Receipt Qty
+3	=	Receipt No
+4	=	Line No
+5	=	To Lot
+6	=	Pack Key
+7	=	Delivery Note
+8	=	Delivery Date
+9	=	Batch
+10	=	Consignee
+11	=	Order type
+12	=	Fifo Date
+13	=	Sell By Date
+14	=	Mfg Date
+15	=	Lot XPO No.
+16	=	Lot Ext WH
+17	=	Lot Attribute 3
+18	=	Lot Attribute 4
+19	=	Lot Attribute 5
+
+HeaderCount = 19

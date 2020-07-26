@@ -1,0 +1,129 @@
+package stepdefs.POGManagement;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_FLOOR_PLAN_Table;
+import db.SM_GENERAL_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import pages.Master.MasterStore;
+import pages.apex.ApexButton;
+import pages.apex.ApexDropDown;
+import pages.apex.ApexMessage;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppDateUtil;
+
+public class POGM_FloorPlanPageSteps extends SuperStepdefs {
+
+	private String pageName = "Floor Plan";
+	private CommonPageSteps commonPageSteps;
+	private String tableLabel = "floor_plan";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_FLOOR_PLAN_Table sm_floor_plan;
+	private ApexTextField apexTextField;
+	private SM_GENERAL_Table sm_gen_table;
+	private ApexDropDown apexDropDown;
+	private ApexMessage apexMessage;
+	private MasterStore mstore;;
+
+	public POGM_FloorPlanPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_floor_plan = new SM_FLOOR_PLAN_Table(con, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		apexTextField = new ApexTextField(driver, testCaseId);
+		sm_gen_table=new SM_GENERAL_Table(con, testCaseId);
+		apexDropDown=new ApexDropDown(driver, testCaseId);
+		apexMessage=new ApexMessage(driver, testCaseId);
+		mstore=new MasterStore(driver, testCaseId);
+	}
+
+	@Then("^From Floor Plan Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+	
+	@When("^From Floor Plan Page, Validate Record Count from Database$")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount= sm_floor_plan.getFloorPlanCount();
+		mstore.validatePaginationCount("Total Records", "//div[contains(@id,'floor_plan')]//span[@class='a-GV-pageRange']", expectedRowCount+"");
+//		apexTable.validateMaxTableRowCountinPagination(pageName,tableLabel,String.valueOf(expectedRowCount));
+		logger.pass("From Floor Plan Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+	
+	@Then("^From Floor Plan Page, Filter Table content for Column \"([^\"]*)\" With Value \"([^\"]*)\"$")
+	public void from_Floor_Plan_Page_Filter_Table_content_for_Column_With_Value(String columnName, String filterValue) throws Throwable {
+		Thread.sleep(4000);
+		apexTable.filterScrollingTableContent(pageName,tableLabel, "Store", filterValue);
+    	logger.pass("From Masters UDA Page, Filter UDA Table content for Column "+bold(columnName)+" With Value  "+bold(filterValue));
+	}
+	
+	@Then("^From Floor Plan Page, Filter Table content for Column \"([^\"]*)\" ascending With Value \"([^\"]*)\"$")
+	public void from_Floor_Plan_Page_Filter_Table_content_for_Column_With_AscValue(String columnName, String filterValue) throws Throwable {
+		Thread.sleep(2000);
+		apexTable.filterScrollingTableContent(pageName,tableLabel, "Store", filterValue);
+    	logger.pass("From Floor Plan Page, Filter Table content for Column "+bold(columnName)+" With Value  "+bold(filterValue));
+	}
+	
+	@Then("^From Floor Plan Page, Enter Date For Field \"(.*)\" As \"(.*)\"$")
+	public void enterText(String fieldName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		if(value.toLowerCase().contains("sysdate")) 
+		{String varindays=value.substring(7);
+			value=AppDateUtil.sysDateInUIFormat(Integer.parseInt(varindays));}
+		apexTextField.enterText(pageName, fieldName, value);
+		logger.pass("From Floor Plan Page, Enter date For field "+bold(fieldName)+" As "+bold(value));
+	}
+	
+	@When("^Select Store from DB for which Dummy Floor Plan can be added$")
+	public void selectStore() throws Exception {
+		String store= sm_gen_table.getFloorPlanStore();
+		apexDropDown.selectDropDownValue(pageName, "P41_STORE", store);
+		logger.pass("From Floor Plan Page, Selected Store "+ bold(store) + " from DB ");
+	}
+	
+	@When("^Search for added Store$")
+	public void searchStore() throws Exception {
+		String store= sm_gen_table.getFloorPlanStore();
+		apexDropDown.selectDropDownValue(pageName, "P41_STORE", store);
+		logger.pass("From Floor Plan Page, Selected Store "+ bold(store) + " from DB ");
+	}
+	
+	@When("^Delete the Floor Plan PDF added$")
+	public void deleteFPpdf() throws Exception {
+		apexTable.clickOnTableCell(pageName, "floor_plan_pdf", 1, "Delete");
+		Thread.sleep(1000);
+		apexMessage.verifyMessageContent("Are you sure you want to delete?");
+		apexMessage.clickOnButton("Ok");
+		Thread.sleep(2000);
+		apextButton.clickOnButton(pageName, "Cancel");
+		logger.pass("Deleted Floor Plan PDF");
+	}
+	
+
+	@When("^Delete the added Dummy Floor Plan$")
+	public void deletedummyFP() throws Exception {
+		apexTable.clickOnTableCellwithSpan(pageName, tableLabel, 1, "");
+		Thread.sleep(2000);
+		apexMessage.verifyMessageContent("Are you sure you want to delete major version? Please download all assignments before confirming");
+		apexMessage.clickOnButton("Ok");
+		commonPageSteps.ValidateNoDataFound(pageName, "floor_plan");;
+		logger.pass("Deleted Dummy Floor Plan");
+	}
+	
+	
+	@When("^Validate added Dummy Floor Plan dates$")
+	public void validateFPdetails() throws Exception {
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "FP Version",AppDateUtil.sysDateInYYYYMMDDformat(1));
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective Start Date",AppDateUtil.sysDateInUIFormat(1));
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "DWG End Date",AppDateUtil.sysDateInUIFormat(11));
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Floor Plan End Date",AppDateUtil.sysDateInUIFormat(11));
+		//apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "DWG Upload Date","");
+		logger.pass("Validated all Dummy Floor Plan dates");
+	}
+}

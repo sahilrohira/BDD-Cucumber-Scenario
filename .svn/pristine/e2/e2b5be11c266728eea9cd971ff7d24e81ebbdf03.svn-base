@@ -1,0 +1,47 @@
+
+Feature: Validating Functionality Related To Fixture under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "Fixture" Link
+@run
+Scenario: Masters_Fixture_TC001#Fixture 
+		When From Master_Fixture Page, Validate Record Count from Database
+		Then Validate Downloaded XLSX File Content with File Name As "Fixture" and Tablename as "fixture_master"
+		When Fetch the values from database for Fixture type and Family
+		And From Master_Fixture Page, Click On "Add Row" Button
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "Fixture ID" As "RANDOM"
+		And From Master_Fixture Page, For Row "2", Enter Text Description For Column "Description" As "Automation_Regression"
+		And From Master_Fixture Page, For Row "2", Select Drop Down Value For Column "Fixture Family" As "FAMILY" 
+		And From Master_Fixture Page, For Row "2", Select Drop Down Value For Column "Fixture Type" As "FIXTURE_TYPE"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "Fixture Setup Date" As "vdate-5"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "Fixture End Date" As "vdate+35"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "Cost" As "654321"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "Fixture Capacity" As "1"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "Width" As "110"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "Height" As "120"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "Depth" As "130"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "OWidth" As "140"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "OHeight" As "150"
+		And From Master_Fixture Page, For Row "2", Enter Text For Column "ODepth" As "160"
+		And Enter Text Field "search_field" Value As "Fixture_ID"
+		And From Master_Fixture Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		And From Apex Error Dialog, Validate Error Message Content As "Effective Date should be future date"
+		When From Master_Fixture Page, For Row "2", Enter Text For Column "Fixture Setup Date" As "vdate+5"
+		And Enter Text Field "search_field" Value As "Fixture_ID"
+		And From Master_Fixture Page, Click On "Save" Button
+		Then Validate Successful Message As "Changes saved"
+		When Enter Text Field "search_field" Value As "Fixture_ID"
+		And Click On "Go" Button
+		Then Validate Meterage, Fixture Status, Volume and Area from Database for Fixture id "Fixture_ID"
+		And Delete Row number "1" from table "fixture_master"
+		And Validate Successful Message As "Changes saved"
+		And Remove Existing Filter
+		When Enter Text Field "search_field" Value As "Fixture_ID"
+		And Click On "Go" Button
+		Then Validate No data Found on Screen "Master Fixture" for table "fixture_master"

@@ -1,0 +1,37 @@
+package pages.POGManagement;
+
+import java.io.IOException;
+
+import org.openqa.selenium.WebDriver;
+import pages.commom.CommonPage;
+import utils.ExcelUtil;
+
+public class Tagging_Template extends CommonPage {
+
+	//private String pageName = "Manage Planogram";
+	
+	private ExcelUtil excelUtil;
+	public Tagging_Template(WebDriver driver, String testCaseId) {
+		super(driver, testCaseId);
+		excelUtil = new ExcelUtil();
+	}
+
+	public void updateTaggingTemplate(String fileName,String addPogCode, String addPogVer,String addMod,String addPogPos,String delPogCode,String delPogVer,String delPogMod,String store,String effDate,String locID,String fromLocID, int row_Num) throws Exception{
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "POG Code (Add)", row_Num, addPogCode);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "POG Version (Add)", row_Num, addPogVer);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "POG Module (Add)", row_Num, addMod);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "POG Position (Add)", row_Num, addPogPos);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "POG Code (Delete)", row_Num, delPogCode);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "POG Version (Delete)", row_Num, delPogVer);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "POG Module (Delete)", row_Num, delPogMod);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "Store", row_Num, store);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "Effective Date", row_Num, effDate);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "Location ID", row_Num, locID);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "", "From Location ID", row_Num, fromLocID);
+	}
+	public String validateTaggingTemplateColumnValue(String fileName, String sheetName,int rowIndex,String columnName,String expValue) throws Exception{
+		String actVal=ExcelUtil.getCellDataFromExcel(fileName, sheetName, columnName, rowIndex);
+		if (expValue.equalsIgnoreCase(actVal)) {return "pass";}
+		else {return "Expected Value: "+expValue+" not matched with Actual Value: "+actVal ;}
+	}
+}

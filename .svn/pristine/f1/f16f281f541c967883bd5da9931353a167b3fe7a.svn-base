@@ -1,0 +1,45 @@
+package db;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import utils.AppData;
+
+
+public class SPACE_PLANNING_Table extends CommonDB {
+
+	public SPACE_PLANNING_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+
+	public int getSpacePlanningCount() throws Exception {
+		String SpacePlanning_Count_SQL = "select * from  sm_prom_plan where bu_id='" + AppData.buId + "'";
+		int spacePlanning_Count = getRowCount(SpacePlanning_Count_SQL);
+		return spacePlanning_Count;
+	}
+	
+	public void getPlanIDforPromotion(String desc,String promNo) throws Exception {
+		String planID_SQL = "select plan_id from  sm_prom_plan where bu_id='" + AppData.buId + "' and description='"+desc+"' and prom_no='"+promNo+"'";
+		storeColumnNameAndValue(planID_SQL);
+	}
+	
+	public void getPlanIDforPromotionforbu_id(String desc,String promNo,String bu_id) throws Exception {
+		String planID_SQL = "select plan_id from  sm_prom_plan where bu_id='" + bu_id + "' and description='"+desc+"' and prom_no='"+promNo+"'";
+		storeColumnNameAndValue(planID_SQL);
+	}
+	
+	public void getStorerLocForFixtureLabelGONforWTCTH() throws Exception {
+		String WTCTH_Fixture_sql = "Select sffl.store as WTCTH_STORE,sffl.location_id as WTCTH_EMPTY_LOC,sffl.fixture_label as WTCTH_fix_Label from sm_floor_fixture_labels sffl" + 
+				"	INNER JOIN sm_floor_plan_dtl sfpd on (sffl.bu_id=sfpd.bu_id and sffl.store=sfpd.store and sffl.location_id!=sfpd.location_id)" + 
+				"	where sffl.bu_id='WTCTH' and sffl.fixture_label like 'GON%'" + 
+				"	AND ax_utility_sql.get_vdate + 1 BETWEEN sffl.eff_start_date AND sffl.eff_end_date" + 
+				"	AND ax_utility_sql.get_vdate + 1 BETWEEN sfpd.eff_start_date AND sfpd.eff_end_date and ROWNUM <= 1";
+		storeColumnNameAndValue(WTCTH_Fixture_sql);
+	}
+	
+	public void updateQueryPromotionFlagforFixtureLabel(String flagVal,String bu_Id, String fixture_Label) throws SQLException {
+        String update_query = "Update sm_fixture_types set Prom_ind = '"+flagVal+"' where bu_id ='" +bu_Id+"' and fixture_type like '"+fixture_Label+"'";
+        CommonDB.executeUpdate(con, update_query);
+    }
+}

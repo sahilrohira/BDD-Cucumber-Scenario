@@ -1,0 +1,40 @@
+
+Feature: Validating Functionality Related To Store under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "Store" Link
+
+@run
+Scenario: Masters_Store_TC001#Store Validation as per DB Values. 
+		When Uncheck the checkbox for Closed Store 
+		And From Master_Store Page, Validate Record Count from Database
+		Then Validate Downloaded XLSX File Content with File Name As "Store" and Tablename as "store_master"
+		When From Master_Store Page, Search for the Store with Floor Plan PDF from database
+		And Click On Link with text "STORE_NAME"
+		And Switch To Frame with Title "Floor Plan PDF Management"
+		And Validate the Floor Plan PDF Count from database for store "STORE"
+		And From Master_Store Page, Click On "Cancel" Button
+		And Click On Link with text "STORE"
+		Then Validate all Store Master details from database for selected Store "STORE"
+		And Validate UDA Details Tab for Store "STORE"
+		When  Click On "Fixture" Span Link
+		And Validate Fixture Count for Store "STORE"
+		When Click On "Product" Span Link
+		And Validate Product Count for Store "STORE"
+		When Click On "Planogram" Span Link
+		#And Validate POG Count for Store "STORE"
+		When Click On "Floor Plan" Span Link
+		And Validate Floor Plan Count for Store "STORE"
+		
+@skip
+Scenario: Masters_Store_TC002#Validate Exclude Store Functionality 
+		When From Master_Store Page, Validate Closed Store is not Listed
+		And Remove Existing Filter
+		Then Uncheck the checkbox for Closed Store
+		And From Master_Store Page, Validate Closed Store is now Listed
+		

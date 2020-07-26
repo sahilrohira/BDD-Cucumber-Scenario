@@ -1,0 +1,41 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+public class AX_PROGRAM_MASTER_Table extends CommonDB
+{
+
+    //private static final String tableName = "AX_SYSPRM";
+
+    public AX_PROGRAM_MASTER_Table(Connection con, String testCaseId)
+    {
+        super(con, testCaseId);
+    }
+
+    public String[] getBU_Ids(String programName) throws Exception{
+    	String[] columnValues = null;
+    	String sqlQuery = "SELECT listagg(COLUMN_VALUE,',') as BU_ID  FROM TABLE (SELECT BU_ID_TAB FROM AX_PROGRAM_MASTER WHERE PROGRAM_NAME='"+programName+"')";
+        String columnValue = getSingleCellValue(sqlQuery);
+        //SPCPRD.AX_BU_ID_TAB_TYPE('WTC', 'WTCMY')
+        if(columnValue == null) {
+        	return null;
+        }
+        
+        columnValues = columnValue.split(",");
+        
+        return columnValues;
+    }
+    
+    public void getQueueIDforReport(String reportName) throws Exception {
+		String queueID_sql = "Select QUEUE_ID from AX_BATCH_REPORTS_QUEUE where bu_id='"+AppData.buId+ "' and report_name ='"+reportName+"' and status ='N' order by CREATED_DATETIME desc";
+		storeColumnNameAndValue(queueID_sql);
+	}
+    
+    public void getQueueIDforReportWithoutReportName() throws Exception {
+		String queueID_sql = "Select QUEUE_ID from AX_BATCH_REPORTS_QUEUE where bu_id='"+AppData.buId+ "' and status ='N' order by CREATED_DATETIME desc FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(queueID_sql);
+	}
+
+}

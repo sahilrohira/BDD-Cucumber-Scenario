@@ -1,0 +1,32 @@
+package db;
+
+import java.sql.Connection;
+import java.util.Map;
+
+import utils.AppData;
+
+public class SM_UDA_Table extends CommonDB {
+
+	public SM_UDA_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "SM_UDA";
+
+	public Map<String, String> getMainBrandValues() throws Exception {
+		String MainBrand_SQL = "select * from  " + tableName + " where uda_sys_code='MAINBRAND' and bu_id='" + AppData.buId
+				+ "' and module='I'";
+		Map<String, String> Description_Column = getColumnNameAndValue(MainBrand_SQL);
+		return Description_Column;
+	}
+	public int getUDACount() throws Exception {
+		String uda_Count_SQL = "select * from  " + tableName + " where bu_id='" + AppData.buId + "'";
+		int uda_count = getRowCount(uda_Count_SQL);
+		return uda_count;
+	}
+	
+	public void storeUDAID(String description) throws Exception {
+		String uda_ID_SQL = "Select UDA_ID from " +tableName+" where bu_id='"+ AppData.buId+"' and Description='"+ description+ "'";
+		storeColumnNameAndValue(uda_ID_SQL);
+	}
+}

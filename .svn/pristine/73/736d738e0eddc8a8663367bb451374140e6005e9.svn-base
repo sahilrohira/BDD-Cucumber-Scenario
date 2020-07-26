@@ -1,0 +1,103 @@
+package stepdefs.Reports;
+
+import java.io.File;
+
+import org.openqa.selenium.By;
+
+import cucumber.api.java.en.Then;
+import db.AX_PROGRAM_MASTER_Table;
+import pages.Reports.Reports_All_Reports_Page;
+import pages.apex.ApexButton;
+import pages.apex.ApexPageHeader;
+import pages.apex.ApexTable;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class All_Reports extends SuperStepdefs {
+
+	public ApexPageHeader apexPageHeader;
+	public Reports_All_Reports_Page reportsAllReports;
+	public ApexButton apexButton;
+	public AX_PROGRAM_MASTER_Table ax_program_master;
+	public ApexTable apexTable;
+
+	public All_Reports(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+		reportsAllReports=new Reports_All_Reports_Page(driver,testCaseId);
+		apexButton = new ApexButton(driver, testCaseId);
+		ax_program_master=new AX_PROGRAM_MASTER_Table(con,testCaseId);
+		apexTable=new ApexTable(driver, testCaseId);
+	}
+
+	@Then("^From All Reports Page, Click On \"(.*)\" Link$")
+	public void clickOnLink(String linkName) throws Exception {
+		apexPageHeader.clickOnHeader3Link("All Reports", linkName);
+		logger.pass("From All Reports Page, Click On "+bold(linkName)+" Link");
+	}    
+
+	@Then("^From All Reports Page, Click On Desc \"(.*)\" Link$")
+	public void clickOnDescLink(String Desc) throws Exception {
+		apexPageHeader.clickOnDivText("All Reports", Desc);
+		logger.pass("From All Reports Page, Click On "+bold(Desc)+" Link");
+	}    
+
+	@Then("^From All Reports Page, Verify Element \"(.*)\" Present$")
+	public void verifyTextLabelPresent(String text) throws Exception {
+		reportsAllReports.verifyTextLabelPresent(text);
+		logger.pass("From All Reports Page, element "+bold(text)+" Present");
+	} 
+
+	@Then("^From All Reports Page, Verify Button \"(.*)\" Present$")
+	public void verifyButtonPresent(String buttonName) throws Exception {
+		apexButton.validateButtonIsPresent("All Repors",buttonName);
+		logger.pass("From All Reports Page, button "+bold(buttonName)+" Present");
+	} 
+
+	@Then("^From All Reports Page, Click On Button \"(.*)\"$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apexButton.clickOnButton("Reports", buttonName);
+		logger.pass("From All Reports Page, Click on button "+bold(buttonName));
+	}
+
+	@Then("^From All Reports page, Switch to \"([^\"]*)\"$")
+	public void switchToFrameWithTitle(String title) throws Exception {
+		reportsAllReports.switchToFrameWithTitle(title);
+		logger.pass("From All Reports Page, switch to "+bold(title)+" frame");
+	}  
+
+	@Then("^Extract the QUEUE_ID for the Report name \"([^\"]*)\"$")
+	public void getQueueIDforReport(String reportName) throws Exception {
+		ax_program_master.getQueueIDforReport(reportName);
+		logger.pass("Extracted Queue ID for Report "+reportName+"is "+getTempData("QUEUE_ID"));
+	}  
+
+	@Then("^From Reports Page, Filter Table content for Column \"([^\"]*)\" With Value \"([^\"]*)\"$")
+	public void from_Rports_Page_Filter_Table_content_for_Column(String columnName, String filterValue) throws Throwable {
+		Thread.sleep(2000);
+		apexTable.filterScrollingTableContent("Batch Reports","batch_reports", columnName, filterValue);
+		Thread.sleep(1000);
+		apexTable.clickOnTableCell("Batch Reports", "batch_reports", 1, "");
+		logger.pass("From Reports Page, Filter Table content for Column "+bold(columnName)+" With Value  "+bold(getTempData(filterValue)));
+	}
+
+	@Then("^Validate the Report successfully downloaded as \"([^\"]*)\"$")
+	public void validateDownloadedReport(String reportName) throws Throwable {
+		String report_Path=System.getProperty("user.dir") + File.separator +  "Test_Reports"+ File.separator + testCaseId+ File.separator + "Download"+File.separator+reportName;
+		File tempFile = new File(report_Path);
+		int time_to_wait = 20;
+		int	time_counter = 0;
+		while (!tempFile.exists()){
+			Thread.sleep(10000);
+			time_counter += 1;
+			if (time_counter > time_to_wait) {
+				logger.fail("Report "+bold(reportName)+" not downloaded");
+				break;
+			}
+			else {
+				logger.pass("Validated that Report "+bold(reportName)+"successfully downloaded");
+			}
+		}
+	}
+}

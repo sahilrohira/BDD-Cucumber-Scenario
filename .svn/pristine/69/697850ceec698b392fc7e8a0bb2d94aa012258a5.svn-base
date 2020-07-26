@@ -1,0 +1,50 @@
+package stepdefs.common;
+
+import utils.AppDateUtil;
+import utils.AppData;
+import cucumber.api.java.en.Then;
+import pages.apex.ApexDatePicker;
+
+public class DateFieldSteps extends SuperStepdefs
+{
+    public ApexDatePicker datePicker;
+    private String pageName;
+    
+    public DateFieldSteps(final Hook hook) {
+        super(hook);
+        this.pageName = "CommonPage";
+        this.datePicker = new ApexDatePicker(this.driver, this.testCaseId);
+    }
+    
+    @Then("^Select Date \"(.*)\" Value As \"(.*)\"$")
+    public void selectDatePickerValue(final String fieldName, final String fieldValue) throws Exception {
+        this.selectDatePickerValue(this.pageName, fieldName, fieldValue);
+    }
+    
+    public void selectDatePickerValue(final String pageName, final String fieldName, final String fieldValue) throws Exception {
+        this.datePicker.selectDate(pageName, fieldName, fieldValue);
+        this.logger.pass("Select Date " + this.bold(fieldName) + " Value Selected As " + this.bold(fieldValue));
+    }
+    
+    @Then("^Select Date \"(.*)\" Value As Application Date$")
+    public void selectDatePickerValueAsSystemDate(final String fieldName) throws Exception {
+        this.selectDatePickerValueAsSystemDate(this.pageName, fieldName);
+    }
+    
+    public void selectDatePickerValueAsSystemDate(final String pageName, final String fieldName) throws Exception {
+        final String fieldValue = AppData.appDate;
+        this.datePicker.selectDate(pageName, fieldName, fieldValue);
+        this.logger.pass("Select Date " + this.bold(fieldName) + " Value As " + this.bold(fieldValue));
+    }
+    
+    @Then("^Select Date \"(.*)\" Value As Application Date With Variation Of \"(.*)\" Days$")
+    public void selectDatePickerValueAsSystemDate(final String fieldName, final int variationInDays) throws Exception {
+        this.selectDatePickerValueAsSystemDate(this.pageName, fieldName, variationInDays);
+    }
+    
+    public void selectDatePickerValueAsSystemDate(final String pageName, final String fieldName, final int variationInDays) throws Exception {
+        final String newDateAfterVariation = AppDateUtil.newDateInUIFormat(variationInDays);
+        this.datePicker.selectDate(pageName, fieldName, newDateAfterVariation);
+        this.logger.pass("Select Date " + this.bold(fieldName) + " Value As " + this.bold(newDateAfterVariation));
+    }
+}

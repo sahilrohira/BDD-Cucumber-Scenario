@@ -1,0 +1,166 @@
+package stepdefs.POGManagement;
+
+import org.openqa.selenium.By;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_GENERAL_Table;
+import db.SM_VIRTUAL_Table;
+import pages.apex.ApexButton;
+import pages.apex.ApexDatePicker;
+import pages.apex.ApexDropDown;
+import pages.apex.ApexFrame;
+import pages.apex.ApexMessage;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+import utils.AppDateUtil;
+
+public class POGM_VirtualHostPageSteps extends SuperStepdefs {
+
+	private String pageName = "Virtual Host";
+	private String tableLabel = "loading_container_ig_grid_vc";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_GENERAL_Table sm_general_table;
+	private SM_VIRTUAL_Table sm_virtual_pog;
+	private ApexDropDown apexDropDown;
+	private ApexTextField apexTextField;
+	private ApexMessage apexmessage;
+	private ApexFrame apexFrame;
+	private ApexDatePicker datePicker;
+
+	public POGM_VirtualHostPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_general_table = new SM_GENERAL_Table(con, testCaseId);
+		sm_virtual_pog = new SM_VIRTUAL_Table(con, testCaseId);
+		apexTextField = new ApexTextField(driver, testCaseId);
+		apexDropDown=new ApexDropDown(driver, testCaseId);
+		apexmessage=new ApexMessage(driver, testCaseId);
+		apexFrame=new ApexFrame(driver, testCaseId);
+		datePicker=new ApexDatePicker(driver, testCaseId);
+	}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Virtual Host Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@Then("^From Virtual Host Page, Validate Record Count from Database$")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount = sm_virtual_pog.getVirtualHostCount();
+		if (expectedRowCount!=0) {
+		apexTable.validateTableRowCount(pageName, tableLabel, expectedRowCount);}
+		else {apexTable.validateTableIsEmpty(pageName, tableLabel);}
+		logger.pass("From Virtual Host Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+
+	@Then("^Add a Virtual Host$")
+	public void addVirtualHost() throws Exception {
+		sm_general_table.getDivisionNameTrim();
+		sm_general_table.getDepartmentNameTrim();
+		sm_general_table.getSubDepartmentNameTrim();
+		apexDropDown.selectDropDownValue(pageName, "P141_POG_DIVISION","TDIVISION_NAME");
+		apexDropDown.selectDropDownValue(pageName, "P141_POG_DEPT","TDEPART_NAME");
+		apexDropDown.selectDropDownValue(pageName, "P141_POG_SUBDEPT","TSUB_DEPARTMENT");
+		int ranNum = AppData.getRandomNumberBetweenRange(1111,9999);
+		storeTempData("VHOST_POG", "VHOST"+ranNum);
+		apexTextField.enterText(pageName, "P141_POG_CODE", "VHOST_POG");
+		apexTextField.enterText(pageName, "P141_START_DATE", AppDateUtil.newDateInUIFormat(1));
+		apexTextField.validateTextFieldIsDisabled(pageName, "P141_END_DATE");
+		apextButton.clickOnButton(pageName, "Add");
+		logger.pass("From Virtual Host Page, Added new Virtual Host POG as" + bold("VHOST"+ranNum));
+	}
+	
+	
+	@Then("^Add a Temp Virtual Host$")
+	public void addTempVirtualHost() throws Exception {
+		sm_general_table.getDivisionNameTrim();
+		sm_general_table.getDepartmentNameTrim();
+		sm_general_table.getSubDepartmentNameTrim();
+		apexDropDown.selectDropDownValue(pageName, "P141_POG_DIVISION","TDIVISION_NAME");
+		apexDropDown.selectDropDownValue(pageName, "P141_POG_DEPT","TDEPART_NAME");
+		apexDropDown.selectDropDownValue(pageName, "P141_POG_SUBDEPT","TSUB_DEPARTMENT");
+		int ranNum = AppData.getRandomNumberBetweenRange(1111,9999);
+		storeTempData("VHOST_POG", "VHOST"+ranNum);
+		apexTextField.enterText(pageName, "P141_POG_CODE", "VHOST_POG");
+		apexTextField.enterText(pageName, "P141_POG_NAME", "AUTO_SCRIPT");
+		apexTextField.enterText(pageName, "P141_START_DATE", AppDateUtil.newDateInUIFormat(1));
+		apexTextField.clickTextField(pageName, "P141_TEMP");
+		Thread.sleep(1000);
+		//datePicker.selectDate(pageName, "P141_END_DATE", AppDateUtil.newDateInUIFormat(30));
+		//apexTextField.enterText(pageName, "P141_END_DATE", AppDateUtil.newDateInUIFormat(30));
+		driver.findElement(By.xpath("//div[@id='P141_END_DATE_CONTAINER']//button[@class='ui-datepicker-trigger a-Button a-Button--calendar']")).click();
+		for (int j = 1; j <5; j++) {
+		driver.findElement(By.xpath("//span[@class='ui-icon ui-icon-circle-triangle-e']")).click();
+		Thread.sleep(500);
+		}
+		driver.findElement(By.xpath("//table[@class='ui-datepicker-calendar']//tr[5]/td[1]/a")).click();
+		apextButton.clickOnButton(pageName, "Add");
+		logger.pass("From Virtual Host Page, Added new Virtual Host POG as" + bold("VHOST"+ranNum));
+	}
+	
+	@Then("^Validate added Virtual Host details$")
+	public void validatedAdded() throws Exception {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Code", "VHOST_POG");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Name", "VHOST_POG");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Version (Latest)",  AppDateUtil.getAppdateinPOGVersionFormat(1));
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Status", "New");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Division", "TDIVISION_NAME");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Department", "TDEPART_NAME");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Subdept", "TSUB_DEPARTMENT");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Temp POG?", "N");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Start Date", AppDateUtil.newDateInUIFormat(1));
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Expiry Date", AppDateUtil.getMaxEndDate());
+			logger.pass("Validate all details add for VHOST "+bold(getTempData("VHOST_POG")));
+	}
+	
+	@Then("^Validate added Temp Virtual Host details$")
+	public void validatedtempAdded() throws Exception {
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Code", "VHOST_POG");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Name", "AUTO_SCRIPT");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Version (Latest)",  AppDateUtil.getAppdateinPOGVersionFormat(1));
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Status", "New");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Division", "TDIVISION_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Department", "TDEPART_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Subdept", "TSUB_DEPARTMENT");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Temp POG?", "Y");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Start Date", AppDateUtil.newDateInUIFormat(1));
+		//apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Expiry Date", AppDateUtil.newDateInUIFormat(30));
+		logger.pass("Validate all details add for VHOST "+bold(getTempData("VHOST_POG")));
+	}
+	
+	@Then("^Validate Delete Funationality$")
+	public void deleteVHost() throws Exception {
+			apexTable.clickOnTableCellwithSpan(pageName, tableLabel, 1, "Delete");
+			apextButton.clickOnButton(pageName, "Delete");
+			apexmessage.verifyMessageContent("Are you sure you want to delete?");
+			apexmessage.clickOnButton("Ok");
+			logger.pass("Successfully deleted VHOST "+bold(getTempData("VHOST_POG")));
+	}
+	
+	
+	@Then("^Update and Validate the Temp POG details$")
+	public void UpdateTempPOGandValidate() throws Exception {
+			apexTable.clickOnTableCellWithHyperlink(pageName, tableLabel, getTempData("VHOST_POG"));
+			//apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "POG Code","VHOST_POG");
+			apexFrame.apexSwitchToFrame("Manage Virtual Host");
+			apexTextField.enterText(pageName, "P141_POG_NAME", "TEST");
+			apexTextField.enterText(pageName, "P141_END_DATE", AppDateUtil.newDateInUIFormat(20));
+			//datePicker.selectDate(pageName, "P141_END_DATE", AppDateUtil.newDateInUIFormat(20));
+			apextButton.clickOnButton(pageName, "Save");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Expiry Date", AppDateUtil.newDateInUIFormat(20));
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Name", "TEST");
+			logger.pass("Updated POG name and End date and successfully validated.");
+	}
+
+}

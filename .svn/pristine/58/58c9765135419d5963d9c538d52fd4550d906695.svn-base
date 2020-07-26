@@ -1,0 +1,77 @@
+
+Feature: Validating Functionality Related To POG Master under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "POG Master" Link
+@skip
+Scenario Outline: POGM_POGMaster_TC001#POG Master
+		When From POG Master Page, Click On "Cancel" Button
+		And From POG Master Page, Click On "Modify Search" Button
+		And Retreive the Search details from DB for POG Status as "<POGStatus>"
+		When Type the parameters to search for the POG with status as "<POGStatus>"
+		And From POG Master Page, Click On "Reset" Button
+		Then Verify all fields set to Default on POG Master Search Popup
+		When Enter Text Field "POG_CODE" Value As "974586543848846585"
+		And From POG Master Page, Click On "Search" Button
+	  Then Validate No data Found on Screen "POG Master" for table "pog_master"
+	  When From POG Master Page, Click On "Modify Search" Button
+	  And From POG Master Page, Click On "Reset" Button
+		And Type the parameters to search for the POG with status as "<POGStatus>"
+		And From POG Master Page, Click On "Search" Button
+		And Validate POG Module Count with title as "View POG Modules"
+		And Validate Meterage with title as "POG Layout"
+		And Validate all POG Master details from database for selected "POG_CODE" with status as "<POGStatus>"
+		
+		
+			Examples:-
+		| POGStatus |
+    | L  |
+    | H  |
+    | N  |
+    | P  |
+    
+                                     #Execute the below scenarios for WTCHK#
+@run
+ Scenario Outline: POGM_POGMaster_TC002#Freeze POG By Upload POG PDF Program
+ 		And Update Query To Set sysConfVal Indicator Flag to "Y" where sysConfName is "FREEZE_POG_INCLUDE"
+		And Rename existing XML and update file "SPACE_POGMASTER_SAMPLE" node values for pogCode, pogName, transactionNo, systemTime
+		And upload File From Local System to Server to create POG and with file name as "newXMLFileName"
+		And From POG Master Page, Click On "Reset" Button
+		And From POG Master Page, Enter POG Code as "newPOGCode" and Select POG Status "N" From List
+		And Click On "Search" Button
+		And From Table "pog_master" validate attribute "onclick" contains value "return false" for column name "POG Code" with column value "newPOGCode"
+		And Import File From Local System to Server for pog "newPOGCode" and with file name as "BU_ID_POG" and file ext "<FileExtensions>" for Bu Id "WTCHK"
+		And Wait For "5" Second
+		And Refresh the page
+		And From Table "pog_master" validate attribute "onclick" contains value "newPOGCode" for column name "POG Code" with column value "newPOGCode"
+		And Validate for POG Code "newPOGCode" in Bu Id as "WTCHK" have Mime Type as "" and Freeze Indicator as "Y" and file name as ""
+		And From POG Master Page, Click On "Actions" Button
+		And Wait For "1" Second
+		And From Table "pog_master" for column name "Delete" delete the Pog Code ""
+	  
+Examples:-
+		|FileExtensions |
+    |pdf       |
+    |xlsx      |
+    |zip       |
+    
+ @run
+ Scenario: POGM_POGMaster_TC003#Freeze POG By selecting Checkbox from POG Master page
+ 		And Update Query To Set sysConfVal Indicator Flag to "Y" where sysConfName is "FREEZE_POG_INCLUDE"
+		And Rename existing XML and update file "SPACE_POGMASTER_SAMPLE" node values for pogCode, pogName, transactionNo, systemTime
+		And upload File From Local System to Server to create POG and with file name as "newXMLFileName"
+		And From POG Master Page, Click On "Reset" Button
+		And From POG Master Page, Enter POG Code as "newPOGCode" and Select POG Status "N" From List
+		And Click On "Search" Button
+		And From Table "pog_master" validate attribute "onclick" contains value "return false" for column name "POG Code" with column value "newPOGCode"
+		And From Table "pog_master" for column name "Freeze" freeze the Pog Code ""
+		And Refresh the page
+		And Validate for POG Code "newPOGCode" in Bu Id as "WTCHK" have Mime Type as "" and Freeze Indicator as "Y" and file name as ""
+		And From POG Master Page, Click On "Actions" Button
+		And From Table "pog_master" for column name "Delete" delete the Pog Code ""
+    

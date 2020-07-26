@@ -1,0 +1,65 @@
+Feature: Validate that only POG can be tagged where pog_region=sm_area using SMART and Tagging Template
+
+Background:
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Home Page, Click On "Manage Planogram" Link
+@run
+Scenario: ASA32_TC001#Validate the tagging and SMART Template for same pog region = store area.
+ 	When Wait For "2" Second
+	And From Manage Planogram Page, Click On "Template" Button
+	And Extract empty location for a single floor plan store
+	And Extract Area for Store "SFP_STORE"
+	And Extract POG with single module with POG Region as Store area "AREA" or null
+	Then Update the Template with Add_POG Code "POG_SM", Add_POG_Version "POGV_SM", Add_Module "",Add_POG_Position "",Del_POG Code "",Del_POG Version "",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+	And From Manage Planogram Page, Click On "Import" Button
+	And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+	And Validate Successful Message As "Record(s) Imported Successfully."
+	Then Update the Template with Add_POG Code "", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "POG_SM",Del_POG Version "POGV_SM",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+	And From Manage Planogram Page, Click On "Import" Button
+	And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+	And Validate Successful Message As "Record(s) Imported Successfully."
+	And Click On Link in Breadcrum with text "POG Management"
+	And From Masters Page, Click On "POG Details" Link
+	When Switch To Frame with Title "POG Detail Store Search"
+	And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "SFP_STORE"
+	And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+1" and FixtureLabel ""
+	Then Validate that single record is extracted
+	And From POG Details Page, Click On "Export" Button	
+	Then Update the Template with vdate as "vdate+1", FixLabel "",POG Code "POG_SM", Version "POGV_SM", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+	And From POG Details Page, Click On "Import" Button
+	And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+1"
+	And Validate Successful Message As "Record(s) Imported Successfully."
+	Then Update the Template with vdate as "vdate+1", FixLabel "",POG Code "", Version "", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+	And From POG Details Page, Click On "Import" Button
+	And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+1"
+	And Validate Successful Message As "Record(s) Imported Successfully."
+
+@run
+	Scenario: ASA32_TC002#Validate the tagging and SMART Template for same pog region != store area.This should be only executed in WTCCN
+ 	When Wait For "2" Second
+	And From Manage Planogram Page, Click On "Template" Button
+	And Extract empty location for a single floor plan store
+	And Extract Area for Store "SFP_STORE"
+	And Extract POG with single module with POG Region not equal to Store area "AREA"
+	Then Update the Template with Add_POG Code "POG_SM", Add_POG_Version "POGV_SM", Add_Module "",Add_POG_Position "",Del_POG Code "",Del_POG Version "",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+	And From Manage Planogram Page, Click On "Import" Button
+	And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+	Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+	And Wait For "5" Second
+	And Validate the Tagging Template column "Error Text" with value as "POG Code and Store Region are different. Please check the POG Code." in Row "1"
+	And Click On Link in Breadcrum with text "POG Management"
+	And From Masters Page, Click On "POG Details" Link
+	When Switch To Frame with Title "POG Detail Store Search"
+	And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "SFP_STORE"
+	And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+1" and FixtureLabel ""
+	Then Validate that single record is extracted
+	And From POG Details Page, Click On "Export" Button	
+	Then Update the Template with vdate as "vdate+1", FixLabel "",POG Code "POG_SM", Version "POGV_SM", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+	And From POG Details Page, Click On "Import" Button
+	And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+1"
+	Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+	And Wait For "5" Second
+	And Validate the SMART Template column "Error Message" with value as "POG Code and Store Region are different. Please check the POG Code." in Row "4" with asofDate "vdate+1"   

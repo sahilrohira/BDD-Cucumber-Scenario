@@ -1,0 +1,32 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+public class SM_POG_CATEGORY_Table extends CommonDB {
+
+	public SM_POG_CATEGORY_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "SM_POG_CATEGORY";
+
+	public int getPOGCatCount() throws Exception {
+		String pogcat_Count_SQL = "select * from  " + tableName + " where bu_id='" + AppData.buId + "'";
+		int pogcat_count = getRowCount(pogcat_Count_SQL);
+		return pogcat_count;
+	}
+	
+	public void storeCatName(String catcode) throws Exception {
+		String cat_Code=getTempData(catcode);
+		String catName_ID_SQL = "Select Category_Name from " +tableName+" where bu_id='"+ AppData.buId+"' and CATEGORY_CODE='"+ cat_Code+ "'";
+		storeColumnNameAndValue(catName_ID_SQL);
+	}
+	
+	public String getPOGCatCodeandCatName() throws Exception {
+		String category_SQL = "Select (CATEGORY_CODE||' - '||CATEGORY_NAME) as CATEGORY from  " + tableName + " where bu_id='" + AppData.buId + "' fetch next 1 rows only";
+		storeColumnNameAndValue(category_SQL);
+		return getTempData("CATEGORY");
+	}
+}

@@ -1,0 +1,16 @@
+package stepdefs.common;
+
+import pages.apex.ApexTable;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class ApexTableSteps extends SuperStepdefs {
+
+	public ApexTable table;
+
+	public ApexTableSteps(Hook hook) {
+		super(hook);
+		table = new ApexTable(driver,testCaseId);
+	}
+
+}

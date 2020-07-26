@@ -1,0 +1,155 @@
+Feature: Validating Functionality Related To Space Planning under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Manage Planogram" Link
+@skip
+Scenario: POGM_MultiFloorPlanSpacePlanning_TC001#Space Planning Add for New Promotion Template with multiple Floor Plan and Multiple Child Spaces
+		And Extract Double Floor Plan Store with Current Floor Plan end date
+		And Extract any Promotion POG with two version
+		And Extract Empty Location for Store "MFP_STORE" With mutiple Floor Plan
+		And Wait For "1" Second
+		When From Manage Planogram Page, Click On "Template" Button
+		And Extract the POG with multiple ChildSpace
+		Then Update the Template with Add_POG Code "POGID_MCS", Add_POG_Version "POGVER_MCS", Add_Module "",Add_POG_Position "",Del_POG Code "",Del_POG Version "",Del_POG Module "",Store "MFP_STORE",EffectiveDate "vdate+1",Location_ID "MFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Space Planning" Link
+		And Wait For "2" Second
+		And From Space Planning Page, Click On "Add" Button
+		And In Pomotion details Enter Text Field "PROM_NO" Value As "RANDOM_NUM"
+		And In Pomotion details Enter Text Field "P38_PROM_THEME" Value As "AUTO_PROMO_THEME"
+		And In Pomotion details Enter Text Field "P38_EFF_START_DATE" Value As "vdate+1"
+		And In Pomotion details Enter Text Field "P38_EFF_END_DATE" Value As "MFP_PROMENDDATE"
+		And In Pomotion details Enter Text Field "P38_PROM_DESC" Value As "AUTO_PROMO_DESCRIPTION"
+		And From Space Planning Page, Click On "Add" Button
+		And Extract the Plan ID for Promotion Description "AUTO_PROMO_DESCRIPTION" and Promotion Number "PROM_NUM"
+		And Add Store "MFP_STORE" for Promotion Tagging
+		And From Space Planning Page, Download Template for asOfDate "vdate+1" 
+		And Update the Space New Template for tagging Promotion POG "PROMPOG_2VER" on location "MFP_EMPTY_LOC" against ChildSpaceModule "CPOG_MOD1" and store "MFP_STORE"
+		And Update the Space New Template for tagging Promotion POG "PROMPOG_2VER" on location "MFP_EMPTY_LOC" against ChildSpaceModule "CPOG_MOD2" and store "MFP_STORE"
+		And From Space Planning Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Space Planning" with filename as "PLAN_ID"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Store POG Module" Link
+		Then Type the parameters Store as "MFP_STORE",POG Code as "PROMPOG_2VER" and POG Version "" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Apply Filter for Column "Location ID" with value "MFP_EMPTY_LOC"
+		And Update filter "Location ID" with value as "MFP_EMPTY_LOC"
+	  And Validate column "Effective Start Date" with value as "vdate+1"
+		And Validate column "Effective End Date" with value as "MFP_ENDDATE1"
+		And Apply Filter for Column "Effective End Date" with value "MFP_PROMENDDATE"
+		And Validate No data Found on Screen "Store POG Module" for table "store_pog_module"
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Space Planning" Link
+		And Delete the promotion with Plan ID as "PLAN_ID" and Promotion Number as "PROM_NUM"
+		And Wait For "5" Second
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Manage Planogram" Link
+		Then Update the Template with Add_POG Code "", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "POGID_MCS",Del_POG Version "POGVER_MCS",Del_POG Module "",Store "MFP_STORE",EffectiveDate "vdate+1",Location_ID "MFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+
+@run	
+Scenario: POGM_MultiFloorPlanSpacePlanning_TC002#Space Planning Add(AD), Version Update(VU) and Stop(ST) Action for Updated Promotion Template with multiple Floor Plan and Multiple Child Spaces
+		And Extract Double Floor Plan Store with Current Floor Plan end date
+		And Extract any Promotion POG with two version
+		And Extract Empty Location for Store "MFP_STORE" With mutiple Floor Plan
+		And Wait For "1" Second
+		When From Manage Planogram Page, Click On "Template" Button
+		And Extract the POG with multiple ChildSpace
+		Then Update the Template with Add_POG Code "POGID_MCS", Add_POG_Version "POGVER_MCS", Add_Module "",Add_POG_Position "",Del_POG Code "",Del_POG Version "",Del_POG Module "",Store "MFP_STORE",EffectiveDate "vdate+1",Location_ID "MFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Space Planning" Link
+		And Wait For "2" Second
+		And From Space Planning Page, Click On "Add" Button
+		And In Pomotion details Enter Text Field "PROM_NO" Value As "RANDOM_NUM"
+		And In Pomotion details Enter Text Field "P38_PROM_THEME" Value As "AUTO_PROMO_THEME"
+		And In Pomotion details Enter Text Field "P38_EFF_START_DATE" Value As "vdate+1"
+		And In Pomotion details Enter Text Field "P38_EFF_END_DATE" Value As "MFP_PROMENDDATE"
+		And In Pomotion details Enter Text Field "P38_PROM_DESC" Value As "AUTO_PROMO_DESCRIPTION"
+		And From Space Planning Page, Click On "Add" Button
+		And Extract the Plan ID for Promotion Description "AUTO_PROMO_DESCRIPTION" and Promotion Number "PROM_NUM"
+		And Select "P38_STATUS" Value As "Update"
+		And From Space Planning Page, Click On "Save" Button
+		And Add Store "MFP_STORE" for Promotion Tagging
+		And From Space Planning Page, Download Template for asOfDate "vdate+1" 
+		Then Update the Space Update Template for tagging Promotion POG "PROMPOG_2VER" Version "PROM_VER1" on location "MFP_EMPTY_LOC" against ChildSpaceModule "CPOG_MOD1" and store "MFP_STORE" with Action as "AD"
+		And Extract any Promotion POG except POG code "PROMPOG_2VER" and pog Version "PROM_VER1"
+		Then Update the Space Update Template for tagging Promotion POG "PROM_POG2" Version "PROM_POG_VER2" on location "MFP_EMPTY_LOC" against ChildSpaceModule "CPOG_MOD2" and store "MFP_STORE" with Action as "AD"
+		And From Space Planning Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Space Planning" with filename as "PLAN_ID"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Store POG Module" Link
+		Then Type the parameters Store as "MFP_STORE",POG Code as "PROMPOG_2VER" and POG Version "PROM_VER1" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Apply Filter for Column "Location ID" with value "MFP_EMPTY_LOC"
+		And Update filter "Location ID" with value as "MFP_EMPTY_LOC"
+	  And Validate column "Effective Start Date" with value as "vdate+1"
+		And Validate column "Effective End Date" with value as "MFP_ENDDATE1"
+		And Apply Filter for Column "Effective End Date" with value "MFP_PROMENDDATE"
+		And Validate No data Found on Screen "Store POG Module" for table "store_pog_module"
+		And From Store POG Module Page, Click On "Modify Search" Button
+		Then Type the parameters Store as "MFP_STORE",POG Code as "PROM_POG2" and POG Version "PROM_POG_VER2" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Update filter "Effective End Date" with value as "MFP_ENDDATE1"
+		And Validate column "Effective Start Date" with value as "vdate+1"
+		And Update filter "Effective End Date" with value as "MFP_PROMENDDATE"
+		And Validate No data Found on Screen "Store POG Module" for table "store_pog_module"
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Space Planning" Link
+		And Extract the Plan ID for Promotion Description "AUTO_PROMO_DESCRIPTION" and Promotion Number "PROM_NUM"
+		And From Space Planning Page, Filter Table content for Column "Plan ID" With Value "PLAN_ID"
+		Then Click On Link with text "PROM_NUM"
+		And Clear the download folder
+		And From Space Planning Page, Download Template for asOfDate "vdate+2" 
+		And Wait For "5" Second
+		Then Update the Space Update Template for tagging Promotion POG "PROMPOG_2VER" Version "PROM_VER2" on location "MFP_EMPTY_LOC" against ChildSpaceModule "CPOG_MOD1" and store "MFP_STORE" with Action as "VU"
+		Then Update the Space Update Template for tagging Promotion POG "PROM_POG2" Version "PROM_POG_VER2" on location "MFP_EMPTY_LOC" against ChildSpaceModule "CPOG_MOD2" and store "MFP_STORE" with Action as "ST"
+		And From Space Planning Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Space Planning" with filename as "PLAN_ID"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Store POG Module" Link
+		Then Type the parameters Store as "MFP_STORE",POG Code as "PROMPOG_2VER" and POG Version "PROM_VER1" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Update filter "Effective End Date" with value as "vdate+1"
+	  And Validate column "Effective Start Date" with value as "vdate+1"
+	  And From Store POG Module Page, Click On "Modify Search" Button
+		Then Type the parameters Store as "MFP_STORE",POG Code as "PROM_POG2" and POG Version "PROM_POG_VER2" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Validate column "Effective Start Date" with value as "vdate+1"
+		And From Store POG Module Page, Click On "Modify Search" Button
+		Then Type the parameters Store as "MFP_STORE",POG Code as "PROMPOG_2VER" and POG Version "PROM_VER2" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Update filter "Effective End Date" with value as "MFP_ENDDATE1"
+		And Validate column "Effective Start Date" with value as "vdate+2"
+		And Update filter "Effective End Date" with value as "MFP_PROMENDDATE"
+		And Validate No data Found on Screen "Store POG Module" for table "store_pog_module"
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Space Planning" Link
+		And Wait For "2" Second
+		Then Click On Link with text "PROM_NUM"
+		And From Space Planning Page, Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		And Wait For "4" Second
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Manage Planogram" Link
+		And Wait For "2" Second
+		When From Manage Planogram Page, Click On "Template" Button
+		Then Update the Template with Add_POG Code "", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "POGID_MCS",Del_POG Version "POGVER_MCS",Del_POG Module "",Store "MFP_STORE",EffectiveDate "vdate+1",Location_ID "MFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."

@@ -1,0 +1,67 @@
+Feature: Validating Functionality Related To POG Hierarchy under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "POG Hierarchy" Link
+@run
+Scenario:  Masters_POGHierarchy_TC001#POGHierarchy:Add,Delete
+		When From Master POGHierarchy Page, Click On "Expand All" Button
+		Then Validate all hierarchy expanded
+		When From Master POGHierarchy Page, Click On "Collapse All" Button
+		Then Validate all hierarchy collapsed
+		When From Master POGHierarchy Page, Click On "Add Division" Button
+		And Switch To Frame with Title "POG Division Details"
+		And From Master POGHierarchy Page, Click On "Add" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "2 errors have occurred"
+		And From Apex Error Dialog, Validate Error Message Content As "Division ID must have some value."
+		And From Apex Error Dialog, Validate Error Message Content As "Division Name must have some value."
+		When Add Division with Division ID as "AUTO_DIVID_" and Division Name as "AUTO_DIVNAME_" and Usage Type as "Regular" and default Exclude Indicator
+		And From Master POGHierarchy Page, Click On "Add Department" Button
+		And Switch To Frame with Title "POG Department Details"
+		And From Master POGHierarchy Page, Click On "Add" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "6 errors have occurred"
+		And Add Department with Department ID as "AUTO_DEPID_",Department Name as "AUTO_DEPNAME_",Category from Database and Display Indicator as "Default" and other default values
+		And Validate Successful Message As "Record(s) Added Successfully."
+		And Validate that select Category From DB should not be deleted in POG Category 
+		When From Master POGHierarchy Page, Click On "Add Sub Department" Button
+		And Switch To Frame with Title "POG Sub Department Details"
+		And From Master POGHierarchy Page, Click On "Add" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "5 errors have occurred"
+		And Add Sub Department with Sub Department as "AUTO_SUBDEPID_",Sub Department Name as "AUTO_SUBDEPNAME_" and other default values
+		And Validate Successful Message As "Record(s) Added Successfully."
+		When Click On Link with text "DIVISION_NAME"
+		And Switch To Frame with Title "POG Division Details"
+		And From Master POGHierarchy Page, Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		And From Apex Error Dialog, Validate Error Message Content As "SM-0001 Child Record Exists, Cannot Delete Parent Record."
+		And From Master POGHierarchy Page, Click On "Cancel" Button
+		When Click on toggle Element for "DIVISION_NAME"
+		And Click On Link with text "DEPARTMENT_NAME" 
+		And Switch To Frame with Title "POG Department Details"
+		And From Master POGHierarchy Page, Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		And From Apex Error Dialog, Validate Error Message Content As "SM-0001 Child Record Exists, Cannot Delete Parent Record."
+		And From Master POGHierarchy Page, Click On "Cancel" Button
+		When Click on toggle Element for "DEPARTMENT_NAME"
+		And Click On Link with text "SUBDEPARTMENT_NAME"
+		And Switch To Frame with Title "POG Sub Department Details"
+		And From Master POGHierarchy Page, Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		And Validate Successful Message As "Record(s) Deleted Successfully."
+		When Click on toggle Element for "DIVISION_NAME"
+		And Click On Link with text "DEPARTMENT_NAME" 
+		And Switch To Frame with Title "POG Department Details"
+		And From Master POGHierarchy Page, Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		And Validate Successful Message As "Record(s) Deleted Successfully."
+		When Click On Link with text "DIVISION_NAME"
+		And Switch To Frame with Title "POG Division Details"
+		And From Master POGHierarchy Page, Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		And Validate Successful Message As "Record(s) Deleted Successfully."

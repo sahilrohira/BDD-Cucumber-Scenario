@@ -1,0 +1,30 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexAlert extends CommonPage{
+	
+	public By alertDialogContent 	= 	By.xpath("//div[@role='alertdialog']//p");
+	public By alertDialogOkButton	=	By.xpath("//div[@role='alertdialog']//button[text()='OK']");
+	public By alertTitleContent	    =	By.xpath("//h2[@class='t-Alert-title']");
+
+	public ApexAlert(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+
+	public void verifyErrorDialogContent(String txt) throws Exception {
+		validateTextEquals("ApexAlert", "AlertDialogContent", alertDialogContent, txt);
+	}
+	
+	public void clickOnOKButton() throws Exception {
+		clickOnElement("ApexAlert", "AlertDialogOkButton", alertDialogOkButton);
+	}
+	
+	public void verifAlertTitle(String txt) throws Exception {
+		validateTextEquals("ApexAlert", "AlertTitleContent", alertTitleContent, txt);
+	}
+	
+}

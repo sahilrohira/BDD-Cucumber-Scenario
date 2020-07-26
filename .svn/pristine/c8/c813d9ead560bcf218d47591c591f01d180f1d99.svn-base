@@ -1,0 +1,611 @@
+Feature: Validating Functionality Related To Reports
+
+  Background: 
+    Given Open DB Connection
+    And Open Browser
+    And Log In To Application With Provided Credential
+    And From Home Page, Click On "Reports" Link
+    And From Reports Page, Click On "All Reports" Link
+
+  @run
+  Scenario: Reports_All_Reports_TC_New# Batch Report Output
+  And Validate the Batch Report Functionality for the Frames with title "Export Reports" and download reports by clicking on "Submit In Batch" button
+    
+  
+  Scenario: Reports_All_Reports_TC001# Planogram Assignment
+    When From All Reports Page, Click On "Planogram Assignment" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Store Region" Present
+    And From All Reports Page, Verify Button "Export" Present
+    And From All Reports Page, Click On Button "Submit In Batch"
+    And Extract the QUEUE_ID for the Report name "PLANOGRAM_ASSIGNMENT"
+    Then Run Batch "batch_report_download" irrespective of BU_ID
+    Then Run Batch "print_batch_report" irrespective of BU_ID
+    And From All Reports Page, Click On Button "Batch Report Output"
+    And Switch To Frame with Title "Batch Reports"
+    And From Reports Page, Filter Table content for Column "Sequence No" With Value "QUEUE_ID"
+    And Click On Link with text "Planogram Assignment.xlsx"
+    Then Validate the Report successfully downloaded as ""
+
+
+  Scenario: Reports_All_Reports_TC002# Planogram Item Capacity
+    When From All Reports Page, Click On Desc "This report lists all products as of date with a total capacity greater than requested pieces." Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "POG Status" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Item Total Units" Present
+    And From All Reports Page, Verify Button "Export" Present
+    And From All Reports Page, Click On Button "Submit In Batch"
+    And Extract the QUEUE_ID for the Report name "PLANOGRAM_ITEM_DDATE"
+    Then Run Batch "batch_report_download" irrespective of BU_ID
+    Then Run Batch "print_batch_report" irrespective of BU_ID
+    And From All Reports Page, Click On Button "Batch Report Output"
+    And Switch To Frame with Title "Batch Reports"
+    And From Reports Page, Filter Table content for Column "Sequence No" With Value "QUEUE_ID"
+    And Click On Link with text "Planogram_Item_Capacity.xlsx"
+    Then Validate the Report successfully downloaded as "Planogram_Item_Capacity.xlsx"
+
+  
+  Scenario: Reports_All_Reports_TC003# Planogram Item Capacity
+    When From All Reports Page, Click On Desc "This report lists all products with a total capacity greater than requested pieces." Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "POG Status" Present
+    And From All Reports Page, Verify Element "Item Total Units" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC004# Item-POG-Store Relationship
+    When From All Reports Page, Click On "Item-POG-Store Relationship" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Effective Date" Present
+    And From All Reports Page, Verify Element "POG Status" Present
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "POG Code" Present
+    And From All Reports Page, Verify Element "Product Code" Present
+    And From All Reports Page, Verify Element "Product Description" Present
+    And From All Reports Page, Verify Element "Store Format" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "Item Department" Present
+    And From All Reports Page, Verify Element "Store Region" Present
+    And From All Reports Page, Verify Element "Store Area" Present
+    And From All Reports Page, Verify Element "Product Status" Present
+    And From All Reports Page, Verify Element "Group" Present
+    And From All Reports Page, Verify Element "Class" Present
+    And From All Reports Page, Verify Element "Sub Class" Present
+    And From All Reports Page, Verify Element "Supplier Code" Present
+    And From All Reports Page, Verify Element "Include Promotion" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC005# Promotion Meter
+    When From All Reports Page, Click On "Promotion Meter" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Start Period" Present
+    And From All Reports Page, Verify Element "End Period" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC006# Space Report
+    When From All Reports Page, Click On "Space Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "Floor Plan Status" Present
+    And From All Reports Page, Verify Element "Store Area" Present
+    And From All Reports Page, Verify Element "Store Region" Present
+    And From All Reports Page, Verify Element "Fixture Type Code" Present
+    And From All Reports Page, Verify Element "Segment" Present
+    And From All Reports Page, Verify Element "Store Class" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC007# Store Item Distribution
+    When From All Reports Page, Click On "Store Item Distribution" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store Exclude" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC008# Unassigned POG Summary
+    When From All Reports Page, Click On "Unassigned POG Summary" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC009# Unassigned Fixture
+    When From All Reports Page, Click On "Unassigned Fixture" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Exclude Dummy Fixture" Present
+    And From All Reports Page, Verify Element "Exclude fixtures if Promo fixture label assigned" Present
+    And From All Reports Page, Verify Element "Store Region" Present
+    And From All Reports Page, Verify Element "Fixture Type Code" Present
+    And From All Reports Page, Verify Element "Fixture info" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC010# Partially Assigned POG
+    When From All Reports Page, Click On "Partially Assigned POG" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Effective Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC011# Range Change Report - Item Level
+    When From All Reports Page, Click On "Range Change Report - Item Level" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store Exclude" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC012# Range Change Report - Store Item Level
+    When From All Reports Page, Click On "Range Change Report - Store Item Level" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Action" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC013# WTCTH Range Change Report 2
+    When From All Reports Page, Click On "WTCTH Range Change Report 2" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Include Promotion" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC014# WTCTH Range Change Report
+    When From All Reports Page, Click On "WTCTH Range Change Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Include Promotion" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC015# Range Change Report - Store Level
+    When From All Reports Page, Click On "Range Change Report - Store Level" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store Exclude" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC016# Range Change Report - Store POG Level
+    When From All Reports Page, Click On "Range Change Report - Store POG Level" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store Exclude" Present
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "Before Date" Present
+    And From All Reports Page, Verify Element "After Date" Present
+    And From All Reports Page, Verify Element "POG Type" Present
+    And From All Reports Page, Verify Element "Include Dummy Location?" Present
+    And From All Reports Page, Verify Element "Dummy Location Type" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Element "Store Area" Present
+    And From All Reports Page, Verify Element "Include Replenishment Only" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC017# Future Item List
+    When From All Reports Page, Click On "Future Item List" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store Area" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC018# Range Review Status Report
+    When From All Reports Page, Click On "Range Review Status Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Store Area" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC019# OSD Type Report
+    When From All Reports Page, Click On "OSD Type Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Region" Present
+    And From All Reports Page, Verify Element "Start Date" Present
+    And From All Reports Page, Verify Element "End Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC020# Item List
+    When From All Reports Page, Click On "Item List" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store Area" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC021# All Event Report
+    When From All Reports Page, Click On "All Event Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "From" Present
+    And From All Reports Page, Verify Element "To" Present
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Action By" Present
+    And From All Reports Page, Verify Element "Event Type" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC022# Adhoc Price Tag for 1 store
+    When From All Reports Page, Click On "Adhoc Price Tag for 1 store" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC023# POG Department Meterage
+    When From All Reports Page, Click On "POG Department Meterage" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Include Promotion" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC024# Product Master Information
+    When From All Reports Page, Click On "Product Master Information" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Item Group" Present
+    And From All Reports Page, Verify Element "Item Department" Present
+    And From All Reports Page, Verify Element "Item Brand" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC025# POG Sub Department Meterage
+    When From All Reports Page, Click On "POG Sub Department Meterage" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Include Promotion" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC026# Range Review Status Summary Report
+    When From All Reports Page, Click On "Range Review Status Summary Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "Store Area" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+
+  
+  Scenario: Reports_All_Reports_TC027# Space Analysis by Store with Child
+    When From All Reports Page, Click On "Space Analysis by Store with Child" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "Start Period" Present
+    And From All Reports Page, Verify Element "End Period" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+
+  
+  Scenario: Reports_All_Reports_TC028# Space Analysis by Store
+    When From All Reports Page, Click On "Space Analysis by Store" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "Start Period" Present
+    And From All Reports Page, Verify Element "End Period" Present
+
+  
+  Scenario: Reports_All_Reports_TC029# POG Item Status Report
+    When From All Reports Page, Click On "POG Item Status Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "POG Division" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "POG Code" Present
+    And From All Reports Page, Verify Element "POG Version" Present
+    And From All Reports Page, Verify Element "POG Type" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Element "POG Status" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC030# Multiple POG Version
+    When From All Reports Page, Click On "Multiple POG Version" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Start Period" Present
+    And From All Reports Page, Verify Element "End Period" Present
+    And From All Reports Page, Verify Element "Show Exceptions Only" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC031# POG Module Report
+    When From All Reports Page, Click On "POG Module Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "POG Division" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "POG SubDept" Present
+    And From All Reports Page, Verify Element "POG Code" Present
+    And From All Reports Page, Verify Element "POG Version" Present
+    And From All Reports Page, Verify Element "POG Type" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Element "POG Status" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC032# Multiple POG Version (Company)
+    When From All Reports Page, Click On "Multiple POG Version (Company)" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC033# Promotion Plan
+    When From All Reports Page, Click On "Promotion Plan" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Start Period" Present
+    And From All Reports Page, Verify Element "End Period" Present
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "Promotion Description" Present
+    And From All Reports Page, Verify Element "Promotion Theme" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC034# POG Module report - Fixture Info.
+    When From All Reports Page, Click On "POG Module report - Fixture Info." Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "POG SubDept" Present
+    And From All Reports Page, Verify Element "POG Code" Present
+    And From All Reports Page, Verify Element "POG Status" Present
+    And From All Reports Page, Verify Element "Exclude Dummy Fixture" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC035# POG Item Change Report
+    When From All Reports Page, Click On "POG Item Change Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Import Date" Present
+    And From All Reports Page, Verify Element "POG Code" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC036# Item Wise Store Count
+    When From All Reports Page, Click On "Item Wise Store Count" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC037# POG Hierarchy Comparison Report
+    When From All Reports Page, Click On "POG Hierarchy Comparison Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Element "New FP Creation Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC038# POG Item Report
+    When From All Reports Page, Click On "POG Item Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "POG Division" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "POG Code" Present
+    And From All Reports Page, Verify Element "POG Version" Present
+    And From All Reports Page, Verify Element "POG Type" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC039# Range Change - POG Comparison
+    When From All Reports Page, Click On "Range Change - POG Comparison" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "New POG" Present
+    And From All Reports Page, Verify Element "POG Version" Present
+    And From All Reports Page, Verify Element "Current POG" Present
+    And From All Reports Page, Verify Element "POG Version" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC040# POG DPP Report
+    When From All Reports Page, Click On "POG DPP Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "POG Effective Date" Present
+    And From All Reports Page, Verify Element "POG Division" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "POG SubDept" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC041# Item DPP Worksheet
+    When From All Reports Page, Click On "Item DPP Worksheet" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "POG Effective Date" Present
+    And From All Reports Page, Verify Element "POG Division" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "POG SubDept" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC042# Multiple Module assignment report
+    When From All Reports Page, Click On "Multiple Module assignment report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Element "Exclude POG Dept" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC043# POG Item Status Report
+    When From All Reports Page, Click On "POG Item Status Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "POG Division" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "POG Code" Present
+    And From All Reports Page, Verify Element "POG Version" Present
+    And From All Reports Page, Verify Element "POG Type" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Element "POG Status" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC044# POG assignment effective date gap check report
+    When From All Reports Page, Click On "POG assignment effective date gap check report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Days gap" Present
+    And From All Reports Page, Verify Element "POG Division" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "POG SubDept" Present
+    And From All Reports Page, Verify Element "POG Code" Present
+    And From All Reports Page, Verify Element "Virtual POG/ PLN" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+
+  
+  Scenario: Reports_All_Reports_TC045# UDA 303
+    When From All Reports Page, Click On "UDA 303" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Store Exclude" Present
+    And From All Reports Page, Verify Element "POG Division" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Element "POG SubDept" Present
+    And From All Reports Page, Verify Element "Before Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC046# Multiple POG Assigned to One Location
+    When From All Reports Page, Click On "Multiple POG Assigned to One Location" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Store" Present
+    #And From All Reports Page, Verify Element "Include Promotion" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC047# POG Changes Beyond Specified Range Days
+    When From All Reports Page, Click On "POG Changes Beyond Specified Range Days" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Generation Date" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC048# Range Change Report MY - Item Status
+    When From All Reports Page, Click On "Range Change Report MY - Item Status" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "To Date" Present
+    And From All Reports Page, Verify Element "From Date" Present
+    And From All Reports Page, Verify Element "Item" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC049# Item Meterage Report
+    When From All Reports Page, Click On "Item Meterage Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Store Code" Present
+    And From All Reports Page, Verify Element "Store List" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC050# Store Meterage Report
+    When From All Reports Page, Click On "Store Meterage Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "As Of Date" Present
+    And From All Reports Page, Verify Element "Store" Present
+    And From All Reports Page, Verify Element "Store Area" Present
+    And From All Reports Page, Verify Element "Store Market" Present
+    And From All Reports Page, Verify Element "Store Type" Present
+    And From All Reports Page, Verify Element "POG Department" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC051# POG Hospital
+    When From All Reports Page, Click On "POG Hospital" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "File Name" Present
+    And From All Reports Page, Verify Element "Start Period" Present
+    And From All Reports Page, Verify Element "End Period" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC052# Batch Data Processing Report
+    When From All Reports Page, Click On "Batch Data Processing Report" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Start Period" Present
+    And From All Reports Page, Verify Element "End Period" Present
+    And From All Reports Page, Verify Element "Program Name" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present
+
+  
+  Scenario: Reports_All_Reports_TC053# Auto Version Update Exceptions
+    When From All Reports Page, Click On "Auto Version Update Exceptions" Link
+    Then From All Reports page, Switch to "Export Reports"
+    And From All Reports Page, Verify Element "Start Period" Present
+    And From All Reports Page, Verify Element "End Period" Present
+    And From All Reports Page, Verify Element "POG Code" Present
+    And From All Reports Page, Verify Button "Submit In Batch" Present
+    And From All Reports Page, Verify Button "Export" Present

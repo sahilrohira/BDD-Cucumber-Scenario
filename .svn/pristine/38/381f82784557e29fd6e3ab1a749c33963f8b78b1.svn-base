@@ -1,0 +1,157 @@
+package stepdefs.POGManagement;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_BU_SYSPRM_Table;
+import db.SM_STORE_POG_MODULE_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexButton;
+import pages.apex.ApexDropDown;
+import pages.apex.ApexPageHeader;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppDateUtil;
+
+public class POGM_StorePOGModulePageSteps extends SuperStepdefs {
+
+	private String pageName = "Store POG Module";
+	private CommonPageSteps commonPageSteps;
+	private String tableLabel = "store_pog_module";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_STORE_POG_MODULE_Table sm_store_mod_pog;
+	private SM_BU_SYSPRM_Table sm_bu_sysprm;
+	private ApexDropDown apexDropDown;
+	private ApexPageHeader apexPageHeader;
+	
+
+	public POGM_StorePOGModulePageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_store_mod_pog= new SM_STORE_POG_MODULE_Table(con, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		sm_bu_sysprm = new SM_BU_SYSPRM_Table(con, testCaseId);
+		apexDropDown=new ApexDropDown(driver,testCaseId);
+		apexPageHeader= new ApexPageHeader(driver,testCaseId);
+	}
+
+	
+	@Then("^From Store POG Module Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@When("^Type the parameters Store as \"(.*)\",POG Code as \"(.*)\" and POG Version \"(.*)\" as to search for the Store POG Module with status as \"(.*)\"$")
+	public void StorePOGSearch(String store,String pogCode, String pogVer,String itemStatus) throws Exception {
+		Thread.sleep(1000);
+		commonPageSteps.enterTextFieldValue("P20_STORE", store);
+		commonPageSteps.enterTextFieldValue("P20_POG_CODE", pogCode);
+		commonPageSteps.enterTextFieldValue("P20_POG_VERSION", pogVer);
+		apexDropDown.delselectAllDropDownValue(pageName, "P20_STORE_POG_STATUS");
+		Thread.sleep(2000);
+		switch(itemStatus) {
+		case "L":
+			commonPageSteps.selectDropDownValue("P20_STORE_POG_STATUS", "Live");
+			break;
+		case "P":
+			commonPageSteps.selectDropDownValue("P20_STORE_POG_STATUS", "Planned");
+			break;
+		case "H":
+			commonPageSteps.selectDropDownValue("P20_STORE_POG_STATUS", "Historical");
+			break;
+		}
+	}
+	
+	
+	@Then("^Apply Filter for Column \"(.*)\" with value \"(.*)\"$")
+	public void applyFilter(String colummnName,String filterVal) throws Exception {
+		apexTable.filterScrollingTableContent(pageName, tableLabel, colummnName, filterVal);
+		//logger.pass("Applied Filter for column "+colummnName+" with Value "+ bold(getTempData(filterVal)));
+	}
+	
+	
+	@Then("^Validate all fields set to Default on Search Popup for Store POG Module$")
+	public void VerifyallfieldsetoDefaultValue() throws Exception {
+		commonPageSteps.validateTextFieldValue("P20_STORE", "");
+		//commonPageSteps.validateDropDownValue("P100_STORE_POG_STATUS", "");
+		commonPageSteps.validateTextFieldValue("P20_POG_CODE", "");
+		commonPageSteps.validateTextFieldValue("P20_POG_VERSION", "");
+		commonPageSteps.validateDropDownValue("P20_DIVISION", "--Select--");
+		//commonPageSteps.validateDropDownValue("P100_DEPARTMENT", "");
+		commonPageSteps.validateDropDownValue("P20_ON_VIRTUAL_POG", "PLN and Virtual POG");
+		commonPageSteps.validateDropDownValue("P20_REPORT_TYPE", "Primary Report");
+		logger.pass("Successfully Validated the Reset Button Functionality");
+	}
+	
+	@Then("^Retreive the Store POG Module details from DB with Status as \"(.*)\"$")
+	public void fetchStorePOGSearchAttri(String storerPOGStatus) throws Exception {
+		sm_store_mod_pog.fetchStorePOGModSearchAttri(storerPOGStatus);
+		logger.pass("Fetched Store POG Module search attributes with status as " + bold(storerPOGStatus));
+	}
+	
+	@Then("^Validate all Store POG Module details from database for selected \"(.*)\" with status as \"(.*)\"$")
+	public void validateStorePOGdetailfromDB(String pog,String storePOGStatus) throws Exception {
+		sm_store_mod_pog.fetchStorePOGModdetails();
+		String POG_Name_Ind=sm_bu_sysprm.getSysConfValue("POG_NAME_IND");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store", "STORE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store Name", "STORE_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Location ID", "LOCATION_ID");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Code", "POG_CODE");
+		
+		if (POG_Name_Ind.equalsIgnoreCase("Y")){
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Name", "POG_NAME");
+		}
+		
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Version", "POG_VERSION");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Virtual", "VIRTUAL");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Module", "POG_MODULE");
+		String Pog_type=null;
+		switch(getTempData("POG_TYPE")) {case "D":Pog_type="Dummy";break;case "R":Pog_type="Regular";break;case "P":Pog_type="Promotion";break;case "H":Pog_type="Host";break;}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Type", Pog_type);
+		switch(storePOGStatus) {
+		case "L":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store POG Status", "Live");
+		break;
+		case "P":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store POG Status", "Planned");
+		break;
+		case "H":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store POG Status", "Historical");
+		break;
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Actual POG Start Date", "ACTUAL_POG_START_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective Start Date", "EFF_START_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective End Date", "EFF_END_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Division", "DIVISION");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Department", "DEPARTMENT");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Height (cm)", "POG_HEIGHT");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Width (cm)", "POG_WIDTH");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Depth (cm)", "POG_DEPTH");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Meterage (m)", "METERAGE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store District", "DISTRICT_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Region Name", "REGION_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store Area (Sq. Ft)", "TOTAL_SQUARE_FT");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store Open Date", "STORE_OPEN_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store Close Date", "STORE_CLOSE_DATE");
+		apexTable.validateScrollingTableEqualColumnCellValue(pageName, tableLabel, 1, "POG Start Date", "POG_START_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Temp POG?", "TEMP_IND");
+		logger.pass("Successfully matched DB value to UI for all Store POG columns for Store "+bold(getTempData("STORE"))+" POG Code:"+bold(pog)+" POG Version:"+bold(getTempData("POG_VERSION"))+" with status as: "+bold(storePOGStatus));
+	}
+	
+	@Then("^Validate column \"(.*)\" with value as \"(.*)\"$")
+	public void validateStorePOGdetailColumnfromDB(String columnName,String columnVal) throws Exception {
+		if(getTempData(columnVal)!=null) {columnVal=getTempData(columnVal);}
+		if(columnVal.toLowerCase().contains("vdate")) 
+		{String varindays=columnVal.substring(5);
+		columnVal=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		if(columnVal.toLowerCase().contains("max_end_date")) {
+			columnVal=AppDateUtil.getMaxEndDate();
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, columnName, columnVal);
+		logger.pass("Successfully matched DB value to UI for Store POG Module column :"+bold(columnName)+" with value as: "+bold(columnVal));
+	}
+	
+}

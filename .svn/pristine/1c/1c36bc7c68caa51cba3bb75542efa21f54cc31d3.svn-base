@@ -1,0 +1,339 @@
+package db;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+import utils.MyList;
+
+
+public class CommonDB {
+
+	protected Connection con;
+	protected String testCaseId;
+	private Logger logger;
+
+	public CommonDB(Connection con, String testCaseId) {
+		this.con = con;
+		this.testCaseId=testCaseId;
+		this.logger=Logger.getLogger(testCaseId);
+	}
+
+	public static ResultSet executeQuerry(Connection con, String sqlQuery) throws SQLException {
+		Statement stmt = con.createStatement();
+		return stmt.executeQuery(sqlQuery);
+	}
+	
+	public static void executeUpdate(Connection con, String sqlQuery) throws SQLException {
+		Statement stmt = con.createStatement();
+		stmt.executeUpdate(sqlQuery);
+		stmt.close();
+	}
+
+	protected ResultSet executeQuery(String sqlQuery) throws SQLException {
+		Statement stmt = con.createStatement();
+		logger.info("Executing Query [" + sqlQuery + "]");
+		return stmt.executeQuery(sqlQuery);
+	}
+
+
+	/*protected String getSingleCellValue(String sqlQuery) throws SQLException {
+		ResultSet rs = executeQuery(sqlQuery);
+		while(rs.next()) {
+			//java.sql.Struct rs1= (Struct) rs.getObject(1); //ERROR
+			Object x=rs.getArray(1);
+			System.out.println(x); 
+		}
+		return null;
+	}*/
+
+	protected String getSingleCellValue(String sqlQuery) throws SQLException {
+		ResultSet rs = executeQuery(sqlQuery);
+		rs.next();
+		String columnVal = rs.getString(1);
+		return columnVal;
+	}
+	
+	protected int getRowCount(String sqlQuery) throws SQLException {
+		int rowCount = 0;
+		ResultSet rs = executeQuery(sqlQuery);
+		while (rs.next()) {
+			rowCount++;
+		}
+		return rowCount;
+	}
+
+
+	protected List<String> getColumnValues(String sqlQuery, String columnName) throws SQLException {
+		List<String> listColumnValue = new ArrayList<String>();
+
+		ResultSet rs = executeQuery(sqlQuery);
+		logger.info("Fetching value for Column [" + columnName + "]");
+		while (rs.next()) {
+			String columnVal = rs.getString(columnName);
+			//if(columnVal==null) continue;
+			if(columnVal==null) {
+				listColumnValue.add("NULL");
+			}else {
+				listColumnValue.add(columnVal);
+			}
+
+		}
+		logger.info(listColumnValue);
+		return listColumnValue;
+	}
+
+	protected List<Map<String, String>> getColumnNameAndValues(String sqlQuery) throws SQLException {
+		List<Map<String, String>> listColumnNameValue = new ArrayList<Map<String, String>>();
+		ResultSet rs = executeQuery(sqlQuery);
+		ResultSetMetaData    rsmd    =    rs.getMetaData();
+		int    columnCount    =    rsmd.getColumnCount();
+
+		while (rs.next()) {
+			Map<String, String> columnNameValue = new HashMap<String, String>();
+
+			for    (int    i=1;   i<=columnCount;    i++ ) {
+				String name    =    rsmd.getColumnName(i).trim();
+
+				String value    =    rs.getString(i);
+				value = ( value== null)  ? "" : value.trim();
+
+				columnNameValue.put(name, value);
+			}
+			listColumnNameValue.add(columnNameValue);
+		}
+
+		return listColumnNameValue;
+	}
+
+	public Map<String, String> getColumnNameAndValue(String sqlQuery) throws SQLException {
+		ResultSet rs = executeQuery(sqlQuery);
+		ResultSetMetaData rsmd =rs.getMetaData();
+		int columnCount = rsmd.getColumnCount();
+		
+		if (rs.next()){
+		Map<String, String> columnNameValue = new HashMap<String, String>();
+		for(int i=1;i<=columnCount;i++ ) {
+			String name = rsmd.getColumnName(i).trim();
+			String value = rs.getString(i);
+			value = (value==null)? "" : value.trim();
+			columnNameValue.put(name,value);
+		}
+		return columnNameValue;
+		}
+		else 
+			return null;
+	}
+
+	protected void storeColumnNameAndValue(String sqlQuery) throws SQLException, IOException {
+		Map<String, String> columnNameValue =getColumnNameAndValue(sqlQuery);
+		Set<String> keys = columnNameValue.keySet();
+		for (String key : keys) {
+			storeTempData(key, columnNameValue.get(key));
+		}
+	}
+
+	public void storeTempData(String key, String value) throws IOException {
+
+		Properties prop = new Properties();
+		InputStream in = new FileInputStream("Test_Data/TempData/"+testCaseId+".properties");
+		prop.load(in);
+		in.close();
+		OutputStream out = new FileOutputStream("Test_Data/TempData/"+testCaseId+".properties");
+		prop.setProperty(key, value);
+		prop.store(out, null);
+	}
+
+	public String getTempData(String key) throws Exception {
+
+		Properties prop = new Properties();
+		InputStream in = new FileInputStream("Test_Data/TempData/"+testCaseId+".properties");
+		prop.load(in);
+		String val= prop.getProperty(key);
+		in.close();
+
+		if(val==null) {
+			throw new Exception("Variable ["+key+"] was not found in temporary data file [ Test_Data/TempData/"+testCaseId+".properties ]");
+		}
+		return val;
+	}
+
+
+
+
+	protected List<String> getColumnValues(String tableName, Map<String,String> whereClouseEqual, Map<String,List<String>> whereClouseIn, String columnName) throws SQLException {
+		List<String> listColumnValue = new ArrayList<String>();
+
+		String sqlQuery = "SELECT * FROM " + tableName + " WHERE ";
+		Set<String> keys = whereClouseEqual.keySet();
+		for (String key : keys) {
+			if(key.contains("DATE")) {
+				sqlQuery = sqlQuery + " " + key + " = " + whereClouseEqual.get(key) + " AND ";
+			}else {
+				sqlQuery = sqlQuery + " " + key + " = '" + whereClouseEqual.get(key) + "' AND ";
+			}
+		}
+
+		keys = whereClouseIn.keySet();
+		for (String key : keys) {
+			String whereValues =  MyList.toStringForSQL(whereClouseIn.get(key));
+
+			sqlQuery = sqlQuery + " " + key + " IN (" + whereValues+ ") AND ";
+		}
+
+		//Remove Last AND from Query
+		sqlQuery =sqlQuery.substring(0, sqlQuery.length()-5);
+		listColumnValue = getColumnValues(sqlQuery, columnName);
+
+		return listColumnValue;
+	}
+
+	protected List<String> getColumnValues(String tableName, Map<String,String> whereClouse, String columnName) throws SQLException {
+		List<String> listColumnValue = new ArrayList<String>();
+
+		String sqlQuery = "SELECT * FROM " + tableName + " WHERE ";
+		Set<String> keys = whereClouse.keySet();
+		for (String key : keys) {
+			if(key.contains("DATE")) {
+				sqlQuery = sqlQuery + " " + key + " = " + whereClouse.get(key) + " AND ";
+			}else {
+				sqlQuery = sqlQuery + " " + key + " = '" + whereClouse.get(key) + "' AND ";
+			}
+		}
+		//Remove Last AND from Query
+		sqlQuery =sqlQuery.substring(0, sqlQuery.length()-5);
+		listColumnValue = getColumnValues(sqlQuery, columnName);
+
+		return listColumnValue;
+	}
+
+	protected List<String> getColumnValuesOderBy(String tableName, Map<String,String> whereClouse, String orderByColumn, String columnName) throws SQLException {
+		List<String> listColumnValue = new ArrayList<String>();
+
+		String sqlQuery = "SELECT * FROM " + tableName + " WHERE ";
+		Set<String> keys = whereClouse.keySet();
+		for (String key : keys) {
+
+			sqlQuery = sqlQuery + " " + key + " = '" + whereClouse.get(key) + "' AND ";
+		}
+		//Remove Last AND from Query
+		sqlQuery =sqlQuery.substring(0, sqlQuery.length()-5);
+		sqlQuery = sqlQuery + " ORDER BY "+orderByColumn+" ";
+		listColumnValue = getColumnValues(sqlQuery, columnName);
+
+		return listColumnValue;
+	}
+
+
+	protected List<String> getTopColumnValuesOderBy(String tableName, Map<String,String> whereClouse, String orderByColumn, int recordCount, String columnName) throws SQLException {
+		List<String> listColumnValue = new ArrayList<String>();
+
+		String sqlQuery = "SELECT * FROM " + tableName + " WHERE ";
+		Set<String> keys = whereClouse.keySet();
+		for (String key : keys) {
+
+			sqlQuery = sqlQuery + " " + key + " = '" + whereClouse.get(key) + "' AND ";
+		}
+		//Remove Last AND from Query
+		sqlQuery =sqlQuery.substring(0, sqlQuery.length()-5);
+		sqlQuery = sqlQuery + " AND ROWNUM <= "+recordCount+" ";
+		sqlQuery = sqlQuery + " ORDER BY "+orderByColumn+" ";
+		listColumnValue = getColumnValues(sqlQuery, columnName);
+
+		return listColumnValue;
+	}
+
+	protected int getRowCount(String tableName, Map<String,String> whereClouseEqual, Map<String,List<String>> whereClouseIn) throws SQLException {
+		int rowCountFound = 0;
+		String sqlQuery = "SELECT * FROM " + tableName + " WHERE ";
+		Set<String> keys = whereClouseEqual.keySet();
+		for (String key : keys) {
+			if(key.contains("DATE")) {
+				sqlQuery = sqlQuery + " " + key + " = " + whereClouseEqual.get(key) + " AND ";
+			}else {
+				sqlQuery = sqlQuery + " " + key + " = '" + whereClouseEqual.get(key) + "' AND ";
+			}
+		}
+
+		keys = whereClouseIn.keySet();
+		for (String key : keys) {
+			String whereValues =  MyList.toStringForSQL(whereClouseIn.get(key));
+
+			sqlQuery = sqlQuery + " " + key + " IN (" + whereValues+ ") AND ";
+		}
+
+		//Remove Last AND from Query
+		sqlQuery =sqlQuery.substring(0, sqlQuery.length()-5);
+		rowCountFound = getRowCount(sqlQuery);
+
+		return rowCountFound;
+	}
+
+	protected void deleteTableRows(String tableName, Map<String,String> whereClouseEqual, Map<String,List<String>> whereClouseIn) throws SQLException {
+		String sqlQuery = "DELETE FROM " + tableName + " WHERE ";
+		Set<String> keys = whereClouseEqual.keySet();
+		for (String key : keys) {
+			if(key.contains("DATE")) {
+				sqlQuery = sqlQuery + " " + key + " = " + whereClouseEqual.get(key) + " AND ";
+			}else {
+				sqlQuery = sqlQuery + " " + key + " = '" + whereClouseEqual.get(key) + "' AND ";
+			}
+		}
+
+		keys = whereClouseIn.keySet();
+		for (String key : keys) {
+
+			String whereValues = "";
+			if(key.contains("DATE")) {
+				whereValues =  MyList.toStringForSQLDate(whereClouseIn.get(key));
+			}else {
+				whereValues =  MyList.toStringForSQL(whereClouseIn.get(key));
+			}
+			sqlQuery = sqlQuery + " " + key + " IN ( " + whereValues + " ) AND ";
+		}
+
+		//Remove Last AND from Query
+		sqlQuery =sqlQuery.substring(0, sqlQuery.length()-5);
+		executeQuery(sqlQuery);
+	}
+
+
+	protected void updateTableRows(String tableName, String updateColName, String updateColValue , Map<String,String> whereClouseEqual, Map<String,List<String>> whereClouseIn) throws SQLException {
+		String sqlQuery = "UPDATE " + tableName + " SET " + updateColName + " = '" + updateColValue + "' WHERE ";
+		Set<String> keys = whereClouseEqual.keySet();
+		for (String key : keys) {
+			if(key.contains("DATE")) {
+				sqlQuery = sqlQuery + " " + key + " = " + whereClouseEqual.get(key) + " AND ";
+			}else {
+				sqlQuery = sqlQuery + " " + key + " = '" + whereClouseEqual.get(key) + "' AND ";
+			}
+		}
+
+		keys = whereClouseIn.keySet();
+		for (String key : keys) {
+			String whereValues =  MyList.toStringForSQL(whereClouseIn.get(key));
+
+			sqlQuery = sqlQuery + " " + key + " IN (" + whereValues+ ") AND ";
+		}
+
+		//Remove Last AND from Query
+		sqlQuery =sqlQuery.substring(0, sqlQuery.length()-5);
+		executeQuery(sqlQuery);
+	}
+
+}

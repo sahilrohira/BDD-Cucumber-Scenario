@@ -1,0 +1,114 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_UDA_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexButton;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppDateUtil;
+
+public class Masters_UDAPageSteps extends SuperStepdefs {
+
+	private String pageName = "Masters_UDA";
+	private String tableLabel = "uda_report";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_UDA_Table sm_uda_table;
+	
+
+	public Masters_UDAPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_uda_table=new SM_UDA_Table(con, testCaseId);
+	}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Master_UDA Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+
+	@When("^From Master_UDA Page, Validate Record Count from Database")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount= sm_uda_table.getUDACount();
+		apexTable.validateTableRowCount(pageName,tableLabel,expectedRowCount);
+		logger.pass("From Masters UDA Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+
+	@Then("^From Master_UDA Page, For Row \"(.*)\", Select Drop Down Value For Column \"(.*)\" As \"(.*)\"$")
+	public void selectDropDownValue(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		apexTable.selectCellDropDownValue(pageName, tableLabel, rowNo, headerName, value);
+		if(value.equals("Free Text")) {
+			apexTable.enterCellText(pageName, tableLabel, rowNo, "Data Length", "34");
+		}
+		logger.pass("From Master_UDA Page, For Row "+bold(rowNo)+", Select Drop Down Value For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master_UDA Page, For Row \"(.*)\", Enter Text Description For Column \"(.*)\" As \"(.*)\"$")
+	public void enterTextDescription(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		if(value.toLowerCase().contains("vdate")) 
+		{String varindays=value.substring(5);
+			value=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		apexTable.enterCellTextDescription(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_UDA Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master_UDA Page, For Row \"(.*)\", Enter Text For Column \"(.*)\" As \"(.*)\"$")
+	public void enterText(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		if(value.toLowerCase().contains("vdate")) 
+		{String varindays=value.substring(5);
+			value=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		apexTable.enterCellText(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_UDA Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	
+	@Then("^From Master_UDA Page, For Row \"(.*)\", in table \"(.*)\" Enter Text For Column \"(.*)\" As \"(.*)\"$")
+	public void enterTextinUDATableValue(int rowNo,String tableName1, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		if(value.toLowerCase().contains("vdate")) 
+		{String varindays=value.substring(5);
+			value=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		apexTable.enterCellTextinFrozenTable(pageName, tableName1, rowNo, headerName, value);
+		logger.pass("From Master_UDA Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	
+	@When("^Get the UDA ID for Description As \"(.*)\"$")
+	public void getUDAIDforDescription(String description) throws Exception {
+		sm_uda_table.storeUDAID(description);
+		logger.pass("Stored UDA id from database");
+	}
+	
+	   @Then("^From Master UDA Page, Filter UDA Table content for Column \"(.*)\" With Value \"(.*)\"$")
+	    public void filterTableContent(String columnName, String filterValue) throws Exception {
+		   Thread.sleep(3000);
+	    	apexTable.filterScrollingTableContent(pageName,tableLabel, columnName, filterValue);
+	    	Thread.sleep(1000);
+	    	logger.pass("From Masters UDA Page, Filter UDA Table content for Column "+bold(columnName)+" With Value  "+bold(filterValue));
+	    }
+	   
+	  
+	   @Then("^From Master_UDA Page, For Row \"(.*)\", Validate column \"(.*)\" Value As \"(.*)\"$")	    	
+		   public void validateTableCellValue(int rowNo, String headerName, String value) throws Exception {
+				if(getTempData(value)!=null) {value=getTempData(value);}
+				if (headerName.equalsIgnoreCase("Data Length") & value.equalsIgnoreCase("Free Text")) {
+					apexTable.validateScrollingTableCellValue(pageName, tableLabel, rowNo, headerName, "34");
+				}
+				if (headerName.equalsIgnoreCase("Data Length") & value.equalsIgnoreCase("Date")) {
+					apexTable.validateScrollingTableCellValue(pageName, tableLabel, rowNo, headerName, "10");
+				}
+				logger.pass("From Masters UDA Page, Validated UDA Table content for Column "+bold(headerName)+" With Value  "+bold(value));
+	    }
+}

@@ -1,0 +1,592 @@
+package pages.apex;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+
+import dataProviders.TableHeaderReader;
+import pages.commom.CommonPage;
+import utils.MyList;
+
+public class ApexTable extends CommonPage {
+
+	String tableHeaderXpath = "//th[@role='columnheader' and not(contains(@style,'hidden'))]/span[@class='a-GV-headerLabel']";
+	String tableRowXpath = "//div[@class='a-GV-w-scroll']//tbody/tr";
+
+	public ApexTable(WebDriver driver, String testCaseId) {
+		super(driver, testCaseId);
+	}
+
+	public void validateTableIsEmpty(final String pageName, final String tableLabel) throws Exception {
+		final By noDataLabel = By.xpath(
+				"//div[ not( contains(@style,'display') ) and not( contains(@style,'none')) ]/span[contains(@id,'"
+						+ tableLabel + "') and text()='No data found']");
+		this.waitForPresenceOfElement(pageName, "BlankTableContent", noDataLabel);
+	}
+
+	public void validateTableIsEmptyWithSelectRowMessage(final String pageName, final String tableLabel)
+			throws Exception {
+		final By selectRowMessage = By.xpath(
+				"//div[ not( contains(@style,'display') ) and not( contains(@style,'none')) ]/span[contains(@id,'"
+						+ tableLabel + "') and text()='Select 1 row in the master region']");
+		this.waitForPresenceOfElement(pageName, "BlankTableContent", selectRowMessage);
+	}
+
+	public void verifyTableHeader(String pageName, String keyLabel, String propFileName) throws Exception {
+		String fullTableHeaderFilePath = "Test_Data/TableHeader/" + propFileName;
+		HashMap<String, String> tableHeaderMap = new TableHeaderReader(fullTableHeaderFilePath).map;
+		int expHeaderCount = Integer.parseInt(tableHeaderMap.get("HeaderCount"));
+
+		By tableHeaderLabel = By
+				.xpath("//div[contains(@aria-labelledby,'" + keyLabel + "')]//div[@class='a-GV-w-hdr']//th");
+
+		validateElementCount(pageName, "TableHeaderList", tableHeaderLabel, expHeaderCount);
+
+		for (int currentHeaderNo = 1; currentHeaderNo <= expHeaderCount; currentHeaderNo++) {
+			String currentHeaderName = tableHeaderMap.get(currentHeaderNo + "");
+			if (keyLabel.equalsIgnoreCase("fixture_master")) {
+				currentHeaderNo = currentHeaderNo + 6;
+			}
+			validateTextEquals(pageName, "TableHeader" + currentHeaderNo, tableHeaderLabel, currentHeaderNo, "span",
+					currentHeaderName);
+		}
+	}
+
+	public void validateTableContentAgainstCSV_File(String pageName, String keyLabel, int recordFoundInCSV,
+			List<String> headerListInCSV) throws Exception {
+
+		int headerCountInCSV = headerListInCSV.size();
+		By tableHeaderLabel = By.xpath("//div[contains(@aria-labelledby,'" + keyLabel + "')]" + tableHeaderXpath);
+		// By tableHeaderLabel =
+		// By.xpath("//div[contains(@aria-labelledby,'"+keyLabel+"')]//div[@class='a-GV-w-hdr']//th");
+		// By tableRowLabel =
+		// By.xpath("//span[contains(@id,'"+keyLabel+"')]/span[text()='Page
+		// rows']/../span[2]");
+		if (keyLabel.equalsIgnoreCase("fixture_master")) {
+			headerCountInCSV = headerCountInCSV + 5;
+		}
+		validateElementCount(pageName, "TableHeaderList", tableHeaderLabel, headerCountInCSV);
+		validateTableRowCount(pageName, keyLabel, recordFoundInCSV);
+
+		for (int currentHeaderNo = 1; currentHeaderNo <= headerCountInCSV; currentHeaderNo++) {
+			String currentHeaderName = headerListInCSV.get(currentHeaderNo - 1);
+			if (keyLabel.equalsIgnoreCase("fixture_master")) {
+				int fixturecurrentHeaderNo = currentHeaderNo;
+				validateTextEquals(pageName, "TableHeader" + fixturecurrentHeaderNo + 5, tableHeaderLabel,
+						fixturecurrentHeaderNo + 5, "", currentHeaderName);
+				currentHeaderNo = fixturecurrentHeaderNo + 6;
+			} else {
+				validateTextEquals(pageName, "TableHeader" + currentHeaderNo, tableHeaderLabel, currentHeaderNo, "",
+						currentHeaderName);
+			}
+		}
+	}
+
+	public void validateTableContentAgainstXLSX_File(String pageName, String keyLabel, int recordFoundInCSV,
+			List<String> headerListInXSLX) throws Exception {
+
+		int headerCountInXSLX = headerListInXSLX.size();
+		By tableHeaderLabel = By.xpath("//div[contains(@aria-labelledby,'" + keyLabel + "')]" + tableHeaderXpath);
+		// By tableHeaderLabel =
+		// By.xpath("//div[contains(@aria-labelledby,'"+keyLabel+"')]//div[@class='a-GV-w-hdr']//th");
+		// By tableRowLabel =
+		// By.xpath("//span[contains(@id,'"+keyLabel+"')]/span[text()='Page
+		// rows']/../span[2]");
+		if (keyLabel.equalsIgnoreCase("fixture_master")) {
+			headerCountInXSLX = headerCountInXSLX + 5;
+		}
+		validateElementCount(pageName, "TableHeaderList", tableHeaderLabel, headerCountInXSLX);
+		validateTableRowCount(pageName, keyLabel, recordFoundInCSV);
+
+		for (int currentHeaderNo = 1; currentHeaderNo <= headerCountInXSLX; currentHeaderNo++) {
+			String currentHeaderName = headerListInXSLX.get(currentHeaderNo - 1);
+			if (keyLabel.equalsIgnoreCase("fixture_master")) {
+				int fixturecurrentHeaderNo = currentHeaderNo;
+				validateTextEquals(pageName, "TableHeader" + fixturecurrentHeaderNo + 5, tableHeaderLabel,
+						fixturecurrentHeaderNo + 5, "", currentHeaderName);
+				currentHeaderNo = fixturecurrentHeaderNo + 6;
+			} else {
+				validateTextEquals(pageName, "TableHeader" + currentHeaderNo, tableHeaderLabel, currentHeaderNo, "",
+						currentHeaderName);
+			}
+		}
+	}
+
+	public void filterScrollingTableContent(String pageName, String tableLabel, String columnName, String filterValue)
+			throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		clickOnElementWithText(pageName, columnName, tableHeaderLocator, columnName);
+		if (getTempData(filterValue) != null) {
+			filterValue = getTempData(filterValue);
+		}
+		By searchText = By.xpath("//input[contains(@id,'column_header_search')]");
+		enterText(pageName, columnName + "_SearchText", searchText, filterValue);
+		pressKeywords(pageName, columnName, searchText, Keys.ENTER);
+		Thread.sleep(1000);
+	}
+
+	public void filterFrozenTableContent(String pageName, String tableLabel, String columnName, String filterValue)
+			throws Exception {
+		By tableHeaderLocator = By.xpath("//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[contains(@class,'a-GV-w-frozen')]" + tableHeaderXpath);
+		clickOnElementWithText(pageName, columnName, tableHeaderLocator, columnName);
+
+		By searchText = By.xpath("//input[contains(@id,'column_header_search')]");
+		enterText(pageName, columnName + "_SearchText", searchText, filterValue);
+		pressKeywords(pageName, columnName, searchText, Keys.ENTER);
+		Thread.sleep(2000);
+	}
+
+	public void validateTableContent(String pageName, String keyLabel, int totalRowToValidate,
+			List<Map<String, String>> expectedTableContent) throws Exception {
+		List<Map<String, String>> actualTableContent = new ArrayList<Map<String, String>>();
+
+		String tableLocator = "//div[contains(@aria-labelledby,'" + keyLabel + "')]";
+
+		By tableHeaderLabel = By.xpath("//div[contains(@aria-labelledby,'" + keyLabel + "')]" + tableHeaderXpath);
+		int headerCount = getElementCount(pageName, "RowCount", tableHeaderLabel);
+		Map<Integer, String> headerNumberNameMap = new HashMap<Integer, String>();
+
+		int actualHeaderNo = 1;
+		for (int currentHeaderNo = 1; currentHeaderNo <= headerCount; currentHeaderNo++) {
+			String currentHeaderName = getElementText(tableHeaderLabel, currentHeaderNo, "").toUpperCase();
+			if (currentHeaderName.contains("SORTED ASCENDING")) {
+				continue;
+			}
+			headerNumberNameMap.put(actualHeaderNo, currentHeaderName);
+			actualHeaderNo = actualHeaderNo + 1;
+		}
+		headerCount = actualHeaderNo - 1;
+
+		logger.info("Header Name Considered for comparison :-" + headerNumberNameMap);
+
+		By tableRowLabel = By.xpath("//div[contains(@aria-labelledby,'" + keyLabel + "')]" + tableRowXpath);
+		int rowCount = getElementCount(pageName, "RowCount", tableRowLabel);
+
+		// commenting for now as all pages are not getting loaded now, when page size is
+		// more than 700
+		if (expectedTableContent.size() != rowCount) {
+			throw new Exception("Table Row Count Not Matching with DB Values. Expected [" + expectedTableContent.size()
+					+ "] Actual Found [" + rowCount + "]");
+		} else {
+			System.out.println("Table Row Count Matching with DB Values. Expected [" + expectedTableContent.size()
+					+ "] Actual Found [" + rowCount + "]");
+		}
+
+		if (totalRowToValidate > rowCount)
+			totalRowToValidate = rowCount;
+
+		for (int currentRow = 1; currentRow <= totalRowToValidate; currentRow++) {
+			Map<String, String> columnNameValue = new HashMap<String, String>();
+
+			for (int currentHeaderNo = 1; currentHeaderNo <= headerCount; currentHeaderNo++) {
+				String currentHeaderName = headerNumberNameMap.get(currentHeaderNo);
+				// ignore header with no header name..these are used for normal opration like
+				// single row view , refresh row, revert changes
+				if (currentHeaderName.equals(""))
+					continue;
+
+				String cellValue = getTableCellText(tableLocator, currentRow, currentHeaderNo);
+
+				// to handle Row in PO Receipt Details
+
+				if (cellValue.equals("Manage Details"))
+					continue;
+
+				columnNameValue.put(currentHeaderName, cellValue);
+			}
+			actualTableContent.add(columnNameValue);
+		}
+
+		MyList.validateTableRowsPresentOnUI(expectedTableContent, actualTableContent);
+	}
+
+	public void loadAllContentOfTable(String tableLabel) throws Exception {
+		By lastRowCellLabel = By.xpath("//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table//tr[position()=last()]//td[1]");
+		if (isElementPresent(lastRowCellLabel)) {
+			for (int i = 0; i < 20; i++) {
+				scrollToElement(lastRowCellLabel);
+				Thread.sleep(2000);
+			}
+		}
+
+	}
+
+	public void validateTableRowCount(String pageName, String tableLabel, int expectedRowCount) throws Exception {
+		By tableRowCountLabel = By
+				.xpath("//span[contains(@id,'" + tableLabel + "')]/span[text()='Page rows']/../span[2]");
+		Thread.sleep(2000);
+		validateTextEquals(pageName, tableLabel, tableRowCountLabel, "Total " + expectedRowCount);
+	}
+
+	public void validateMaxTableRowCountinPagination(String pageName, String tableLabel, String expectedRowCount)
+			throws Exception {
+		By tableRowCountLabel = By
+				.xpath("//div[contains(@id,'" + tableLabel + "')]//span[@class='a-IRR-pagination-label']");
+		validateTextContains(pageName, tableLabel, tableRowCountLabel, expectedRowCount);
+	}
+
+	// span[contains(@class,'a-IRR-pagination-label')]
+	public void validateScrollingTableCellValue(String pageName, String tableLabel, int rowNo, String columnName,
+			String expCellValue) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		if (tableLabel.equalsIgnoreCase("fixture_master")) {
+			headerNo = headerNo - 4;
+		}
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		if (getTempData(expCellValue) != null) {
+			expCellValue = getTempData(expCellValue);
+		}
+		validateTextEquals(pageName, tableLabel + "_Row_" + rowNo + "_" + columnName, cell, expCellValue);
+	}
+
+	public void validateScrollingTableEqualColumnCellValue(String pageName, String tableLabel, int rowNo,
+			String columnName, String expCellValue) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		int headerNo = getElementNowithequalColumnName(pageName, "TableHeader_" + columnName, tableHeaderLocator,
+				columnName);
+		if (tableLabel.equalsIgnoreCase("fixture_master")) {
+			headerNo = headerNo - 4;
+		}
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		if (getTempData(expCellValue) != null) {
+			expCellValue = getTempData(expCellValue);
+		}
+		validateTextEquals(pageName, tableLabel + "_Row_" + rowNo + "_" + columnName, cell, expCellValue);
+	}
+
+	public void validateFrozenTableCellValue(String pageName, String tableLabel, int rowNo, String columnName,
+			String expCellValue) throws Exception {
+		By tableHeaderLocator = By.xpath("//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[contains(@class,'a-GV-w-frozen')]" + tableHeaderXpath);
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[contains(@class,'a-GV-w-frozen')]/table";
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		validateTextEquals(pageName, tableLabel + "_Row_" + rowNo + "_" + columnName, cell, expCellValue);
+	}
+
+	public void selectTableRow(String pageName, String tableLabel, int rowNo) throws Exception {
+		By rowSelector = By.xpath("//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[contains(@class,'a-GV-w-frozen')]/table/tbody/tr[" + rowNo + "]/th/span");
+		clickOnElement(pageName, tableLabel + "_Row_" + rowNo + "_Select", rowSelector);
+	}
+
+	public int getTableRow(String pageName, String tableLabel, String columnName, String cellText) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		By tableCellLocator = By.xpath("//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table//tr/td[" + headerNo + "]");
+		return getElementNo(pageName, "TableCell_" + cellText, tableCellLocator, cellText);
+	}
+
+	public void clickOnTableCell(String pageName, String tableLabel, int rowNo, String columnName) throws Exception {
+		By tableHeaderLocator = By.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		clickOnElement(pageName, tableLabel + "_Row_" + rowNo + "_" + columnName, cell);
+	}
+
+	public void clickOnTableCellwithSpan(String pageName, String tableLabel, int rowNo, String columnName)
+			throws Exception {
+		By tableHeaderLocator = By.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]/span");
+		clickOnElement(pageName, tableLabel + "_Row_" + rowNo + "_" + columnName, cell);
+	}
+
+	public void clickOnTableCellWithHyperlink(String pageName, String tableLabel, String hyperLinkText)
+			throws Exception {
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		By cell = By.xpath(tableLocator + "//a[text()='" + hyperLinkText + "']");
+		clickOnElement(pageName, tableLabel + "_HypeLink_" + hyperLinkText, cell);
+	}
+
+	public void clickOnTableCellLinkWithColumnValue(String pageName, String tableLabel, String columnName,
+			String columnValue) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		By cell = By.xpath(
+				tableLocator + "/tbody/tr/td[contains(.,'" + columnValue + "') and position()='" + headerNo + "']//a");
+		clickOnElement(pageName, tableLabel + "_Table_" + columnValue, cell);
+	}
+
+	public void clickOnTableCellWithColumnValue(String pageName, String tableLabel, String columnName,
+			String columnValue) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		By cell = By.xpath(
+				tableLocator + "/tbody/tr/td[contains(.,'" + columnValue + "') and position()='" + headerNo + "']");
+		clickOnElement(pageName, tableLabel + "_Table_" + columnValue, cell);
+	}
+
+	public void enterCellText(String pageName, String tableLabel, int rowNo, String columnName, String text)
+			throws Exception {
+		if (getTempData(text) != null) {
+			text = getTempData(text);
+		}
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		By cellTxt = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]//input");
+
+		clickOnElement(pageName, columnName + "_Cell", cell);
+		enterText(pageName, columnName + "_CellText", cellTxt, text);
+	}
+
+	public void enterCellTextinFrozenTable(String pageName, String tableLabel, int rowNo, String columnName,
+			String text) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		By cellTxt = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]//input");
+
+		doubleClickOnElement(pageName, columnName + "_Cell", cell);
+		enterText(pageName, columnName + "_CellText", cellTxt, text);
+	}
+
+	public void clearAndTypeCellText(String pageName, String tableLabel, int rowNo, String columnName, String text)
+			throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		String fixture_master = null;
+		if (columnName.equalsIgnoreCase("OWidth") || columnName.equalsIgnoreCase("OHeight")
+				|| columnName.equalsIgnoreCase("ODepth")) {
+			fixture_master = columnName;
+			columnName = columnName.substring(1);
+		}
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		if (fixture_master != null) {
+			headerNo = headerNo + 3;
+		} // To handle Fixture Table in Master Module
+		if (tableLabel.equalsIgnoreCase("fixture_master")) {
+			headerNo = headerNo - 4;
+		}
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		By cellTxt = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]//input");
+
+		clickOnElement(pageName, columnName + "_Cell", cell);
+		clearText(pageName, columnName + "_CellText", cellTxt);
+
+		clickOnElement(pageName, columnName + "_Cell", cell);
+		enterText(pageName, columnName + "_CellText", cellTxt, text);
+	}
+
+	public void clearAndTypeCellTextAfterDoubleClick(String pageName, String tableLabel, int rowNo, String columnName,
+			String text) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		String fixture_master = null;
+		if (columnName.equalsIgnoreCase("OWidth") || columnName.equalsIgnoreCase("OHeight")
+				|| columnName.equalsIgnoreCase("ODepth")) {
+			fixture_master = columnName;
+			columnName = columnName.substring(1);
+		}
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		if (fixture_master != null) {
+			headerNo = headerNo + 3;
+		} // To handle Fixture Table in Master Module
+		if (tableLabel.equalsIgnoreCase("fixture_master")) {
+			headerNo = headerNo - 4;
+		}
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		By cellTxt = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]//input");
+
+		clickOnElement(pageName, columnName + "_Cell", cell);
+		doubleClickOnElement(pageName, columnName + "_Cell", cell);
+		Thread.sleep(1000);
+		clearText(pageName, columnName + "_CellText", cellTxt);
+		clickOnElement(pageName, columnName + "_Cell", cell);
+		Thread.sleep(1000);
+		enterText(pageName, columnName + "_CellText", cellTxt, text);
+		// pressKeywords(pageName, columnName+"_Cell", cell, Keys.TAB);
+	}
+
+	public void enterCellTextDescription(String pageName, String tableLabel, int rowNo, String columnName, String text)
+			throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		// To handle Fixture Table in Master Module
+
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		String fixture_master = null;
+		if (columnName == "OWidth" || columnName == "OHeight" || columnName == "ODepth") {
+			fixture_master = columnName;
+			columnName = columnName.substring(1);
+		}
+		if (fixture_master != null) {
+			headerNo = headerNo + 3;
+		} // To handle Fixture Table in Master Module
+		if (tableLabel.equalsIgnoreCase("fixture_master")) {
+			headerNo = headerNo - 4;
+		}
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		By cellTxt = By.xpath("//textarea");
+
+		clickOnElement(pageName, columnName + "_Cell", cell);
+		enterText(pageName, columnName + "_CellText", cellTxt, text);
+	}
+
+	public void selectCellDropDownValue(String pageName, String tableLabel, int rowNo, String columnName, String text)
+			throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		if (getTempData(text) != null) {
+			text = getTempData(text);
+		}
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		if (tableLabel.equalsIgnoreCase("fixture_master")) {
+			headerNo = headerNo - 4;
+		}
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		By cellDD = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]//select");
+
+		clickOnElement(pageName, columnName + "_Cell", cell);
+		selectElementByVisibleText(pageName, columnName + "_CellDD", cellDD, text);
+	}
+
+	public void selectCellDropDownValueAfterdoubleClick(String pageName, String tableLabel, int rowNo,
+			String columnName, String text) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+		if (getTempData(text) != null) {
+			text = getTempData(text);
+		}
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+		if (tableLabel.equalsIgnoreCase("fixture_master")) {
+			headerNo = headerNo - 4;
+		}
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		By cellDD = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]//select");
+
+		doubleClickOnElement(pageName, columnName + "_Cell", cell);
+
+		selectElementByVisibleText(pageName, columnName + "_CellDD", cellDD, text);
+	}
+
+	public void selectCellYesNoValue(String pageName, String tableLabel, int rowNo, String columnName,
+			String yesNoValue) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]");
+		By cellYN = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]//span[contains(@class,'"
+				+ yesNoValue.toLowerCase() + "')]/label");
+
+		clickOnElement(pageName, columnName + "_Cell", cell);
+		clickOnElement(pageName, columnName + "_Cell_YN", cellYN);
+	}
+
+	public void pressTabKeyword(String pageName, String tableLabel, int rowNo, String columnName) throws Exception {
+		By tableHeaderLocator = By
+				.xpath("//div[contains(@aria-labelledby,'" + tableLabel + "')]//div[@class='a-GV-w-hdr']/table//th");
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-scroll']/table";
+
+		int headerNo = getElementNo(pageName, "TableHeader_" + columnName, tableHeaderLocator, columnName);
+
+		// By cell = By.xpath(tableLocator+"//tr["+rowNo+"]/td["+headerNo+"]");
+		By cellTxt = By.xpath(tableLocator + "//tr[" + rowNo + "]/td[" + headerNo + "]//input");
+		pressKeywords(pageName, columnName + "_Cell", cellTxt, Keys.TAB);
+	}
+
+	public void clickOnTableCellRowActions(String pageName, String tableLabel, int rowNo) throws Exception {
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-frozen']/table";
+		By cell = By.xpath(tableLocator + "//tr[" + rowNo + "]/td");
+		clickOnElement(pageName, tableLabel + "_Row_" + rowNo, cell);
+	}
+
+	public void deleteTableRow(String pageName, String tableLabel, int rowNo) throws Exception {
+		if (getTempData(tableLabel) != null) {
+			tableLabel = getTempData(tableLabel);
+		}
+		clickOnTableCellRowActions(pageName, tableLabel, rowNo);
+		By deleteButton = By.xpath("//button[text()='Delete Row']");
+		clickOnElementThenWait(pageName, "Delete_Button", deleteButton, 1);
+		By saveButton = By.xpath("//button[span[text()='Save'] and not(contains(@style,'display: none;'))]");
+		clickOnElementThenWait(pageName, "Save_Button", saveButton, 2);
+	}
+
+	public void refreshTableRow(String pageName, String tableLabel, int rowNo) throws Exception {
+		if (getTempData(tableLabel) != null) {
+			tableLabel = getTempData(tableLabel);
+		}
+		clickOnTableCellRowActions(pageName, tableLabel, rowNo);
+		By refreshButton = By.xpath("//button[text()='Refresh Row']");
+		clickOnElementThenWait(pageName, "Refresh_Button", refreshButton, 1);
+		By saveButton = By.xpath("//button[span[text()='Save'] and not(contains(@style,'display: none;'))]");
+		clickOnElementThenWait(pageName, "Save_Button", saveButton, 2);
+	}
+
+	public void addTableRow(String pageName, String tableLabel, int rowNo) throws Exception {
+		clickOnTableCellRowActions(pageName, tableLabel, rowNo);
+		By addRowButton = By.xpath("//button[text()='Add Row']");
+		clickOnElementThenWait(pageName, "Add_Button", addRowButton, 1);
+	}
+
+	public void addTableRowHavingSpan(String pageName, String tableLabel, int rowNo) throws Exception {
+		// clickOnTableCellRowActions(pageName, tableLabel, rowNo);
+		By addRowButton = By
+				.xpath("//div[contains(@id,'" + tableLabel + "')]//span[text()='Add Row']//ancestor::button");
+		clickOnElementThenWait(pageName, "Add_Button", addRowButton, 1);
+	}
+
+	public void clickOnTableCheckBox(String pageName, String tableLabel, int rowNo) throws Exception {
+		String tableLocator = "//div[contains(@aria-labelledby,'" + tableLabel
+				+ "')]//div[@class='a-GV-w-frozen']/table";
+		By cell = By.xpath(tableLocator + "//tr[@data-rownum=" + rowNo + "]//th");
+		clickOnElement(pageName, tableLabel + "_Row_" + rowNo, cell);
+
+	}
+}

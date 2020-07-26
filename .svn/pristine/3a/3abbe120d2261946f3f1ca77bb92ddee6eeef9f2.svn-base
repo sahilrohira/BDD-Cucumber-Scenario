@@ -1,0 +1,32 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+public class SM_FLOOR_PLAN_Table extends CommonDB {
+
+	public SM_FLOOR_PLAN_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "SM_FLOOR_PLAN";
+
+	public int getFloorPlanCount() throws Exception {
+		String floorplan_Count_SQL = "select * from sm_floor_plan sfp left outer join sm_floor_layout_dwg sfld on (sfp.bu_id=sfld.bu_id and sfp.fp_version=sfld.fp_version and sfp.store=sfld.store) where sfp.bu_id='"+ AppData.buId+"' order by sfp.store";
+		int floorplan_Count = getRowCount(floorplan_Count_SQL);
+		return floorplan_Count;
+	}
+	
+	public void storeCatName(String catcode) throws Exception {
+		String cat_Code=getTempData(catcode);
+		String catName_ID_SQL = "Select Category_Name from " +tableName+" where bu_id='"+ AppData.buId+"' and CATEGORY_CODE='"+ cat_Code+ "'";
+		storeColumnNameAndValue(catName_ID_SQL);
+	}
+	
+	public String getPOGCatCodeandCatName() throws Exception {
+		String category_SQL = "Select (CATEGORY_CODE||' - '||CATEGORY_NAME) as CATEGORY from  " + tableName + " where bu_id='" + AppData.buId + "' fetch next 1 rows only";
+		storeColumnNameAndValue(category_SQL);
+		return getTempData("CATEGORY");
+	}
+}

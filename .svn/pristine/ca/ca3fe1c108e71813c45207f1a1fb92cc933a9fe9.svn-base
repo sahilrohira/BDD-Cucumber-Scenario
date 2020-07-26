@@ -1,0 +1,15 @@
+#HeaderNo     # Heade Name
+1	=	Item
+2	=	Line No
+3	=	Supplier Item
+4	=	Line Status
+5	=	Order Qty
+6	=	Unit Cost
+7	=	Order Value
+8	=	Received Qty
+9	=	Received Value
+10	=	Variance Qty
+11	=	Last Received Date
+12	=	Updated Datetime
+
+HeaderCount = 12

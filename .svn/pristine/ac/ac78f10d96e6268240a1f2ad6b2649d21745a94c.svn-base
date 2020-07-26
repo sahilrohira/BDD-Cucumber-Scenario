@@ -1,0 +1,89 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_FIXTURELABEL_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import pages.apex.ApexButton;
+import pages.apex.ApexDropDown;
+import pages.apex.ApexItemOption;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class Masters_FixtureLabelPageSteps extends SuperStepdefs {
+
+	private String pageName = "Masters_FixtureLabel";
+	private String tableLabel = "fixture_label";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_FIXTURELABEL_Table sm_fixturelabel_table;
+	private ApexDropDown apexDropDown;
+	private ApexTextField apexTextField;
+	private ApexItemOption apexItemOption;
+
+	public Masters_FixtureLabelPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_fixturelabel_table=new SM_FIXTURELABEL_Table(con, testCaseId);
+		apexDropDown=new ApexDropDown(driver, testCaseId);
+		apexTextField=new ApexTextField(driver, testCaseId);
+		apexItemOption=new ApexItemOption(driver, testCaseId);
+	}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Master_FixtureLabel Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+
+	@When("^From Master_FixtureLabel Page, Validate Record Count from Database")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount= sm_fixturelabel_table.getFixtureLabelCount();
+		apexTable.validateTableRowCount(pageName,tableLabel,expectedRowCount);
+		logger.pass("From Masters Fixture Label Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+
+	@Then("^From Master_FixtureLabel Page, Add POG fixture Label as \"(.*)\" with Pog Ind as \"(.*)\", Prom Ind as \"(.*)\",Util Ind as \"(.*)\" and Meter Ind as \"(.*)\"$")
+	public void createPOGFixtureLabel(String fixtureLabel, String pogInd,String promInd,String utiInd,String metInd) throws Exception {
+		sm_fixturelabel_table.removeExistingFixtureLabel();
+		
+		apexDropDown.selectDropDownValue(pageName, "LABEL_TYPE", "POG");
+		apexDropDown.selectDropDownValue(pageName, "FIXTURE_LABEL", fixtureLabel);
+		apexItemOption.select_y_n_Value(pageName,"POG_IND", pogInd);
+		apexItemOption.select_y_n_Value(pageName,"PROM_IND", promInd);
+		apexItemOption.select_y_n_Value(pageName,"UTILIZATION_IND", utiInd);
+		apexItemOption.select_y_n_Value(pageName,"METERAGE_IND", metInd);
+		apextButton.clickOnButton(pageName, "Create");
+		logger.pass("Add new POG Label ");
+	}
+	
+	@Then("^From Master_FixtureLabel Page, For Row \"(.*)\", Validate value For Column \"(.*)\" As \"(.*)\"$")
+	public void validateColumnValue(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_FixtureLabel Page, Successfully Validated For Row "+bold(rowNo)+", Value For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master_FixtureLabel Page, Add Fixture with Label as \"(.*)\",Excl Ind as \"(.*)\", Description as \"(.*)\" Pog Ind as \"(.*)\", Prom Ind as \"(.*)\",BO Ind as \"(.*)\",Merch Ind as \"(.*)\",Portal Ind as \"(.*)\" and Price Ind as \"(.*)\"$")
+	public void createFixtureLabel(String fixLable,String excludeInd,String description, String pogInd,String promInd,String boInd,String merchInd,String portalInd,String pricetagInd) throws Exception {
+		apexDropDown.selectDropDownValue(pageName, "LABEL_TYPE", "Fixture");
+		apexItemOption.select_y_n_Value(pageName,"EXCLUDE_IND", excludeInd);
+		apexTextField.enterText(pageName, "FIXTURE_LABEL", fixLable);
+		apexTextField.enterText(pageName, "DESCRIPTION", description);
+		apexItemOption.select_y_n_Value(pageName,"POG_IND", pogInd);
+		apexItemOption.select_y_n_Value(pageName,"PROM_IND", promInd);
+		apexItemOption.select_y_n_Value(pageName,"BO_IND", boInd);
+		apexItemOption.select_y_n_Value(pageName,"MERCH_IND", merchInd);
+		apexItemOption.select_y_n_Value(pageName,"PORTAL_IND", portalInd);
+		apexItemOption.select_y_n_Value(pageName,"PRICE_TAG_IND", pricetagInd);
+		apextButton.clickOnButton(pageName, "Create");
+		logger.pass("Added new Fixture Label");
+	}
+}

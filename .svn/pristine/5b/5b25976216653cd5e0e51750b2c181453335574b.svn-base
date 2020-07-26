@@ -1,0 +1,150 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_STORE_Table;
+import pages.Master.MasterStore;
+import pages.apex.ApexButton;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class Masters_StorePageSteps extends SuperStepdefs {
+
+	private String pageName = "Masters_Store";
+	private String tableLabel = "store_master";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_STORE_Table sm_store_table;
+	private ApexTextField apexTextField;
+	private MasterStore mstore;
+	
+
+	public Masters_StorePageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_store_table=new SM_STORE_Table(con, testCaseId);
+		apexTextField=new ApexTextField(driver, testCaseId);
+		mstore=new MasterStore(driver, testCaseId);
+		}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Master_Store Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+
+	@When("^From Master_Store Page, Validate Record Count from Database")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount= sm_store_table.getStoreCount();
+		apexTable.validateTableRowCount(pageName,tableLabel,expectedRowCount);
+		logger.pass("From Masters Store Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+
+	@When("^From Master_Store Page, Search for the Store with Floor Plan PDF from database")
+	public void searchStorewithFloorPlanPDF() throws Exception {
+		sm_store_table.storeStoreNameAndNumWithPdf();
+		String storenumber=getTempData("STORE");
+		apexTable.filterScrollingTableContent(pageName,tableLabel, "Store", "STORE");
+		logger.pass("From Masters Store Page, Store "+bold(storenumber)+" is selected");
+	}
+	
+	@Then("^Validate the Floor Plan PDF Count from database for store \"(.*)\"$")
+	public void validateStoredetailfromDB(String store) throws Exception {
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		String expectedRowCount=sm_store_table.getStorePDFCount(store);
+		apexTable.validateTableRowCount(pageName,"floor_plan_pdf",Integer.parseInt(expectedRowCount));
+		logger.pass("From Masters Store Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+	
+	@Then("^Validate all Store Master details from database for selected Store \"(.*)\"$")
+	public void validateStoreMasterdetailfromDB(String store) throws Exception {
+		sm_store_table.fetchStoreDetails();
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE", store);;
+		apexTextField.enterTexwithIDEquals(pageName, "P18_STORE", store);
+		apextButton.clickOnButton(pageName, "Search Store");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_NAME", "STORE_NAME");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_NAME10", "SHORT_NAME");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_NAME3", "ABBR");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_ADD1", "ADDRESS1");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_ADD2", "ADDRESS2");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_CITY", "CITY");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_DISTRICT", "DISTRICT");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STATE", "STATE");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_COUNTRY_ID", "COUNTRY");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_PHONE_NUMBER", "PHONE_NUMBER");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_CLASS", "STORE_CLASS");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_OPEN_DATE", "OPEN_DATE");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_CLOSE_DATE", "CLOSE_DATE");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_EMAIL", "EMAIL");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_TOTAL_SQUARE_FT", "TOTAL_SQUARE_FT");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_SELLING_SQUARE_FT", "SELLING_SQUARE_FT");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P18_STORE_FORMAT", "STORE_FORMAT");
+		logger.pass("Floor Plan PDF Count matched from DB value ");
+	}
+	
+	@Then("^Validate UDA Details Tab for Store \"(.*)\"$")
+	public void validateUDADetailsfromDB(String store) throws Exception {
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		String Attribute_Count=sm_store_table.getSpaceUDAAttributesCount(store);
+		if (Attribute_Count.equals("0")) {apexTable.validateTableIsEmpty(pageName,tableLabel);	}
+		else{ 
+			mstore.validatePaginationCount("Space UDA Count","//div[contains(@class,'col col-6')][2]//span[@class='a-IRR-pagination-label']",Attribute_Count);
+		}
+		String SysAttribute_Count=sm_store_table.getSystemUDAAttributesCount(store);
+		if (SysAttribute_Count.equals("0")) {apexTable.validateTableIsEmpty(pageName,"store_uda_left");	}
+		else {
+		mstore.validatePaginationCount("System UDA Count","//div[contains(@class,'col col-6')][2]//span[@class='a-IRR-pagination-label']",SysAttribute_Count);}
+	}
+	
+	@Then("^Validate Fixture Count for Store \"(.*)\"$")
+	public void validateFixtureCountfromDB(String store) throws Exception {
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		int fixture_count=sm_store_table.getFixtureCount(store);
+		apexTable.validateTableRowCount(pageName,"store_fixture",fixture_count);
+	}
+	
+	@Then("^Validate Product Count for Store \"(.*)\"$")
+	public void validateProductCountfromDB(String store) throws Exception {
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		int product_count=sm_store_table.getProductCount(store);
+		apexTable.validateTableRowCount(pageName,"product_store",product_count);
+	}
+	 
+	@Then("^Validate Floor Plan Count for Store \"(.*)\"$")
+	public void validateFloorPlanCountfromDB(String store) throws Exception {
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		int floorPlan_count=sm_store_table.getFloorPlanCount(store);
+		apexTable.validateTableRowCount(pageName,"FLOOR_PLAN",floorPlan_count);
+	}
+	
+	@Then("^From Master_Store Page, Validate Closed Store is not Listed")
+	public void searchClosedStore() throws Exception {
+		sm_store_table.storeClosedStore();
+		apexTable.filterScrollingTableContent(pageName, "store_master", "Store", "CLOSED_STORE");
+		apexTable.validateTableIsEmpty(pageName,tableLabel);
+		logger.pass("Closed Store "+bold(getTempData("CLOSED_STORE"))+" is not found");
+	}
+	
+	@Then("Uncheck the checkbox for Closed Store")
+	public void uncheckClosedStorechkbox() throws Exception {
+		apexTextField.clickTextField(pageName, "EXCLUDE_STORE");
+		Thread.sleep(4000);
+		logger.pass("Uncheck the Checkbox to include Excluded Store");
+	}
+	
+	@Then("^From Master_Store Page, Validate Closed Store is now Listed")
+	public void searchClosedStoreVisible() throws Exception {
+		apexTable.filterScrollingTableContent(pageName, "store_master", "Store", "CLOSED_STORE");
+		apexTable.validateTableRowCount(pageName,tableLabel,1);
+		logger.pass("Closed Store "+bold(getTempData("CLOSED_STORE"))+" is listed now");
+	}
+	
+}

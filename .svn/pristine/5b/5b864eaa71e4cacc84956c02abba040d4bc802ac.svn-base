@@ -1,0 +1,276 @@
+package stepdefs.POGManagement;
+
+import java.io.File;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_SMART_TEMPLATE_Table;
+import pages.apex.ApexTable;
+import pages.POGManagement.SMART_Template;
+import pages.apex.ApexButton;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+import utils.AppDateUtil;
+import utils.ExcelUtil;
+
+public class POGM_SMARTTemplatePageSteps extends SuperStepdefs {
+
+	private String pageName = "POG Details";
+	private CommonPageSteps commonPageSteps;
+	private String tableLabel = "store_search";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_SMART_TEMPLATE_Table smart_template_table;
+	private SMART_Template smartTemp;
+
+	public POGM_SMARTTemplatePageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		smart_template_table=new SM_SMART_TEMPLATE_Table(con, testCaseId);
+		smartTemp=new SMART_Template(driver, pageName);
+	}
+
+	@When("^From POG Details Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@Then("^From POG Detail Page, Filter Table content for Column \"([^\"]*)\" ascending With Value \"([^\"]*)\"$")
+	public void from_POG_Detail_Page_Filter_Table_content_for_Column_With_AscValue(String columnName, String filterValue) throws Throwable {
+		Thread.sleep(2000);
+		//smart_template_table.getStorewithPlannedFP();
+		apexTable.filterScrollingTableContent(pageName,tableLabel, "Store", filterValue);
+		Thread.sleep(1000);
+		apexTable.clickOnTableCell(pageName, "store_search_ig_grid", 1, "");
+		logger.pass("From POG details Page, Filter Table content for Column "+bold(columnName)+" With Value  "+bold(getTempData(filterValue)));
+	}
+	
+	@Then("^From POG Detail Page, Filter Table content for Column \"([^\"]*)\" With Value \"([^\"]*)\"$")
+	public void from_POG_Detail_Page_Filter_Table_content_for_Column_With_Value(String columnName, String filterValue) throws Throwable {
+		Thread.sleep(2000);
+		//smart_template_table.getStorewithPlannedFP();
+		apexTable.filterScrollingTableContent(pageName,"search_pog_details", columnName, filterValue);
+		apexTable.clickOnTableCell(pageName, "search_pog_details", 1, "");
+		logger.pass("From POG details Page, Filter Table content for Column "+bold(columnName)+" With Value "+bold(getTempData(filterValue)));
+	}
+	
+	@Then("^Add Store with Filter Location \"(.*)\", AsofDate \"(.*)\" and FixtureLabel \"(.*)\"$")
+	public void addstorewithFilter(String location,String asofDate, String fixtureLabel) throws Throwable {
+		Thread.sleep(6000);
+		//smart_template_table.getStorewithPlannedFP();
+		if(asofDate.toLowerCase().contains("vdate")) 
+		{String varindays=asofDate.substring(5);
+		asofDate=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		//String location=smart_template_table.getEmptyLocforStore(getTempData("STOREPFP"));
+		commonPageSteps.enterTextFieldValue("P110_AS_OF_DATE", asofDate);
+		commonPageSteps.enterTextFieldValue("P110_LOC_ID", getTempData(location));
+		commonPageSteps.enterTextFieldValue("P110_FIXTURE_LABEL", fixtureLabel);
+		commonPageSteps.clickOnButton("Add");
+		logger.pass("From POG details Page, Filtered Table content for asofDate "+bold(asofDate)+", location "+bold(getTempData(location))+" fixtureLable as "+bold(fixtureLabel));
+	}
+
+
+	@Then("^Update the Template with vdate as \"(.*)\", FixLabel \"(.*)\",POG Code \"(.*)\", Version \"(.*)\", Module \"(.*)\",Meterage \"(.*)\",InsideDisp \"(.*)\",OutsideDisp \"(.*)\" against Store \"(.*)\" and LocID \"(.*)\"$")
+	public void updateSMARTTemplatewithparameters(String asofDate, String fixtureLabel,String pogCode,String pogVer,String mod,String meterage,String inDis,String outDis,String store,String locID) throws Throwable {
+		if(getTempData(fixtureLabel)!=null) {fixtureLabel=getTempData(fixtureLabel);}
+		if(getTempData(pogCode)!=null) {pogCode=getTempData(pogCode);}
+		if(getTempData(pogVer)!=null) {pogVer=getTempData(pogVer);}
+		if(getTempData(mod)!=null) {mod=getTempData(mod);}
+		if(getTempData(meterage)!=null) {meterage=getTempData(meterage);}
+		if(getTempData(inDis)!=null) {inDis=getTempData(inDis);}
+		if(getTempData(outDis)!=null) {outDis=getTempData(outDis);}
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		if(getTempData(locID)!=null) {locID=getTempData(locID);}
+		
+		if(asofDate.toLowerCase().contains("vdate")) 
+		{String varindays=asofDate.substring(5);
+		asofDate=AppDateUtil.getAppdateinPOGVersionFormat(Integer.parseInt(varindays));}
+		String fileName=AppData.buId+"_"+asofDate;
+		fileName=System.getProperty("user.dir") + File.separator +"Test_Reports"+File.separator +testCaseId+File.separator +"Download"+File.separator+fileName;
+		if (new File(fileName+".xlsx").exists()) {
+			smartTemp.updateSMARTTemplate(fileName, fixtureLabel, pogCode, pogVer, mod, meterage, inDis, outDis, store, locID);}
+		else {
+			Thread.sleep(5000);
+			smartTemp.updateSMARTTemplate(fileName, fixtureLabel, pogCode, pogVer, mod, meterage, inDis, outDis, store, locID);
+		}
+		logger.pass("Updated SMART Template with pog code as"+bold(pogCode)+" pog version as "+bold(pogVer)+" pog module as "+bold(mod)+" Meterage as "+bold(meterage)+" Inside Display as "+bold(inDis)
+		+" Ouside display as "+bold(outDis)+" against locatiin id "+bold(locID)+" for store "+bold(store));
+	}
+
+	@Then("^Validate that single record is extracted$")
+	public void validaterecordcount() throws Throwable {
+		apexTable.validateTableRowCount(pageName, "search_pog", 1);
+		logger.pass("Valiodate that single record is extracted.");
+	}
+	
+	@Then("^Validate the extracted record count at location \"(.*)\" for store \"(.*)\"$")
+	public void validaterecordcountatloc(String location_id,String store) throws Throwable {
+		if(getTempData(location_id)!=null) {location_id=getTempData(location_id);}
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		String expectRowCount=smart_template_table.getRecordCountInStoreOnLocForTaggedPOG(location_id,store);
+		apexTable.validateTableRowCount(pageName, "search_pog", Integer.parseInt(expectRowCount));
+		logger.pass("Validated record count from DB");
+	}
+	
+	@Then("^Validate Parent Record Count at POG Detail Level 1 at location \"(.*)\" for store \"(.*)\"$")
+	public void validaterecordcountatlocinPOGLevel1(String location_id,String store) throws NumberFormatException, Exception  {
+		if(getTempData(location_id)!=null) {location_id=getTempData(location_id);}
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		String expectRowCount=smart_template_table.getRecordCountInStoreOnLocForTaggedPOGinPOGLevel1(location_id,store);
+		apexTable.validateTableRowCount(pageName, "R21286154225791946_ig_grid_vc_pageRange", Integer.parseInt(expectRowCount));
+		logger.pass("Validated record count from DB for Parent Table in POG Detail Level 1");
+	}
+	
+	@Then("^From POG Details Level 1 Click on Parent Module \"(.*)\"$")
+	public void selectParentPOGModule(String moduleName) throws Throwable {
+		if(getTempData(moduleName)!=null) {moduleName=getTempData(moduleName);}
+		apexTable.clickOnTableCellWithColumnValue(pageName, "ig_summary", "POG Module",moduleName);
+		logger.pass("Parent Module is selected");
+	}
+	
+	@Then("^Validate Child POG Details record count for Parent module \"(.*)\" at location \"(.*)\" for store \"(.*)\"$")
+	public void validatechildRecordCountforParentModule(String parentmoduleName, String location, String store) throws Throwable {
+		if(getTempData(parentmoduleName)!=null) {parentmoduleName=getTempData(parentmoduleName);}
+		if(getTempData(location)!=null) {location=getTempData(location);}
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		String expectRowCount=smart_template_table.getChildRecordCountInStoreOnLocForParentPOGModuleinPOGLevel1(parentmoduleName,location,store);
+		apexTable.validateTableRowCount(pageName, "R21401684348973724_ig_grid_vc_pageRange", Integer.parseInt(expectRowCount));
+		logger.pass("Child Record count is validated against module "+ bold(parentmoduleName));
+	}
+	
+	
+	@Then("^Validate that no record is extracted in SMART Template with vdate as \"(.*)\"$")
+	public void validateEmptySmartTemplate(String templateDate) throws Throwable {
+		if(templateDate.toLowerCase().contains("vdate")) 
+		{String varindays=templateDate.substring(5);
+		templateDate=AppDateUtil.getAppdateinPOGVersionFormat(Integer.parseInt(varindays));}
+		String fileName=AppData.buId+"_"+templateDate;
+		int recordFoundInXSLX = ExcelUtil.getRowCountFromExcel("Test_Reports/"+testCaseId+"/Download/"+fileName,"");
+		if (recordFoundInXSLX!=1) {
+			logger.fail("Record is extracted in SMART Teamplate");
+			throw new Exception("Record is extracted in SMART Teamplate" +"  Expected [Record should not extractd in SMART Template]");}
+		else {
+			logger.pass("Valiodate that single record is extracted in SMART Template");
+		}
+	}
+	
+	@Then("^Extract the Promotion POG details$")
+	public void ExtractPromotionPOG() throws Throwable {
+		smart_template_table.getLocForPromotionPOGInStore();
+		logger.pass("Extracted Promotion POG "+bold(getTempData("PROM_LOCID")) +" from database for store "+bold(getTempData("PROM_STORE")));
+	}
+
+	@Then("^Extract the Child Dummy POG details$")
+	public void ExtractChildDummyPOG() throws Throwable {
+		smart_template_table.getLocForChildDummyPOGInStore();
+		logger.pass("Extracted Child Dummy POG "+bold(getTempData("CHILD_DUMMY_LOCID")) +" from database for store "+bold(getTempData("CHILD_DUMMY_STORE")));
+	}
+	
+	@Then("^Extract the Child Promotion POG details$")
+	public void ExtractChildPromotionPOG() throws Throwable {
+		smart_template_table.getLocForChildPromotionPOGInStore();
+		logger.pass("Extracted Child Promotion POG "+bold(getTempData("CHILD_PROM_LOCID")) +" from database for store "+bold(getTempData("CHILD_PROM_STORE")));
+	}
+
+	@Then("^Extract the Empty Child Space POG details$")
+	public void ExtractEmptyChildSpacePOG() throws Throwable {
+		smart_template_table.getLocForEmptyChildSpacePOGInStore();
+		logger.pass("Extracted Promotion POG "+bold(getTempData("CHILD_PROM_LOCID")) +" from database for store "+bold(getTempData("CHILD_PROM_STORE")));
+	}
+	
+	@Then("^Extract empty location for a single floor plan store$")
+	public void extractEmptyLocforSingleFPStore() throws Throwable {
+		smart_template_table.getEmptyLocforStoreWithSingleFP();
+		logger.pass("Empty Location "+bold(getTempData("SFP_EMPTY_LOC")+ "for Store"+bold(getTempData("SFP_STORE")+" is extracted from Space DB")));
+	}
+	
+	@Then("^Extract the POG with ChildSpace$")
+	public void extractPOGwithChildspace() throws Throwable {
+		smart_template_table.getPOGwithChildSpace();
+		logger.pass("POG "+bold(getTempData("POGID_CS")+ "with Child Module"+bold(getTempData("POGMOD_CS")+" is extracted from Space DB")));
+	}
+	
+	@Then("^Extract the POG with multiple ChildSpace$")
+	public void extractPOGwithMultipleChildspace() throws Throwable {
+		smart_template_table.getPOGwithMultipleChildSpace();
+		logger.pass("POG "+bold(getTempData("POGID_MCS")+ " with Child Module1"+bold(getTempData("CPOG_MOD1")+" and Child Module"+bold(getTempData("CPOG_MOD2"))+" is extracted from Space DB")));
+	}
+	
+	@Then("^Extract the POG with ChildSpace for Promotion Tagging$")
+	public void extractPOGwithChildspaceforPromTagging() throws Throwable {
+		smart_template_table.getPOGwithChildSpaceforPromTag();
+		logger.pass("POG "+bold(getTempData("POGID_PCS")+ "with Child Module"+bold(getTempData("POGMOD_PCS")+" is extracted from Space DB")));
+	}
+	
+	@Then("^Extract the POG with ChildSpace for Promotion Tagging for store \"(.*)\"$")
+	public void extractPOGwithChildspaceforPromTaggingInStore(String store) throws Throwable {
+		smart_template_table.getPOGwithChildSpaceforPromTag();
+		logger.pass("POG "+bold(getTempData("POGID_PCS")+ "with Child Module"+bold(getTempData("POGMOD_PCS")+" is extracted from Space DB")));
+	}
+	
+	@Then("Extract the POG2 with ChildSpace for Promotion Tagging except POG \"(.*)\" and Version \"(.*)\"$")
+	public void extractPOGwithChildspaceforPromTaggingexceptPOG(String pogCode,String pogVer) throws Throwable {
+		smart_template_table.getPOGwithChildSpaceforPromTagexceptPOG(pogCode,pogVer);
+		logger.pass("POG "+bold(getTempData("POGID2_PCS")+ "with Child Module"+bold(getTempData("POGMOD2_PCS")+" is extracted from Space DB")));
+	}
+	
+	
+	@Then("^Extract POG with single module$")
+	public void extractPOGwithSingleMod() throws Throwable {
+		smart_template_table.getPOGwithSingleMod();
+		logger.pass("POG "+bold(getTempData("POG_SM")+ "with Single Module"+bold(getTempData("POGV_SM")+" is extracted from Space DB")));
+	}
+	
+	@Then("^Extract POG with single module with POG Region as Store area \"(.*)\" or null$")
+	public void extractPOGwithSingleModWithStoreArea(String storeArea) throws Throwable {
+		if(getTempData(storeArea)!=null) {storeArea=getTempData(storeArea);}
+		smart_template_table.getPOGwithSingleModforStoreArea(storeArea);
+		logger.pass("POG "+bold(getTempData("POG_SM")+ "with Single Module"+bold(getTempData("POGV_SM")+" is extracted from Space DB for POG Region as ")));
+	}
+	
+	@Then("^Extract POG with single module with POG Region not equal to Store area \"(.*)\"$")
+	public void extractPOGwithSingleModWithoutStoreArea(String storeArea) throws Throwable {
+		if(getTempData(storeArea)!=null) {storeArea=getTempData(storeArea);}
+		smart_template_table.getPOGwithoutSingleModforStoreArea(storeArea);
+		logger.pass("POG "+bold(getTempData("POG_SM")+ "with Single Module"+bold(getTempData("POGV_SM")+" is extracted from Space DB for POG Region as ")));
+	}
+	
+	@Then("^Validate POG Code as \"(.*)\", POG Version as \"(.*)\", FixLabel as \"(.*)\", Start Date as \"(.*)\", End date as \"(.*)\", Inside Display as \"(.*)\" and Outside Display as \"(.*)\"$")
+	public void validateTaggedPOG(String pogCode, String pogVer,String fixtureLabel,String startdate,String enddate,String inDis,String outDis) throws Exception {
+		if(startdate.toLowerCase().contains("vdate")) 
+		{String varindays=startdate.substring(5);
+		startdate=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		if(enddate.toLowerCase().contains("vdate")) 
+		{String varindays=enddate.substring(5);
+		enddate=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		apexTable.validateScrollingTableCellValue(pageName, "search_pog_details", 1, "POG Code", pogCode);
+		apexTable.validateScrollingTableCellValue(pageName, "search_pog_details",1, "POG Version", pogVer);
+		apexTable.validateScrollingTableCellValue(pageName, "search_pog_details", 1, "Fixture Label", fixtureLabel);
+		apexTable.validateScrollingTableCellValue(pageName, "search_pog_details", 1, "Eff Start Date", startdate);
+		apexTable.validateScrollingTableCellValue(pageName, "search_pog_details", 1, "Eff End Date", enddate);
+		apexTable.validateScrollingTableCellValue(pageName, "search_pog_details", 1, "Inside Display", inDis);
+		apexTable.validateScrollingTableCellValue(pageName, "search_pog_details", 1, "Outside Display", outDis);
+		logger.pass("Validated all tagged POG details");
+	}
+	
+	
+	@Then("^Validate the SMART Template column \"(.*)\" with value as \"(.*)\" in Row \"(.*)\" with asofDate \"(.*)\"$")
+	public void validateSMARTTemplatecolumnValue(String columnName,String expValue, int rowInd,String asofDate) throws Throwable {
+		Thread.sleep(2000);
+		if(asofDate.toLowerCase().contains("vdate")) 
+		{String varindays=asofDate.substring(5);
+		asofDate=AppDateUtil.getAppdateinPOGVersionFormat(Integer.parseInt(varindays));}
+		String fileName=System.getProperty("user.dir") + File.separator +"Test_Reports"+File.separator +testCaseId+File.separator +"Download"+File.separator+AppData.buId+"_"+asofDate+" (1).xlsx";
+		String match=smartTemp.validateSMARTTemplateColumnValue(fileName, "Sheet1", rowInd, columnName, expValue);
+		if (match.equalsIgnoreCase("pass")){
+		logger.pass("Expected Value: "+expValue+" matched");}
+		else {
+			throw new Exception(match);
+		}
+	}
+}

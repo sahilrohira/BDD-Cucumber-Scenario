@@ -1,0 +1,91 @@
+package dataProviders;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Connection;
+
+import utils.AppDateUtil;
+
+public class EnvironmentFileReader {
+
+	private EnvironmentData environmentData; 
+
+	public EnvironmentFileReader()
+    {
+        String envName = (new GlobalFileReader()).getEnvironmentName();
+        String envPropertyFilePath = (new StringBuilder("Test_Data/")).append(envName).append(".properties").toString();
+        try
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(envPropertyFilePath));
+            environmentData = new EnvironmentData();
+            try
+            {
+                environmentData.load(reader);
+                reader.close();
+            }
+            catch(IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        catch(FileNotFoundException e)
+        {
+            e.printStackTrace();
+            throw new RuntimeException((new StringBuilder(String.valueOf(envName))).append(".properties not found at ").append(envPropertyFilePath).toString());
+        }
+    }
+
+    public EnvironmentData getEnvironmentData()
+    {
+        return environmentData;
+    }
+	public String getUrl() {
+		String url= environmentData.getProperty("url").trim();
+		return url;
+	}
+	
+	public String getUserName() {
+		String userName= environmentData.getProperty("username").trim();
+		return userName;
+	}
+	
+	public String getPassword() {
+		String password= environmentData.getProperty("password").trim();
+		return password;
+	}
+	
+	public String getBU_ID() {
+		String browserToUse= environmentData.getProperty("BU_ID").trim();
+		return browserToUse;
+	}
+	
+	public String getDC_Code1() {
+		String dcCode= environmentData.getProperty("DC_CODE_1").trim();
+		return dcCode;
+	}
+	
+	public String getApplication_Date(Connection con, String testCaseId) throws Exception {
+		AppDateUtil appDateUtil = new AppDateUtil();
+		return appDateUtil.getAppdate(con, testCaseId);
+	}
+	
+	public String getDB_URL() {
+		String url= environmentData.getProperty("DB_URL").trim();
+		return url;
+	}
+	
+	public String getDB_UserName() {
+		String userName= environmentData.getProperty("DB_UserName").trim();
+		return userName;
+	}
+	
+	public String getDB_Password() {
+		String password= environmentData.getProperty("DB_Password").trim();
+		return password;
+	}
+	
+	
+
+}

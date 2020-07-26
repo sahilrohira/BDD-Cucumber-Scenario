@@ -1,0 +1,61 @@
+package stepdefs.Reports;
+
+import org.openqa.selenium.By;
+
+import cucumber.api.java.en.Then;
+import pages.Reports.Reports_All_Reports_Page;
+import pages.apex.ApexButton;
+import pages.apex.ApexPageHeader;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class All_Reports extends SuperStepdefs {
+
+	public ApexPageHeader apexPageHeader;
+	public Reports_All_Reports_Page reportsAllReports;
+	public ApexButton apexButton;
+	
+	public All_Reports(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+		reportsAllReports=new Reports_All_Reports_Page(driver,testCaseId);
+		apexButton = new ApexButton(driver, testCaseId);
+	}
+    
+    /**
+     * @author Chitresh.Goyal
+     	
+     	From Home Page, Click On "Planogram Assignment" Link
+     	
+     */
+    @Then("^From All Reports Page, Click On \"(.*)\" Link$")
+    public void clickOnLink(String linkName) throws Exception {
+    	apexPageHeader.clickOnHeader3Link("All Reports", linkName);
+    	logger.pass("From All Reports Page, Click On "+bold(linkName)+" Link");
+    }    
+    
+    @Then("^From All Reports Page, Click On Desc \"(.*)\" Link$")
+    public void clickOnDescLink(String Desc) throws Exception {
+    	apexPageHeader.clickOnDivText("All Reports", Desc);
+    	logger.pass("From All Reports Page, Click On "+bold(Desc)+" Link");
+    }    
+    
+    @Then("^From All Reports Page, Verify Element \"(.*)\" Present$")
+    public void verifyTextLabelPresent(String text) throws Exception {
+    	reportsAllReports.verifyTextLabelPresent(text);
+    	logger.pass("From All Reports Page, element "+bold(text)+" Present");
+    } 
+    
+    @Then("^From All Reports Page, Verify Button \"(.*)\" Present$")
+    public void verifyButtonPresent(String buttonName) throws Exception {
+    	apexButton.validateButtonIsPresent("All Repors",buttonName);
+    	logger.pass("From All Reports Page, button "+bold(buttonName)+" Present");
+    } 
+    
+    @Then("^From All Reports page, Switch to \"([^\"]*)\"$")
+    public void switchToFrameWithTitle(String title) throws Exception {
+    	reportsAllReports.switchToFrameWithTitle(title);
+    	logger.pass("From All Reports Page, switch to "+bold(title)+" frame");
+    }  
+}

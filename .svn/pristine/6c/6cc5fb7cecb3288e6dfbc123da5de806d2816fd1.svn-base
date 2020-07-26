@@ -1,0 +1,216 @@
+Feature: Validating Functionality Related To Smart Template under POG Management in POG Detail
+
+  Background: 
+    Given Open DB Connection
+    And Open Browser
+    And Log In To Application With Provided Credential
+    And From Home Page, Click On "POG Management" Link
+    And From Masters Page, Click On "POG Details" Link
+
+  @skip
+  Scenario: POGM_POGDetails_TC001#Scenarios related to Location
+    And Extract the Promotion POG details
+    When Switch To Frame with Title "POG Detail Store Search"
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "PROM_STORE"
+    And Add Store with Filter Location "PROM_LOCID", AsofDate "vdate-1" and FixtureLabel ""
+    And From Table "search_pog_details_ig" validate attribute "onclick" contains value "return false;" for column name "Location ID" with column value ""
+    And From POG Details Page, Click On "Modify Search" Button
+    And Wait For "5" Second
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Add Store with Filter Location "PROM_LOCID", AsofDate "vdate+2" and FixtureLabel ""
+    And Click On Link with text "PROM_LOCID"
+    And Validate Breadcrumb Header with Value as "POG Details Level 1"
+    And Wait For "2" Second
+    And Click On Link in Breadcrum with text "POG Details"
+    And Wait For "5" Second
+    And Switch To Frame with Title "POG Detail Store Search"
+    And From POG Details Page, Click On "Reset" Button
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "PROM_STORE"
+    And Extract empty location for a multiple floor plan store "PROM_STORE"
+    And Add Store with Filter Location "MFP_EMPTY_LOC", AsofDate "vdate+1" and FixtureLabel ""
+    And Click On Link with text "MFP_EMPTY_LOC"
+    And Validate No data Found on Screen "POG Details Level 1" for table "ig_pog_details_ig_grid_vc_msg"
+    And Validate Hidden Span Text Field "P70_FIXTURE_LABEL_error_placeholder" Value As ""
+    And Click On Link in Breadcrum with text "POG Details"
+    And Extract the Child Promotion POG details
+    And Switch To Frame with Title "POG Detail Store Search"
+    And From POG Details Page, Click On "Reset" Button
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "CHILD_PROM_STORE"
+    And Add Store with Filter Location "CHILD_PROM_LOCID", AsofDate "vdate+1" and FixtureLabel ""
+    And From POG Detail Page, Filter Table content for Column "POG Code" With Value "POG_CODE"
+    And Click On Link with text "CHILD_PROM_LOCID"
+    And Validate Hidden Span Text Field "P70_FIXTURE_LABEL_error_placeholder" Value As ""
+    And Validate No data Found on Screen "POG Details Level 1" for table "ig_pog_child_details_ig_grid_vc_msg"
+    And Click On Link in Breadcrum with text "POG Details"
+    And Extract the Child Promotion POG details
+    And Switch To Frame with Title "POG Detail Store Search"
+    And From POG Details Page, Click On "Reset" Button
+
+  @skip
+  Scenario: POGM_POGDetails_TC002#Scenarios related to Setup Fixture Label when SMART_TEMP_OVERW_PLANNED_ASSIG=Y
+    And Update Query to change sys_conf_name "SMART_TEMP_OVERW_PLANNED_ASSIG"  value to "Y"
+    And Refresh Current Window
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Extract Fixture Label
+    And Extract the Promotion POG details
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "PROM_STORE"
+    And Add Store with Filter Location "PROM_LOCID", AsofDate "vdate+10" and FixtureLabel ""
+    And Click On Link with text "PROM_LOCID"
+    And Enter Text Field "P70_FIXTURE_LABEL" Value As "FIXTURE_LABEL"
+    And From POG Details Page, Click On "Save" Button
+    And Validate Records Updated Successfully Message
+    And Remove Successful Message Notification
+    And From POG Details Page, Click On "Back" Button
+    And From POG Details Page, Click On "Modify Search" Button
+    And Wait For "3" Second
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Add Store with Filter Location "PROM_LOCID", AsofDate "vdate+15" and FixtureLabel ""
+    And From POG Detail Page, Filter Table content for Column "Fixture Label" With Value "FIXTURE_LABEL"
+    And Validate FixLabel as "FIXTURE_LABEL"
+    And From POG Details Page, Click On "Modify Search" Button
+    And Wait For "3" Second
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Add Store with Filter Location "PROM_LOCID", AsofDate "vdate+20" and FixtureLabel ""
+    And Click On Link with text "PROM_LOCID"
+    And Extract Fixture Label
+    And Click On "Actions" Button
+    And Enter Text Field "P70_FIXTURE_LABEL" Value As "FIXTURE_LABEL"
+    And From POG Details Page, Click On "Save" Button
+    And Validate Records Updated Successfully Message
+    And Remove Successful Message Notification
+    And From POG Details Page, Click On "Back" Button
+    And Remove Existing Filter
+    And From POG Detail Page, Filter Table content for Column "Fixture Label" With Value "FIXTURE_LABEL"
+    And Validate FixLabel as "FIXTURE_LABEL"
+    And Click On Link with text "PROM_LOCID"
+    And Enter Text Field "P70_FIXTURE_LABEL" Value As ""
+    And From POG Details Page, Click On "Save" Button
+    And Validate Records Updated Successfully Message
+    And Remove Successful Message Notification
+    And From POG Details Page, Click On "Back" Button
+    And Validate No data Found on Screen "POG Details" for table "search_pog_details_ig_grid"
+    And Remove Existing Filter
+    And From POG Details Page, Click On "Modify Search" Button
+    And Wait For "3" Second
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Add Store with Filter Location "PROM_LOCID", AsofDate "vdate+10" and FixtureLabel ""
+    And Click On Link with text "PROM_LOCID"
+    And Enter Text Field "P70_FIXTURE_LABEL" Value As ""
+    And From POG Details Page, Click On "Save" Button
+    And Validate Records Updated Successfully Message
+    And Remove Successful Message Notification
+
+  @skip
+  Scenario: POGM_POGDetails_TC003#Scenarios related to add POG and add Inside/Outside display when SMART_TEMP_OVERW_PLANNED_ASSIG=Y
+    And Update Query to change sys_conf_name "SMART_TEMP_OVERW_PLANNED_ASSIG"  value to "Y"
+    And Refresh Current Window
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Extract the Promotion POG details
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "PROM_STORE"
+    And Add Store with Filter Location "PROM_LOCID", AsofDate "vdate+30" and FixtureLabel ""
+    And Click On Link with text "PROM_LOCID"
+    And Extract the POG Code of type "P"
+    And For table "ig_pog_details_ig" Add Row "1" on POG Details page
+    And Validate POG Code "POG_CODE" is absent from LOV
+    And Extract the POG Code of type "R"
+    And Add POG Code "POG_CODE"  from LOV from table "ig_pog_details"
+    And Click On "Actions" Button
+    And From POG Details Page, Click On "Save" Button
+    And Validate Records Updated Successfully Message
+    And Remove Successful Message Notification
+    And Wait For "2" Second
+    And For table "ig_pog_details" in row num "1" with column Name "Effective End Date" enter text "vdate+20"
+    And From POG Details Page, Click On "Save" Button
+    And From Apex Error Dialog, Validate Error Message Content As "Effective End Date cannot be earlier than Effective Start Date"
+    And Delete Row number "1" from table "ig_pog_details"
+    And Extract the POG Code of type "D"
+    And For table "ig_pog_details_ig" Add Row "1" on POG Details page
+    And Add POG Code "POG_CODE"  from LOV from table "ig_pog_details"
+    And Click On "Actions" Button
+    And Wait For "2" Second
+    And For table "ig_pog_details" in row num "1" with column Name "Effective Start Date" enter text "vdate-2"
+    And From POG Details Page, Click On "Save" Button
+    And From Apex Error Dialog, Validate Error Message Content As "Effective Start Date of POG"
+    And From Apex Error Dialog, Validate Error Message Content As "POG_CODE"
+    And From Apex Error Dialog, Validate Error Message Content As "must be future date"
+    And Delete Row number "1" from table "ig_pog_details"
+    And Extract Virtual POG
+    And For table "ig_pog_details_ig" Add Row "1" on POG Details page
+    And Add POG Code "VIRTUAL_POG_CODE"  from LOV from table "ig_pog_details"
+    And Click On "Actions" Button
+    And From POG Details Page, Click On "Save" Button
+    And Validate Records Updated Successfully Message
+    And Remove Successful Message Notification
+    And Delete Row number "1" from table "ig_pog_details"
+    And Extract the POG with ChildSpace
+    And For table "ig_pog_details_ig" Add Row "1" on POG Details page
+    And Add POG Code "POGID_CS"  from LOV from table "ig_pog_details"
+    And Click On "Actions" Button
+    And From POG Details Page, Click On "Save" Button
+    And Validate Records Updated Successfully Message
+    And Remove Successful Message Notification
+    And From POG Details Page, Click On "Back" Button
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "PARENT_MOD"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "-", Start Date as "vdate+30", End date as "MAX_END_DATE", Inside Display as "-" and Outside Display as "-"
+    And Remove Existing Filter
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "POGMOD_CS"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "POGMOD_CS", Start Date as "vdate+30", End date as "MAX_END_DATE", Inside Display as "-" and Outside Display as "-"
+    And Remove Existing Filter
+    And Click On Link with text "PROM_LOCID"
+    And Delete Row number "1" from table "ig_pog_details"
+    And From POG Details Page, Click On "Back" Button
+    And Extract the Empty Child Space POG details
+    And From POG Details Page, Click On "Modify Search" Button
+    And Wait For "3" Second
+    And Switch To Frame with Title "POG Detail Store Search"
+    And From POG Details Page, Click On "Reset" Button
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "EMPTYCHILDSPACE_STORE"
+    And Add Store with Filter Location "EMPTYCHILDSPACE_LOCATIONID", AsofDate "vdate+10" and FixtureLabel ""
+    And Click On Link with text "EMPTYCHILDSPACE_LOCATIONID"
+    And Filter Column "All Text Columns" with value "EMPTYCHILDSPACE_MODULE" by SearchIcon
+    And From table "ig_pog_details" having column name "POG Module" click on cell having value "EMPTYCHILDSPACE_MODULE"
+    And For table "ig_pog_child_details" Add Row "1" on POG Details page
+    And Extract the Child Dummy POG details
+    And Add POG Code "DUMMYCHILD_POG"  from LOV from table "ig_pog_child_details_ig"
+    And From table "ig_pog_details" having column name "POG Module" click on cell having value "EMPTYCHILDSPACE_MODULE"
+    And From POG Details Page, Click On "Save" Button
+    And Validate Records Updated Successfully Message
+    And Remove Successful Message Notification
+    And Wait For "2" Second
+    And From POG Details Page, Click On "Back" Button
+    And From POG Detail Page, Filter Table content for Column "POG Code" With Value "DUMMYCHILD_POG"
+    And Validate POG Code as "DUMMYCHILD_POG", POG Version as "CHILD_DUMMY_POGVERSION", FixLabel as "EMPTYCHILDSPACE_MODULE", Start Date as "vdate+10", End date as "MAX_END_DATE", Inside Display as "-" and Outside Display as "-"
+    And Remove Existing Filter
+    And Click On Link with text "EMPTYCHILDSPACE_LOCATIONID"
+    And Click On "Actions" Button
+    And Delete Row number "1" from table "ig_pog_child_details_ig"
+    And From POG Details Page, Click On "Save" Button
+    And Remove Existing Filter
+    And From POG Details Page, Click On "Back" Button
+    And From POG Details Page, Click On "Modify Search" Button
+    And Wait For "3" Second
+    And Switch To Frame with Title "POG Detail Store Search"
+    And From POG Details Page, Click On "Reset" Button
+    And Extract the Empty Child Space POG details
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "EMPTYCHILDSPACE_STORE"
+    And Add Store with Filter Location "EMPTYCHILDSPACE_LOCATIONID", AsofDate "vdate+10" and FixtureLabel ""
+    And Click On Link with text "EMPTYCHILDSPACE_LOCATIONID"
+    And Click On "Actions" Button
+    And For table "ig_pog_details" in row num "1" with column Name "Eq. Meterage (m)" enter text "1234"
+    And For table "ig_pog_details" in row num "1" with column Name "Inside Display" enter text "4321"
+    And For table "ig_pog_details" in row num "1" with column Name "Outside Display" enter text "1111"
+    And Click On "Actions" Button
+    And From POG Details Page, Click On "Save" Button
+    And Validate Records Updated Successfully Message
+    And Remove Successful Message Notification
+    And Wait For "2" Second
+    And From POG Details Page, Click On "Back" Button
+    And From POG Detail Page, Filter Table content for Column "POG Code" With Value "POG_CODE"
+    And Validate POG Code as "POG_CODE", POG Version as "", FixLabel as "", Start Date as "vdate+10", End date as "MAX_END_DATE", Inside Display as "4321" and Outside Display as "1111"
+    And Remove Existing Filter
+    And Click On Link with text "EMPTYCHILDSPACE_LOCATIONID"
+    And Click On "Actions" Button
+    And For table "ig_pog_details" in row num "1" with column Name "Eq. Meterage (m)" enter text ""
+    And For table "ig_pog_details" in row num "1" with column Name "Inside Display" enter text ""
+    And For table "ig_pog_details" in row num "1" with column Name "Outside Display" enter text ""
+    And From POG Details Page, Click On "Save" Button

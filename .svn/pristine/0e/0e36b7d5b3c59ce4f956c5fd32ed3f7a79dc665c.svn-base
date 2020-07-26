@@ -1,0 +1,33 @@
+package stepdefs.Reports;
+
+import cucumber.api.java.en.Then;
+import pages.apex.ApexPageHeader;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class Reports extends SuperStepdefs {
+
+	public ApexPageHeader apexPageHeader;
+	
+	public Reports(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+	}
+    
+    /**
+     * @author Chitresh.Goyal
+     	
+     	From Home Page, Click On "All Reports" Link
+     	From Home Page, Click On "Interface" Link
+     	From Home Page, Click On "Health Check Reports" Link
+     	From Home Page, Click On "POG Assignment" Link
+     	From Home Page, Click On "Space Summary" Link
+     	
+     */
+    @Then("^From Reports Page, Click On \"(.*)\" Link$")
+    public void clickOnLink(String linkName) throws Exception {
+    	apexPageHeader.clickOnHeader3Link("Reports", linkName);
+    	logger.pass("From Reports Page, Click On "+bold(linkName)+" Link");
+    }      
+
+}

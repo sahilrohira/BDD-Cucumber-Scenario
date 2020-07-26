@@ -1,0 +1,34 @@
+Feature: Validating Functionality Related To POG Category under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "POG Category" Link
+@run
+Scenario:  Masters_POGCategory_TC001#POGCategory:Add,Delete,Modify
+
+		When From Master POGCategory Page, Validate Record Count from Database
+		Then Validate Downloaded XLSX File Content with File Name As "Category" and Tablename as "pog_category"
+		When From Master POGCategory Page, Click On "Add Row" Button
+		And From Master POGCategory Page, For Row "2", Enter Text For Column "Category Code" As "Random"
+		And From Master POGCategory Page, For Row "2", Enter Text Description For Column "Category Name" As "Auto_Script_POGCatName"
+		And Click on Row Actions for table "ig_grid" on row number "2"
+		And From Master POGCategory Page, Click On "Save" Button
+		Then Validate Successful Message As "Changes saved"
+		And From Master POGCategory Page, Click On "Add Row" Button
+		When From Master POGCategory Page, For Row "3", Enter Text For Column "Category Code" As "Category_Code"
+		And From Master POGCategory Page, For Row "3", Enter Text Description For Column "Category Name" As "Auto_Script_POGCatName"
+		And Click on Row Actions for table "ig_grid" on row number "3"
+		And From Master POGCategory Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		And From Apex Error Dialog, Validate Error Message Content As "APEX - SM-0056 Record Already Exists"
+		And Refresh Current Window
+		When Validate added POG Category "Category_Code" in Database
+		When Enter Text Field "search_field" Value As "Category_Code"
+		And Click On "Go" Button
+		Then Validate Category Code and Category Name from Database
+		And Delete Row number "1" from table "ig_grid"
+		And Validate Successful Message As "Changes saved"

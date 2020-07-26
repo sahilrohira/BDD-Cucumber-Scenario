@@ -1,0 +1,39 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexItemOption extends CommonPage{
+	
+	public ApexItemOption(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+	
+	public void select_y_n_Value(String pageName, String fieldName, String y_n_Val) throws Exception {
+		y_n_Val = y_n_Val.toUpperCase();
+		
+		By itempOptionLabel = By.xpath("//label[contains(@for,'"+fieldName+"_"+y_n_Val+"')]");;
+		clickOnElement(pageName, fieldName+"_"+y_n_Val, itempOptionLabel);
+	}
+	
+	public void validate_y_n_ValueIsEnabled(String pageName, String fieldName) throws Exception {
+		By enabledItempOption_Y = By.xpath("//input[contains(@id,'"+fieldName+"_Y') and @required and not(@disabled)]");
+		By enabledItempOption_N = By.xpath("//input[contains(@id,'"+fieldName+"_N') and @checked='checked' and not(@disabled)]");
+		
+		waitForPresenceOfElement(pageName, fieldName+"_Y", enabledItempOption_Y);
+		waitForPresenceOfElement(pageName, fieldName+"_N", enabledItempOption_N);
+	}
+	
+	public void validate_y_n_ValueIsDisabled(String pageName, String fieldName) throws Exception {
+		By disabledItempOption_Y = By.xpath("//input[contains(@id,'"+fieldName+"_Y') and @required and @disabled]");
+		By disabledItempOption_N = By.xpath("//input[contains(@id,'"+fieldName+"_N') and @checked='checked' and @disabled]");
+		
+		waitForPresenceOfElement(pageName, fieldName+"_Y", disabledItempOption_Y);
+		waitForPresenceOfElement(pageName, fieldName+"_N", disabledItempOption_N);
+	}
+	
+	
+	
+}

@@ -1,0 +1,54 @@
+package utils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+
+public class DynamicRunner {
+
+	public static void main(String[] args) {
+
+		List<String> featureFileNames = new ArrayList<String>();
+		List<String> executionsStatus = new ArrayList<String>();
+		
+		try {
+			featureFileNames = ExcelUtil.getColumDataFromExcel("Test_Suite/Regression.xlsx", "Execute", "FeatureFileName");
+			executionsStatus = ExcelUtil.getColumDataFromExcel("Test_Suite/Regression.xlsx", "Execute", "Execute");
+			
+			int totalFeatureFile = featureFileNames.size();
+			
+			String featureFileList ="";
+			for(int i=0;i<totalFeatureFile;i++) {
+				String currentFeatureFileName = featureFileNames.get(i);
+				String currenExecutionStatus = executionsStatus.get(i);
+				
+				if(currenExecutionStatus.equalsIgnoreCase("y")) {
+					featureFileList = featureFileList + "\"" + "Test_Features/"+currentFeatureFileName+".feature" + "\",";
+				}
+			}
+			
+			//Remove last ","
+			featureFileList =featureFileList.substring(0, featureFileList.length()-1);
+
+			File srcFile = new File("src/main/resources/SampleRunner.properties");
+			File destDirectory = new File("src/test/java/runner");
+			File destFile = new File("src/test/java/runner/SampleRunnerTest.java");
+			
+			
+			String content = FileUtils.readFileToString(srcFile, "UTF-8");
+		    content = content.replaceAll("featureFileList", featureFileList);
+		    
+		    //clean src/test/java/runner folder
+		    FileUtils.deleteDirectory(destDirectory);
+		    FileUtils.writeStringToFile(destFile, content, "UTF-8");
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			
+	}
+
+}

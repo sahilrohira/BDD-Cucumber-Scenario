@@ -1,0 +1,71 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+
+
+public class SM_STORE_POG_Table extends CommonDB {
+	private SM_BU_SYSPRM_Table sm_bu_sysprm;
+
+	public SM_STORE_POG_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+		sm_bu_sysprm = new SM_BU_SYSPRM_Table(con, testCaseId);
+	}
+	
+	public void fetchStorePOGSearchAttri(String storePOGmodstatus) throws Exception {
+		String store_POG_sql=null;
+		switch(storePOGmodstatus) {
+		case "L":
+			store_POG_sql = "SELECT sfpd.store,ss.store_name,sfpd.fp_version, sm.pog_code, sm.pog_version FROM sm_pog sm INNER JOIN sm_floor_plan_dtl sfpd ON ( sfpd.pog_code = sm.pog_code AND sfpd.pog_version = sm.pog_version AND sfpd.bu_id = sm.bu_id )  INNER JOIN sm_store ss ON  (sm.bu_id = ss.bu_id and sfpd.store=ss.store) AND sm.bu_id = '"+AppData.buId+"' AND sm.file_name != '-' AND sfpd.location_id<>'NL' and sm.mimetype IS NOT NULL AND ax_utility_sql.get_vdate BETWEEN sfpd.eff_start_date AND sfpd.eff_end_date FETCH FIRST 1 ROWS ONLY";
+		break;
+		case "P":
+			store_POG_sql = "SELECT sfpd.store,ss.store_name,sfpd.fp_version, sm.pog_code, sm.pog_version FROM sm_pog sm INNER JOIN sm_floor_plan_dtl sfpd ON ( sfpd.pog_code = sm.pog_code AND sfpd.pog_version = sm.pog_version AND sfpd.bu_id = sm.bu_id )  INNER JOIN sm_store ss ON  (sm.bu_id = ss.bu_id and sfpd.store=ss.store) AND sm.bu_id = '"+AppData.buId+"' AND sm.file_name != '-' AND sfpd.location_id<>'NL' and sm.mimetype IS NOT NULL AND sfpd.eff_start_date>ax_utility_sql.get_vdate FETCH FIRST 1 ROWS ONLY";
+		break;
+		case "H":
+			store_POG_sql = "SELECT sfpd.store,ss.store_name,sfpd.fp_version, sm.pog_code, sm.pog_version FROM sm_pog sm INNER JOIN sm_floor_plan_dtl sfpd ON ( sfpd.pog_code = sm.pog_code AND sfpd.pog_version = sm.pog_version AND sfpd.bu_id = sm.bu_id )  INNER JOIN sm_store ss ON  (sm.bu_id = ss.bu_id and sfpd.store=ss.store) AND sm.bu_id = '"+AppData.buId+"' AND sm.file_name != '-' AND sfpd.location_id<>'NL' and sm.mimetype IS NOT NULL AND sfpd.eff_end_date < ax_utility_sql.get_vdate  and sfpd.eff_end_date>sfpd.eff_start_date FETCH FIRST 1 ROWS ONLY";
+		break;
+		}
+		storeColumnNameAndValue(store_POG_sql);
+	}
+	
+	public void fetchStorePOGdetails() throws Exception {
+		String POG_Meterage_Format=sm_bu_sysprm.getSysConfValue("POG_METERAGE_FORMAT");
+		String store_POG_dtl_sql="Select ss.store,ss.store_name,sfp.fp_version,sfpd.pog_code,sp.pog_name,sfpd.pog_version,(CASE WHEN sp.real_pog_ind = 'Y' THEN 'N' ELSE 'Y' END ) as Virtual," + 
+				" sp.pog_type,to_char(sfpd.eff_start_date,'"+AppData.appDateFormat+"') eff_start_date,to_char(sfpd.eff_end_date,'"+AppData.appDateFormat+"') eff_end_date,(smpd.division || '-'|| smpd.division_name) as Division,(spd.dept || '-'|| spd.dept_name) as Department," + 
+				" sp.pog_height,sp.pog_width,sp.pog_depth,TRIM(TO_CHAR(sp.meterage,'"+POG_Meterage_Format+"') ) meterage,sd.district_name,sr.region_name,ss.total_square_ft," + 
+				" to_char(ss.store_open_date,'"+AppData.appDateFormat+"') store_open_date,to_char(sp.eff_start_date,'"+AppData.appDateFormat+"') pog_start_date,NVL (svh.temp_ind, 'N') temp_ind" + 
+				" from sm_store ss " + 
+				"INNER JOIN sm_floor_plan sfp ON (ss.bu_id=sfp.bu_id and ss.store=sfp.store) " + 
+				"INNER JOIN sm_floor_plan_dtl sfpd ON (ss.bu_id=sfpd.bu_id and ss.store=sfpd.store) " + 
+				"INNER JOIN sm_pog sp ON (sfpd.bu_id=sp.bu_id and sfpd.pog_code=sp.pog_code and sfpd.pog_version=sp.pog_version) " + 
+				"INNER JOIN sm_pog_division smpd ON ( smpd.division = sp.division AND smpd.bu_id = sp.bu_id )" + 
+				"INNER JOIN sm_pog_dept spd ON ( smpd.division = spd.division AND spd.dept = sp.dept AND spd.bu_id = sp.bu_id )" + 
+				"INNER JOIN sm_district sd ON (ss.bu_id = sd.bu_id AND ss.district = sd.district)" + 
+				"INNER JOIN sm_region sr ON (sd.bu_id = sr.bu_id AND sd.region = sr.region)" + 
+				"LEFT OUTER JOIN sm_virtual_host svh ON (svh.bu_id = sp.bu_id  AND svh.pog_code = sp.pog_code AND svh.pog_version = sp.pog_version)" + 
+				"where ss.bu_id='"+AppData.buId+"' and sfpd.store="+getTempData("STORE")+" and sfpd.pog_code='"+getTempData("POG_CODE")+"' and sfpd.pog_version="+getTempData("POG_VERSION")+" and sfp.fp_version="+getTempData("FP_VERSION")+" AND sfpd.location_id<>'NL'"+ 
+				" FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(store_POG_dtl_sql);
+	}
+	
+	public void fetchStorePOGActEffStartDate() throws Exception {
+		String store_ActPOG_Date_sql="SELECT to_char(min(ORIG_EFF_START_DATE),'"+AppData.appDateFormat+"') as Actual_POG_Start_Date FROM sm_floor_plan_dtl" + 
+				" where bu_id = '"+AppData.buId+"' and pog_code='"+getTempData("POG_CODE")+"' and pog_version="+getTempData("POG_VERSION")+" and store="+getTempData("STORE");
+		storeColumnNameAndValue(store_ActPOG_Date_sql);
+	}
+	
+	public void fetchItemPOGStoreLivePlannedHistCount() throws Exception {
+		String item_POG_LiveStoreCount_sql="Select count(distinct(store)) as Live_Count from sm_floor_plan_dtl where pog_code='"+getTempData("POG_CODE")+"'"+ 
+				" and pog_version="+getTempData("POG_VERSION")+" and bu_id='"+AppData.buId+"' and ax_utility_sql.get_vdate between eff_start_date and eff_end_date";
+		storeColumnNameAndValue(item_POG_LiveStoreCount_sql);
+		String item_POG_HistStoreCount_sql="Select count(distinct(store)) as Historical_count from sm_floor_plan_dtl where pog_code='"+getTempData("POG_CODE")+"'"+ 
+				" and pog_version="+getTempData("POG_VERSION")+" and bu_id='"+AppData.buId+"' and eff_end_date<ax_utility_sql.get_vdate";
+		storeColumnNameAndValue(item_POG_HistStoreCount_sql);
+		String item_POG_PlannedStoreCount_sql="Select count(distinct(store)) as Planned_Count from sm_floor_plan_dtl where pog_code='"+getTempData("POG_CODE")+"'"+ 
+				" and pog_version="+getTempData("POG_VERSION")+" and bu_id='"+AppData.buId+"' and eff_start_date>ax_utility_sql.get_vdate";
+		storeColumnNameAndValue(item_POG_PlannedStoreCount_sql);
+	}
+	
+}

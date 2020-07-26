@@ -1,0 +1,191 @@
+2020-07-26 20:46:56 INFO  flight_Booking_Scenario_TC001_1 - Go To URL [https://www.travelocity.com]
+2020-07-26 20:47:04 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Home]  ###  Field Name [Flights Link]   ###   Action [Click]    ###   Locator [By.xpath: //span[contains(@class,'tab-label')]//ancestor::button[@id='tab-flight-tab-hp']]
+2020-07-26 20:47:04 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-origin-hp-flight]   ###   Action [ClearAndType]    ###   Text [Delhi (DEL-Indira Gandhi Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-origin-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:47:05 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-destination-hp-flight]   ###   Action [ClearAndType]    ###   Text [Mumbai (BOM-Chhatrapati Shivaji Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-destination-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:47:07 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [One way Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='One way']]
+2020-07-26 20:47:18 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-departing-single-hp-flight]   ###   Action [ClearAndType]    ###   Text [10/10/2020]   ###   Locator [By.xpath: //input[contains(@id,'flight-departing-single-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:47:19 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-adults-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [2]   ###   Locator [By.xpath: //select[contains(@id,'flight-adults-hp-flight')]]
+2020-07-26 20:47:20 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-children-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [0]   ###   Locator [By.xpath: //select[contains(@id,'flight-children-hp-flight')]]
+2020-07-26 20:47:20 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [Search Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='Search']]
+2020-07-26 20:47:26 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [sortDropdown_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [Duration (Shortest)]   ###   Locator [By.xpath: //select[contains(@id,'sortDropdown')]]
+2020-07-26 20:47:26 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Flights]  ###  Field Name [Departure-Evening checkBox]   ###   Action [Click]    ###   Locator [By.xpath: //span[@id='departure-times-Evening-flights-checkbox']//ancestor::label]
+2020-07-26 20:47:31 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Flights]  ###  Field Name [select-button Button]   ###   Action [Click]    ###   Locator [By.xpath: //li[1]//button[@data-test-id='select-button']]
+2020-07-26 20:47:34 INFO  flight_Booking_Scenario_TC001_1 - Switch To Default Content
+2020-07-26 20:47:34 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [No thanks Link]   ###   Action [Click]    ###   Locator [By.xpath: //a[contains(text(),'No thanks')]]
+2020-07-26 20:47:41 INFO  flight_Booking_Scenario_TC001_2 - Go To URL [https://www.travelocity.com]
+2020-07-26 20:47:48 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ Home]  ###  Field Name [Flights Link]   ###   Action [Click]    ###   Locator [By.xpath: //span[contains(@class,'tab-label')]//ancestor::button[@id='tab-flight-tab-hp']]
+2020-07-26 20:47:48 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-origin-hp-flight]   ###   Action [ClearAndType]    ###   Text [Jaipur (JAI-Sanganer)]   ###   Locator [By.xpath: //input[contains(@id,'flight-origin-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:47:49 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-destination-hp-flight]   ###   Action [ClearAndType]    ###   Text [Hyderabad (HYD-Rajiv Gandhi Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-destination-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:47:50 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [One way Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='One way']]
+2020-07-26 20:47:55 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-departing-single-hp-flight]   ###   Action [ClearAndType]    ###   Text []   ###   Locator [By.xpath: //input[contains(@id,'flight-departing-single-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:47:56 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-adults-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [2]   ###   Locator [By.xpath: //select[contains(@id,'flight-adults-hp-flight')]]
+2020-07-26 20:47:57 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-children-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [0]   ###   Locator [By.xpath: //select[contains(@id,'flight-children-hp-flight')]]
+2020-07-26 20:47:57 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [Search Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='Search']]
+2020-07-26 20:48:00 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [sortDropdown_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [Duration (Shortest)]   ###   Locator [By.xpath: //select[contains(@id,'sortDropdown')]]
+2020-07-26 20:48:20 ERROR flight_Booking_Scenario_TC001_2 - Could Not Select Text  [Duration (Shortest)] On Page Name [ CommonPage]  And Field Name [sortDropdown_DD]
+org.openqa.selenium.NoSuchElementException: no such element: Unable to locate element: {"method":"xpath","selector":"//select[contains(@id,'sortDropdown')]"}
+  (Session info: chrome=84.0.4147.89)
+For documentation on this error, please visit: http://seleniumhq.org/exceptions/no_such_element.html
+Build info: version: '3.14.0', revision: 'aacccce0', time: '2018-08-02T20:19:58.91Z'
+System info: host: 'SAHILROHIRA', ip: '192.168.1.102', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_181'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 84.0.4147.89, chrome: {chromedriverVersion: 83.0.4103.39 (ccbf011cb2d2b..., userDataDir: C:\Users\ADMINI~1\AppData\L...}, goog:chromeOptions: {debuggerAddress: localhost:54572}, javascriptEnabled: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: WINDOWS, platformName: WINDOWS, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:virtualAuthenticators: true}
+Session ID: fd0870defa509ba31b466c5d7bf2de3a
+*** Element info: {Using=xpath, value=//select[contains(@id,'sortDropdown')]}
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(Unknown Source)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.lang.reflect.Constructor.newInstance(Unknown Source)
+	at org.openqa.selenium.remote.http.W3CHttpResponseCodec.createException(W3CHttpResponseCodec.java:187)
+	at org.openqa.selenium.remote.http.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:122)
+	at org.openqa.selenium.remote.http.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:49)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:158)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:83)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:548)
+	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:322)
+	at org.openqa.selenium.remote.RemoteWebDriver.findElementByXPath(RemoteWebDriver.java:424)
+	at org.openqa.selenium.By$ByXPath.findElement(By.java:353)
+	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:314)
+	at pages.commom.CommonPage.scrollToElement(CommonPage.java:1117)
+	at pages.commom.CommonPage.findElement(CommonPage.java:1085)
+	at pages.commom.CommonPage.selectElementByVisibleText(CommonPage.java:524)
+	at pages.actions.DropDown.selectDropDownValue(DropDown.java:26)
+	at stepdefs.common.CommonPageSteps.selectDropDownValue(CommonPageSteps.java:371)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at cucumber.runtime.Utils$1.call(Utils.java:40)
+	at cucumber.runtime.Timeout.timeout(Timeout.java:16)
+	at cucumber.runtime.Utils.invoke(Utils.java:34)
+	at cucumber.runtime.java.JavaStepDefinition.execute(JavaStepDefinition.java:38)
+	at cucumber.runtime.StepDefinitionMatch.runStep(StepDefinitionMatch.java:37)
+	at cucumber.runtime.Runtime.runStep(Runtime.java:300)
+	at cucumber.runtime.model.StepContainer.runStep(StepContainer.java:44)
+	at cucumber.runtime.model.StepContainer.runSteps(StepContainer.java:39)
+	at cucumber.runtime.model.CucumberScenario.run(CucumberScenario.java:44)
+	at cucumber.runtime.junit.ExecutionUnitRunner.run(ExecutionUnitRunner.java:102)
+	at org.junit.runners.Suite.runChild(Suite.java:128)
+	at org.junit.runners.Suite.runChild(Suite.java:27)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at cucumber.runtime.junit.ExamplesRunner.run(ExamplesRunner.java:59)
+	at org.junit.runners.Suite.runChild(Suite.java:128)
+	at org.junit.runners.Suite.runChild(Suite.java:27)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at cucumber.runtime.junit.ScenarioOutlineRunner.run(ScenarioOutlineRunner.java:53)
+	at cucumber.runtime.junit.FeatureRunner.runChild(FeatureRunner.java:63)
+	at cucumber.runtime.junit.FeatureRunner.runChild(FeatureRunner.java:18)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at cucumber.runtime.junit.FeatureRunner.run(FeatureRunner.java:70)
+	at cucumber.api.junit.Cucumber.runChild(Cucumber.java:95)
+	at cucumber.api.junit.Cucumber.runChild(Cucumber.java:38)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at cucumber.api.junit.Cucumber.run(Cucumber.java:100)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:86)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:538)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:760)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:206)
+2020-07-26 20:51:26 INFO  flight_Booking_Scenario_TC001_1 - Go To URL [https://www.travelocity.com]
+2020-07-26 20:51:36 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Home]  ###  Field Name [Flights Link]   ###   Action [Click]    ###   Locator [By.xpath: //span[contains(@class,'tab-label')]//ancestor::button[@id='tab-flight-tab-hp']]
+2020-07-26 20:51:36 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-origin-hp-flight]   ###   Action [ClearAndType]    ###   Text [Delhi (DEL-Indira Gandhi Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-origin-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:51:37 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-destination-hp-flight]   ###   Action [ClearAndType]    ###   Text [Mumbai (BOM-Chhatrapati Shivaji Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-destination-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:51:38 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [One way Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='One way']]
+2020-07-26 20:51:49 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-departing-single-hp-flight]   ###   Action [ClearAndType]    ###   Text [10/10/2020]   ###   Locator [By.xpath: //input[contains(@id,'flight-departing-single-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:51:49 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-adults-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [2]   ###   Locator [By.xpath: //select[contains(@id,'flight-adults-hp-flight')]]
+2020-07-26 20:51:51 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-children-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [0]   ###   Locator [By.xpath: //select[contains(@id,'flight-children-hp-flight')]]
+2020-07-26 20:51:51 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [Search Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='Search']]
+2020-07-26 20:52:00 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [sortDropdown_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [Duration (Shortest)]   ###   Locator [By.xpath: //select[contains(@id,'sortDropdown')]]
+2020-07-26 20:52:00 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Flights]  ###  Field Name [Departure-Evening checkBox]   ###   Action [Click]    ###   Locator [By.xpath: //span[@id='departure-times-Evening-flights-checkbox']//ancestor::label]
+2020-07-26 20:52:01 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Flights]  ###  Field Name [select-button Button]   ###   Action [Click]    ###   Locator [By.xpath: //li[1]//button[@data-test-id='select-button']]
+2020-07-26 20:52:04 INFO  flight_Booking_Scenario_TC001_1 - Switch To Default Content
+2020-07-26 20:52:04 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [No thanks Link]   ###   Action [Click]    ###   Locator [By.xpath: //a[contains(text(),'No thanks')]]
+2020-07-26 20:52:11 INFO  flight_Booking_Scenario_TC001_2 - Go To URL [https://www.travelocity.com]
+2020-07-26 20:52:19 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ Home]  ###  Field Name [Flights Link]   ###   Action [Click]    ###   Locator [By.xpath: //span[contains(@class,'tab-label')]//ancestor::button[@id='tab-flight-tab-hp']]
+2020-07-26 20:52:19 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-origin-hp-flight]   ###   Action [ClearAndType]    ###   Text [Jaipur (JAI-Sanganer)]   ###   Locator [By.xpath: //input[contains(@id,'flight-origin-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:52:20 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-destination-hp-flight]   ###   Action [ClearAndType]    ###   Text [Hyderabad (HYD-Rajiv Gandhi Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-destination-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:52:21 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [One way Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='One way']]
+2020-07-26 20:52:31 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-departing-single-hp-flight]   ###   Action [ClearAndType]    ###   Text [10/05/2020]   ###   Locator [By.xpath: //input[contains(@id,'flight-departing-single-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:52:32 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-adults-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [2]   ###   Locator [By.xpath: //select[contains(@id,'flight-adults-hp-flight')]]
+2020-07-26 20:52:33 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-children-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [0]   ###   Locator [By.xpath: //select[contains(@id,'flight-children-hp-flight')]]
+2020-07-26 20:52:33 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [Search Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='Search']]
+2020-07-26 20:52:40 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [sortDropdown_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [Duration (Shortest)]   ###   Locator [By.xpath: //select[contains(@id,'sortDropdown')]]
+2020-07-26 20:52:40 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ Flights]  ###  Field Name [Departure-Evening checkBox]   ###   Action [Click]    ###   Locator [By.xpath: //span[@id='departure-times-Evening-flights-checkbox']//ancestor::label]
+2020-07-26 20:55:39 INFO  flight_Booking_Scenario_TC001_1 - Go To URL [https://www.travelocity.com]
+2020-07-26 20:55:45 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Home]  ###  Field Name [Flights Link]   ###   Action [Click]    ###   Locator [By.xpath: //span[contains(@class,'tab-label')]//ancestor::button[@id='tab-flight-tab-hp']]
+2020-07-26 20:55:45 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-origin-hp-flight]   ###   Action [ClearAndType]    ###   Text [Delhi (DEL-Indira Gandhi Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-origin-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:55:46 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-destination-hp-flight]   ###   Action [ClearAndType]    ###   Text [Mumbai (BOM-Chhatrapati Shivaji Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-destination-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:55:47 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [One way Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='One way']]
+2020-07-26 20:55:51 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-departing-single-hp-flight]   ###   Action [ClearAndType]    ###   Text [10/10/2020]   ###   Locator [By.xpath: //input[contains(@id,'flight-departing-single-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:55:51 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-adults-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [2]   ###   Locator [By.xpath: //select[contains(@id,'flight-adults-hp-flight')]]
+2020-07-26 20:55:52 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-children-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [0]   ###   Locator [By.xpath: //select[contains(@id,'flight-children-hp-flight')]]
+2020-07-26 20:55:52 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [Search Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='Search']]
+2020-07-26 20:56:01 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [sortDropdown_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [Duration (Shortest)]   ###   Locator [By.xpath: //select[contains(@id,'sortDropdown')]]
+2020-07-26 20:56:01 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Flights]  ###  Field Name [Departure-Evening checkBox]   ###   Action [Click]    ###   Locator [By.xpath: //span[@id='departure-times-Evening-flights-checkbox']//ancestor::label]
+2020-07-26 20:56:01 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Flights]  ###  Field Name [select-button Button]   ###   Action [Click]    ###   Locator [By.xpath: //li[1]//button[@data-test-id='select-button']]
+2020-07-26 20:56:05 INFO  flight_Booking_Scenario_TC001_1 - Switch To Default Content
+2020-07-26 20:56:05 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [No thanks Link]   ###   Action [Click]    ###   Locator [By.xpath: //a[contains(text(),'No thanks')]]
+2020-07-26 20:56:11 INFO  flight_Booking_Scenario_TC001_2 - Go To URL [https://www.travelocity.com]
+2020-07-26 20:56:19 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ Home]  ###  Field Name [Flights Link]   ###   Action [Click]    ###   Locator [By.xpath: //span[contains(@class,'tab-label')]//ancestor::button[@id='tab-flight-tab-hp']]
+2020-07-26 20:56:19 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-origin-hp-flight]   ###   Action [ClearAndType]    ###   Text [Mumbai (BOM-Chhatrapati Shivaji Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-origin-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:56:21 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-destination-hp-flight]   ###   Action [ClearAndType]    ###   Text [Delhi (DEL-Indira Gandhi Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-destination-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:56:22 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [One way Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='One way']]
+2020-07-26 20:56:27 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-departing-single-hp-flight]   ###   Action [ClearAndType]    ###   Text [10/05/2020]   ###   Locator [By.xpath: //input[contains(@id,'flight-departing-single-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:56:27 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-adults-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [2]   ###   Locator [By.xpath: //select[contains(@id,'flight-adults-hp-flight')]]
+2020-07-26 20:56:28 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-children-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [0]   ###   Locator [By.xpath: //select[contains(@id,'flight-children-hp-flight')]]
+2020-07-26 20:56:28 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [Search Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='Search']]
+2020-07-26 20:56:41 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [sortDropdown_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [Duration (Shortest)]   ###   Locator [By.xpath: //select[contains(@id,'sortDropdown')]]
+2020-07-26 20:56:41 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ Flights]  ###  Field Name [Departure-Evening checkBox]   ###   Action [Click]    ###   Locator [By.xpath: //span[@id='departure-times-Evening-flights-checkbox']//ancestor::label]
+2020-07-26 20:56:42 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ Flights]  ###  Field Name [select-button Button]   ###   Action [Click]    ###   Locator [By.xpath: //li[1]//button[@data-test-id='select-button']]
+2020-07-26 20:56:45 INFO  flight_Booking_Scenario_TC001_2 - Switch To Default Content
+2020-07-26 20:56:45 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [No thanks Link]   ###   Action [Click]    ###   Locator [By.xpath: //a[contains(text(),'No thanks')]]
+2020-07-26 20:57:44 INFO  flight_Booking_Scenario_TC001_1 - Go To URL [https://www.travelocity.com]
+2020-07-26 20:57:50 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Home]  ###  Field Name [Flights Link]   ###   Action [Click]    ###   Locator [By.xpath: //span[contains(@class,'tab-label')]//ancestor::button[@id='tab-flight-tab-hp']]
+2020-07-26 20:57:51 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-origin-hp-flight]   ###   Action [ClearAndType]    ###   Text [Delhi (DEL-Indira Gandhi Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-origin-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:57:51 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-destination-hp-flight]   ###   Action [ClearAndType]    ###   Text [Mumbai (BOM-Chhatrapati Shivaji Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-destination-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:57:53 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [One way Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='One way']]
+2020-07-26 20:57:56 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-departing-single-hp-flight]   ###   Action [ClearAndType]    ###   Text [10/10/2020]   ###   Locator [By.xpath: //input[contains(@id,'flight-departing-single-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:57:57 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-adults-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [2]   ###   Locator [By.xpath: //select[contains(@id,'flight-adults-hp-flight')]]
+2020-07-26 20:57:58 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [flight-children-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [0]   ###   Locator [By.xpath: //select[contains(@id,'flight-children-hp-flight')]]
+2020-07-26 20:57:58 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [Search Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='Search']]
+2020-07-26 20:58:09 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [sortDropdown_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [Duration (Shortest)]   ###   Locator [By.xpath: //select[contains(@id,'sortDropdown')]]
+2020-07-26 20:58:09 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Flights]  ###  Field Name [Departure-Evening checkBox]   ###   Action [Click]    ###   Locator [By.xpath: //span[@id='departure-times-Evening-flights-checkbox']//ancestor::label]
+2020-07-26 20:58:10 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ Flights]  ###  Field Name [select-button Button]   ###   Action [Click]    ###   Locator [By.xpath: //li[1]//button[@data-test-id='select-button']]
+2020-07-26 20:58:13 INFO  flight_Booking_Scenario_TC001_1 - Switch To Default Content
+2020-07-26 20:58:13 INFO  flight_Booking_Scenario_TC001_1 - Page Name [ CommonPage]  ###  Field Name [No thanks Link]   ###   Action [Click]    ###   Locator [By.xpath: //a[contains(text(),'No thanks')]]
+2020-07-26 20:58:19 INFO  flight_Booking_Scenario_TC001_2 - Go To URL [https://www.travelocity.com]
+2020-07-26 20:58:27 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ Home]  ###  Field Name [Flights Link]   ###   Action [Click]    ###   Locator [By.xpath: //span[contains(@class,'tab-label')]//ancestor::button[@id='tab-flight-tab-hp']]
+2020-07-26 20:58:28 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-origin-hp-flight]   ###   Action [ClearAndType]    ###   Text [Mumbai (BOM-Chhatrapati Shivaji Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-origin-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:58:29 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-destination-hp-flight]   ###   Action [ClearAndType]    ###   Text [Delhi (DEL-Indira Gandhi Intl.)]   ###   Locator [By.xpath: //input[contains(@id,'flight-destination-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:58:30 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [One way Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='One way']]
+2020-07-26 20:58:33 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-departing-single-hp-flight]   ###   Action [ClearAndType]    ###   Text [10/05/2020]   ###   Locator [By.xpath: //input[contains(@id,'flight-departing-single-hp-flight') and not(contains(@type,'hidden')) ]]
+2020-07-26 20:58:34 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-adults-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [2]   ###   Locator [By.xpath: //select[contains(@id,'flight-adults-hp-flight')]]
+2020-07-26 20:58:35 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [flight-children-hp-flight_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [0]   ###   Locator [By.xpath: //select[contains(@id,'flight-children-hp-flight')]]
+2020-07-26 20:58:35 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [Search Button]   ###   Action [Click]    ###   Locator [By.xpath: //span[text()='Search']]
+2020-07-26 20:58:45 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [sortDropdown_DD]   ###   Action [SelectByVisibleTxt]    ###   Text [Duration (Shortest)]   ###   Locator [By.xpath: //select[contains(@id,'sortDropdown')]]
+2020-07-26 20:58:45 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ Flights]  ###  Field Name [Departure-Evening checkBox]   ###   Action [Click]    ###   Locator [By.xpath: //span[@id='departure-times-Evening-flights-checkbox']//ancestor::label]
+2020-07-26 20:58:46 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ Flights]  ###  Field Name [select-button Button]   ###   Action [Click]    ###   Locator [By.xpath: //li[1]//button[@data-test-id='select-button']]
+2020-07-26 20:58:49 INFO  flight_Booking_Scenario_TC001_2 - Switch To Default Content
+2020-07-26 20:58:49 INFO  flight_Booking_Scenario_TC001_2 - Page Name [ CommonPage]  ###  Field Name [No thanks Link]   ###   Action [Click]    ###   Locator [By.xpath: //a[contains(text(),'No thanks')]]

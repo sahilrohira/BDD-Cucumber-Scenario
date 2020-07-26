@@ -1,0 +1,329 @@
+package stepdefs.POGManagement;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_BU_SYSPRM_Table;
+import db.SM_POG_MASTER_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import pages.apex.ApexWindow;
+import pages.commom.CommonPage;
+import pages.apex.ApexButton;
+import pages.apex.ApexDropDown;
+import pages.apex.ApexFrame;
+import pages.apex.ApexLink;
+import pages.apex.ApexMessage;
+import pages.apex.ApexNotification;
+import pages.apex.ApexPageHeader;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class POGM_POGMasterPageSteps extends SuperStepdefs {
+
+	private String pageName = "POG Master";
+	private CommonPageSteps commonPageSteps;
+	private String tableLabel = "pog_master";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private ApexNotification apexNotification;
+	private SM_POG_MASTER_Table sm_pog_master;
+	private SM_BU_SYSPRM_Table sm_bu_sysprm;
+	private ApexPageHeader apexPageHeader;
+	private ApexFrame apexFrame;
+	private ApexWindow apexWindow;
+	private ApexDropDown apexDropDown;
+	private ApexTextField apexTextField;
+	private ApexLink apexLink;
+	private ApexMessage apexMessage;
+
+	public POGM_POGMasterPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_bu_sysprm = new SM_BU_SYSPRM_Table(con, testCaseId);
+		sm_pog_master = new SM_POG_MASTER_Table(con, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		apexPageHeader = new ApexPageHeader(driver, testCaseId);
+		apexFrame = new ApexFrame(driver, testCaseId);
+		apexWindow = new ApexWindow(driver, testCaseId);
+		apexDropDown = new ApexDropDown(driver, testCaseId);
+		apexTextField = new ApexTextField(driver, testCaseId);
+		apexLink = new ApexLink(driver, testCaseId);
+		apexMessage = new ApexMessage(driver, testCaseId);
+		apexNotification = new ApexNotification(driver, testCaseId);
+	}
+
+	@Then("^From POG Master Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@Then("^From POG Master Page, Enter POG Code as \"(.*)\" and Select POG Status \"(.*)\" From List$")
+	public void ItemSearchWithStatus(String pogCode, String pogStatus) throws Exception {
+		if (getTempData(pogCode) != null)
+			pogCode = getTempData(pogCode);
+		commonPageSteps.enterTextFieldValue("P2_POG_CODE", pogCode);
+		switch (pogStatus) {
+		case "L":
+			commonPageSteps.selectDropDownValue("P2_POG_STATUS", "Live");
+			break;
+		case "N":
+			commonPageSteps.selectDropDownValue("P2_POG_STATUS", "New");
+			break;
+		case "P":
+			commonPageSteps.selectDropDownValue("P2_POG_STATUS", "Planned");
+			break;
+		case "H":
+			commonPageSteps.selectDropDownValue("P2_POG_STATUS", "Historical");
+			break;
+		}
+
+	}
+
+	@Then("^From POG Master Page, validate Pog Code \"(.*)\" property value \"(.*)\"$")
+	public void verifyElementProperty(String fieldName, String property) throws Exception {
+		apexTextField.getTextFieldValue(property, fieldName);
+	}
+
+	@Then("^Validate for POG Code \"(.*)\" in Bu Id as \"(.*)\" have Mime Type as \"(.*)\" and Freeze Indicator as \"(.*)\" and file name as \"(.*)\"$")
+	public void verifyMimeTypeFreezeIndFileName(String pogCode, String buId, String mimeType, String freezeInd,
+			String fileName) throws Exception {
+		if (getTempData(pogCode) != null)
+			pogCode = getTempData(pogCode);
+		sm_pog_master.fetchMimeTypeFreezeIndFileNameOfPOG(pogCode, buId);
+
+	}
+
+	@Then("^From Table \"(.*)\" validate attribute \"(.*)\" contains value \"(.*)\" for column name \"(.*)\" with column value \"(.*)\"$")
+	public void validateElementPropertyContains(String tableLabel, String attributeName, String expAttrValue,
+			String columnName, String columnValue) throws Exception {
+		if (getTempData(columnValue) != null)
+			columnValue = getTempData(columnValue);
+		if (getTempData(expAttrValue) != null)
+			expAttrValue = getTempData(expAttrValue);
+		apexLink.validateTableCellContainsPropertyWithColumnValue(pageName, tableLabel, columnName, columnValue,
+				attributeName, expAttrValue);
+
+	}
+
+	@When("^From Table \"(.*)\" for column name \"(.*)\" delete the Pog Code \"(.*)\"$")
+	public void deletePOGCode(String tableLabel, String columnName, String columnValue) throws Exception {
+		if (getTempData(columnValue) != null)
+			columnValue = getTempData(columnValue);
+		apexTable.clickOnTableCellWithColumnValue(pageName, tableLabel, columnName, columnValue);
+		Thread.sleep(1000);
+		commonPageSteps.clickOnButton("Delete");
+		Thread.sleep(1000);
+		apexMessage.verifyMessageContent("Are you sure you want to delete?");
+		apexMessage.clickOnButton("Ok");
+		Thread.sleep(2000);
+		apexTable.validateTableIsEmpty(pageName, "pog_master");
+		logger.pass("deleted the POG sccessfully");
+	}
+
+	@When("^From Table \"(.*)\" for column name \"(.*)\" freeze the Pog Code \"(.*)\"$")
+	public void freezePOGCodeThroughCheckBox(String tableLabel, String columnName, String columnValue)
+			throws Exception {
+		if (getTempData(columnValue) != null)
+			columnValue = getTempData(columnValue);
+		apexTable.clickOnTableCellWithColumnValue(pageName, tableLabel, columnName, columnValue);
+		commonPageSteps.clickOnButton("Freeze");
+		Thread.sleep(2000);
+		apexNotification.validateRecordsUpdatedSuccessfullyMessage();
+		logger.pass("POG Freezed sccessfully");
+	}
+
+	@Then("^Refresh the page$")
+	public void refreshCurrentPage() throws Exception {
+		commonPageSteps.apexRefreshCurrentWindow();
+	}
+
+	@When("^Type the parameters to search for the POG with status as \"(.*)\"$")
+	public void ItemSearch(String pogStatus) throws Exception {
+		commonPageSteps.enterTextFieldValue("P2_POG_CODE", "POG_CODE");
+		commonPageSteps.enterTextFieldValue("P2_POG_VERSION", "POG_VERSION");
+		apexDropDown.delselectAllDropDownValue(pageName, "P2_POG_STATUS");
+		switch (pogStatus) {
+		case "L":
+			commonPageSteps.selectDropDownValue("P2_POG_STATUS", "Live");
+			break;
+		case "N":
+			commonPageSteps.selectDropDownValue("P2_POG_STATUS", "New");
+			break;
+		case "P":
+			commonPageSteps.selectDropDownValue("P2_POG_STATUS", "Planned");
+			break;
+		case "H":
+			commonPageSteps.selectDropDownValue("P2_POG_STATUS", "Historical");
+			break;
+		}
+	}
+
+	@Then("^Verify all fields set to Default on POG Master Search Popup$")
+	public void ValidateallfieldtoDefaultValue() throws Exception {
+		commonPageSteps.validateTextFieldValue("P2_POG_CODE", "");
+		commonPageSteps.validateTextFieldValue("P2_POG_VERSION", "");
+		commonPageSteps.validateDropDownValue("P2_ON_VIRTUAL_POG", "PLN and Virtual POG");
+		// commonPageSteps.validateDropDownValue("P2_POG_STATUS", "");
+		commonPageSteps.validateDropDownValue("P2_POG_TYPE", "");
+		commonPageSteps.validateDropDownValue("P2_DIVISION", "--Select--");
+		// commonPageSteps.validateDropDownValue("P2_DEPARTMENT", "");
+		logger.pass("Successfully Validated the Reset Button Functionality");
+	}
+
+	@Then("^Retreive the Search details from DB for POG Status as \"(.*)\"$")
+	public void fetchPOGSearchAttri(String pogStatus) throws Exception {
+		sm_pog_master.fetchPOGSearchAttri(pogStatus);
+		sm_pog_master.fetchPOGMasterdetails();
+		sm_pog_master.fetchPOGMasterMinMaxdate();
+		sm_pog_master.fetchPOGMasterStoreLivePlannedHistCount();
+		logger.pass("Fetched POG search attributes for POG with status as " + bold(pogStatus));
+	}
+
+	@Then("^Validate POG Module Count with title as \"(.*)\"$")
+	public void validatePOGModCount(String frameTitle) throws Exception {
+		if (Integer.parseInt(getTempData("VIEW_MODULECNT")) > 0) {
+			apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "View Modules",
+					getTempData("VIEW_MODULECNT"));
+			apexFrame.apexSwitchToFrame(frameTitle);
+			apexWindow.closePopupWindowwithTitle("View POG Modules");
+			logger.pass("Validate the link for POG Module Count " + bold(frameTitle));
+		}
+	}
+
+	@Then("^Validate Meterage with title as \"(.*)\"$")
+	public void validateMeterageLink(String frameTitle) throws Exception {
+		apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "Meterage (m)", getTempData("METERAGE"));
+		apexFrame.apexSwitchToFrame(frameTitle);
+		apexWindow.closePopupWindowwithTitle("POG Layout");
+		logger.pass("Validated link for Meterage " + bold(frameTitle));
+	}
+
+	@Then("^Update Query To Set sysConfVal Indicator Flag to \"(.*)\" where sysConfName is \"(.*)\"$")
+	public void setPromFlagYandFixLbltoGON(String flagVal, String sysConfName) throws Exception {
+		sm_pog_master.updateQueryFreezePogInclude(flagVal, sysConfName);
+		logger.pass("Update Query executed successfully");
+	}
+
+	@Then("^Validate all POG Master details from database for selected \"(.*)\" with status as \"(.*)\"$")
+	public void validatePOGMasterdetailfromDB(String item, String pogStatus) throws Exception {
+		String POG_Name_Ind = sm_bu_sysprm.getSysConfValue("POG_NAME_IND");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Code", "POG_CODE");
+		if (POG_Name_Ind.equalsIgnoreCase("Y")) {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Name", "POG_NAME");
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Version", "POG_VERSION");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Virtual", "VIRTUAL");
+		String Pog_type = null;
+		switch (getTempData("POG_TYPE")) {
+		case "D":
+			Pog_type = "Dummy";
+			break;
+		case "R":
+			Pog_type = "Regular";
+			break;
+		case "P":
+			Pog_type = "Promotion";
+			break;
+		case "H":
+			Pog_type = "Host";
+			break;
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Type", Pog_type);
+		switch (pogStatus) {
+		case "L":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Status", "Live");
+			break;
+		case "P":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Status", "Planned");
+			break;
+		case "N":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Status", "New");
+			break;
+		case "H":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Status", "Historical");
+			break;
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "View Modules", "VIEW_MODULECNT");
+		if (pogStatus.equalsIgnoreCase("N")) {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Live Stores", "0");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Historical Stores", "0");
+		} else if (pogStatus.equalsIgnoreCase("H")) {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Live Stores", "0");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Planned Stores", "0");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Historical Stores", "HISTORICAL_COUNT");
+			if (Integer.parseInt(getTempData("HISTORICAL_COUNT")) > 0) {
+				apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "Historical Stores",
+						getTempData("HISTORICAL_COUNT"));
+				apexPageHeader.waitForPresenceOfHeader1(pageName, "Store POG");
+				Thread.sleep(1000);
+				apextButton.clickOnButton(pageName, "Back");
+			}
+		} else if (pogStatus.equalsIgnoreCase("P")) {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Live Stores", "0");
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Historical Stores", "HISTORICAL_COUNT");
+			if (Integer.parseInt(getTempData("HISTORICAL_COUNT")) > 0) {
+				apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "Historical Stores",
+						getTempData("HISTORICAL_COUNT"));
+				apexPageHeader.waitForPresenceOfHeader1(pageName, "Store POG");
+				apextButton.clickOnButton(pageName, "Back");
+			}
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Planned Stores", "PLANNED_COUNT");
+			if (Integer.parseInt(getTempData("PLANNED_COUNT")) > 0) {
+				apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "Planned Stores",
+						getTempData("PLANNED_COUNT"));
+				apexPageHeader.waitForPresenceOfHeader1(pageName, "Store POG");
+				apextButton.clickOnButton(pageName, "Back");
+			}
+		} else {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Live Stores", "LIVE_COUNT");
+			if (Integer.parseInt(getTempData("LIVE_COUNT")) > 0) {
+				apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "Live Stores",
+						getTempData("LIVE_COUNT"));
+				apexPageHeader.waitForPresenceOfHeader1(pageName, "Store POG");
+				Thread.sleep(1000);
+				apextButton.clickOnButton(pageName, "Back");
+			}
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Historical Stores", "HISTORICAL_COUNT");
+			if (Integer.parseInt(getTempData("HISTORICAL_COUNT")) > 0) {
+				apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "Historical Stores",
+						getTempData("HISTORICAL_COUNT"));
+				apexPageHeader.waitForPresenceOfHeader1(pageName, "Store POG");
+				Thread.sleep(1000);
+				apextButton.clickOnButton(pageName, "Back");
+			}
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Planned Stores", "PLANNED_COUNT");
+			if (Integer.parseInt(getTempData("PLANNED_COUNT")) > 0) {
+				apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "Planned Stores",
+						getTempData("PLANNED_COUNT"));
+				apexPageHeader.waitForPresenceOfHeader1(pageName, "Store POG");
+				Thread.sleep(1000);
+				apextButton.clickOnButton(pageName, "Back");
+			}
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Product Count", "PROD_COUNT");
+		if (Integer.parseInt(getTempData("HISTORICAL_COUNT")) > 0) {
+			apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, "Product Count",
+					getTempData("PROD_COUNT"));
+			apexPageHeader.waitForPresenceOfHeader1(pageName, "Item POG");
+			apextButton.clickOnButton(pageName, "Back");
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Meterage (m)", "METERAGE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective Start Date", "EFF_START_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective End Date", "EFF_END_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Height (cm)", "POG_HEIGHT");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Width (cm)", "POG_WIDTH");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Depth (cm)", "POG_DEPTH");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Division Name", "DIVISION_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Department Name", "DEPARTMENT_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Start Date", "POG_START_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Temp POG?", "TEMP_POG");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POSD Ind", "POSD_IND");
+		logger.pass("Successfully matched DB value to UI for all POG Master columns for POG Code:"
+				+ bold(getTempData("POG_CODE")) + " POG Version:" + bold(getTempData("POG_VERSION"))
+				+ " with status as: " + bold(pogStatus));
+	}
+
+}

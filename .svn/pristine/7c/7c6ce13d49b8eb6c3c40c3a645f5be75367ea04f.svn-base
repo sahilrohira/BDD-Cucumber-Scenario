@@ -1,0 +1,140 @@
+package stepdefs.POGManagement;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_BU_SYSPRM_Table;
+import db.SM_STORE_POG_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexButton;
+import pages.apex.ApexDropDown;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class POGM_StorePOGPageSteps extends SuperStepdefs {
+
+	private String pageName = "Store POG";
+	private CommonPageSteps commonPageSteps;
+	private String tableLabel = "store_pog";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_STORE_POG_Table sm_store_pog;
+	private SM_BU_SYSPRM_Table sm_bu_sysprm;
+	private ApexDropDown apexDropDown;
+	
+
+	public POGM_StorePOGPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_store_pog= new SM_STORE_POG_Table(con, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		sm_bu_sysprm = new SM_BU_SYSPRM_Table(con, testCaseId);
+		apexDropDown=new ApexDropDown(driver,testCaseId);
+	}
+
+	
+	@Then("^From Store POG Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@When("^Type the parameters to search for the Store POG with status as \"(.*)\"$")
+	public void StorePOGSearch(String itemStatus) throws Exception {
+		commonPageSteps.enterTextFieldValue("P100_STORE", "STORE");
+		commonPageSteps.enterTextFieldValue("P100_POG_CODE_1", "POG_CODE");
+		commonPageSteps.enterTextFieldValue("P100_POG_VERSION", "POG_VERSION");
+		apexDropDown.delselectAllDropDownValue(pageName, "P100_STORE_POG_STATUS");
+		switch(itemStatus) {
+		case "L":
+			commonPageSteps.selectDropDownValue("P100_STORE_POG_STATUS", "Live");
+			break;
+		case "P":
+			commonPageSteps.selectDropDownValue("P100_STORE_POG_STATUS", "Planned");
+			break;
+		case "H":
+			commonPageSteps.selectDropDownValue("P100_STORE_POG_STATUS", "Historical");
+			break;
+		}
+	}
+	
+	
+	@Then("^Apply Filter for Column Floor Plan Version to get unique record")
+	public void applyCapacityFilter() throws Exception {
+		Thread.sleep(5000);
+		apexTable.filterScrollingTableContent(pageName, tableLabel, "FP Version", "FP_VERSION");
+		logger.pass("Applied Filter for with Capacity as "+bold(getTempData("FP_VERSION")));
+	}
+	
+	
+	@Then("^Validate all fields set to Default on Search Popup for Store POG$")
+	public void VerifyallfieldsetoDefaultValue() throws Exception {
+		commonPageSteps.validateTextFieldValue("P100_STORE", "");
+		//commonPageSteps.validateDropDownValue("P100_STORE_POG_STATUS", "");
+		commonPageSteps.validateTextFieldValue("P100_POG_CODE_1", "");
+		commonPageSteps.validateTextFieldValue("P100_POG_VERSION", "");
+		commonPageSteps.validateDropDownValue("P100_DIVISION", "--Select--");
+		//commonPageSteps.validateDropDownValue("P100_DEPARTMENT", "");
+		commonPageSteps.validateDropDownValue("P100_ON_VIRTUAL_POG", "PLN and Virtual POG");
+		commonPageSteps.validateDropDownValue("P100_REPORT_TYPE", "Primary Report");
+		logger.pass("Successfully Validated the Reset Button Functionality");
+	}
+	
+	@Then("^Retreive the Store POG details from DB with Status as \"(.*)\"$")
+	public void fetchStorePOGSearchAttri(String storerPOGStatus) throws Exception {
+		sm_store_pog.fetchStorePOGSearchAttri(storerPOGStatus);
+		logger.pass("Fetched Store POG search attributes with status as " + bold(storerPOGStatus));
+	}
+	
+	@Then("^Validate all Store POG details from database for selected \"(.*)\" with status as \"(.*)\"$")
+	public void validateStorePOGdetailfromDB(String pog,String storePOGStatus) throws Exception {
+		sm_store_pog.fetchStorePOGdetails();
+		sm_store_pog.fetchStorePOGActEffStartDate();
+		//sm_pog_item.fetchItemPOGStoreLivePlannedHistCount();
+		String POG_Name_Ind=sm_bu_sysprm.getSysConfValue("POG_NAME_IND");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store", "STORE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store Name", "STORE_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "FP Version", "FP_VERSION");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Code", "POG_CODE");
+		
+		if (POG_Name_Ind.equalsIgnoreCase("Y")){
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Name", "POG_NAME");
+		}
+		
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Version", "POG_VERSION");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Virtual", "VIRTUAL");
+		String Pog_type=null;
+		switch(getTempData("POG_TYPE")) {case "D":Pog_type="Dummy";break;case "R":Pog_type="Regular";break;case "P":Pog_type="Promotion";break;case "H":Pog_type="Host";break;}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Type", Pog_type);
+		switch(storePOGStatus) {
+		case "L":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store POG Status", "Live");
+		break;
+		case "P":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store POG Status", "Planned");
+		break;
+		case "H":
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store POG Status", "Historical");
+		break;
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Actual POG Start Date", "ACTUAL_POG_START_DATE");
+		//apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective Start Date", "EFF_START_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective End Date", "EFF_END_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Division", "DIVISION");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Department", "DEPARTMENT");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Height (cm)", "POG_HEIGHT");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Width (cm)", "POG_WIDTH");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Depth (cm)", "POG_DEPTH");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Meterage (m)", "METERAGE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "District Name", "DISTRICT_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Region Name", "REGION_NAME");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store Area (Sq. Ft)", "TOTAL_SQUARE_FT");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store Open Date", "STORE_OPEN_DATE");
+		apexTable.validateScrollingTableEqualColumnCellValue(pageName, tableLabel, 1, "POG Start Date", "POG_START_DATE");
+		//apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Count", "");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Temp POG?", "TEMP_IND");
+		logger.pass("Successfully matched DB value to UI for all Store POG columns for Store "+bold(getTempData("STORE"))+" POG Code:"+bold(pog)+" POG Version:"+bold(getTempData("POG_VERSION"))+" with status as: "+bold(storePOGStatus));
+	}
+	
+}

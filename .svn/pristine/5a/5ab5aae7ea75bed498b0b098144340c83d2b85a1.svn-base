@@ -1,0 +1,121 @@
+package pages.POGManagement;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+import utils.ExcelUtil;
+
+public class SPACE_Template extends CommonPage {
+	private ExcelUtil excelUtil;
+	public SPACE_Template(WebDriver driver, String testCaseId) {
+		super(driver, testCaseId);
+		excelUtil = new ExcelUtil();
+	}
+
+	public void tagInNewSpaceTemplate(String fileName,String childPOG,String store,String locID,String childmod) throws IOException{
+		int row_Num=getSPACETempRowIndexFromExcel(fileName, "Tagging","Store,Fixture Location ID,Fixture Label", store+","+locID+","+childmod);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "Tagging", "POG Code", row_Num, childPOG);
+	}
+	
+	public void tagInUpdateSpaceTemplate(String fileName,String childPOG,String version,String store,String locID,String childmod,String action) throws IOException{
+		int row_Num=getSPACETempRowIndexFromExcel(fileName, "Tagging","Store,Fixture Location ID,Fixture Label", store+","+locID+","+childmod);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "Tagging", "POG Code", row_Num, childPOG);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "Tagging", "POG Version", row_Num, version);
+		excelUtil.setCellDataToExcel(fileName+".xlsx", "Tagging", "Action", row_Num, action);
+	}
+	
+	
+	public int getSPACETempRowIndexFromExcel(String filePath, String sheetName, String columnsName, String columnsValue) throws IOException{
+		List<String> listColumnsName = new ArrayList<String>();
+		String[] arrColumnsName = columnsName.trim().split(",");
+		for (String tmp : arrColumnsName) {
+			listColumnsName.add(tmp);
+		}
+
+		List<String> listColumnsValue = new ArrayList<String>();
+		String[] arrColumnsValue = columnsValue.trim().split(",");
+		for (String tmp : arrColumnsValue) {
+			listColumnsValue.add(tmp);
+		}
+		
+		int rowCount = getSMPACETemplateRowCountFromExcel(filePath, sheetName);
+		
+		List<Integer> headersIndex = new ArrayList<Integer>();
+		for (String columnName : listColumnsName) {
+			int hederIndex = ExcelUtil.getHeaderIndexFromExcel(filePath+".xlsx", sheetName, columnName);
+			headersIndex.add(hederIndex);
+		}
+		
+		for(int currentRow = 3; currentRow <= rowCount; currentRow++) {
+			
+			List<String> rowData = getSPACETemplateRowDataFromExcel(filePath+".xlsx", sheetName, currentRow);
+			boolean matchingRowFound = true;
+			int colValueIndex =0;
+			for (int headerIndex : headersIndex) {
+				if(! rowData.get(headerIndex).equalsIgnoreCase(listColumnsValue.get(colValueIndex)) ){
+					matchingRowFound = false;
+					break;
+				}
+				colValueIndex++;
+			}
+			
+			if(matchingRowFound==true) {
+				return currentRow-1;
+			}
+			
+		}
+        return -1;
+	}
+	
+	public int getSMPACETemplateRowCountFromExcel(String fileName, String sheetName) throws IOException{
+		int rowCount=0;
+		FileInputStream file = null;
+		XSSFSheet sheet;
+		file = new FileInputStream(new File(fileName+".xlsx"));
+		XSSFWorkbook workbook = new XSSFWorkbook(file);
+		sheet = workbook.getSheetAt(1);
+		rowCount = sheet.getPhysicalNumberOfRows();
+		workbook.close();
+		file.close();
+		return rowCount;
+	}
+	
+	public List<String> getSPACETemplateRowDataFromExcel(String filePath, String sheetName, int rowNo) throws IOException{
+		List<String> rowData = new ArrayList<String>();
+		
+		int columnCount = getSPACETemplateColumnCountFromExcel(filePath);
+		
+		for (int currentColumnIndex = 0; currentColumnIndex < columnCount; currentColumnIndex++) {
+			String cellData =  ExcelUtil.getCellDataFromExcel(filePath, sheetName, currentColumnIndex, rowNo-1);
+			rowData.add(cellData);
+		}
+		return rowData;
+	}
+	
+	public int getSPACETemplateColumnCountFromExcel(String filePath) throws IOException{
+		int columnCount=-1;
+		XSSFSheet sheet;
+		FileInputStream file = new FileInputStream(new File(filePath));
+        XSSFWorkbook workbook = new XSSFWorkbook(file);
+			sheet = workbook.getSheetAt(1);
+			columnCount = sheet.getRow(2).getPhysicalNumberOfCells();
+			//System.out.println(columnCount);
+        workbook.close();
+        file.close();
+        return columnCount;
+	}
+	
+	public void clickonButton(String buttonName,String xpath) throws Exception {
+		By buttonLink= By.xpath(xpath);
+		clickOnElementThenWait("Space Planning", buttonName, buttonLink, 1);
+	}
+}

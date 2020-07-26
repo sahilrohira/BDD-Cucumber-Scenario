@@ -1,0 +1,186 @@
+package db;
+
+import java.sql.Connection;
+import java.util.Map;
+
+import utils.AppData;
+
+public class SM_GENERAL_Table extends CommonDB {
+
+	public SM_GENERAL_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	public void getDivisionName() throws Exception {
+		String division_name_SQL = "select (division||' - '||division_name)as DIVISION_NAME from sm_pog_division where bu_id='"
+				+ AppData.buId + "' and rownum=1";
+		storeColumnNameAndValue(division_name_SQL);
+	}
+
+	public void getDepartmentName() throws Exception {
+		String[] division = getTempData("DIVISION_NAME").split(" - ");
+		String department_name_SQL = "select (dept||' - '||dept_name)as DEPART_NAME from sm_pog_dept where bu_id='"
+				+ AppData.buId + "' and division='" + division[0] + "' and rownum=1";
+		storeColumnNameAndValue(department_name_SQL);
+	}
+
+	public void getSubDepartmentName() throws Exception {
+		String[] dept = getTempData("DEPART_NAME").split(" - ");
+		String sub_department_name_SQL = "select (subdept||' - '||subdept_name) as SUB_DEPARTMENT from sm_pog_subdept where bu_id='"
+				+ AppData.buId + "'and dept='" + dept[0] + "' and rownum=1";
+		storeColumnNameAndValue(sub_department_name_SQL);
+	}
+
+	public void updateSystemConfValue(String flagVal, String sys_Conf_Name) throws Exception {
+
+		String updatePOGSubDeptFlag = "Update ax_bu_sysprm set SYS_CONF_VALUE = '" + flagVal + "' where bu_id ='"
+				+ AppData.buId + "' and sys_conf_name = '" + sys_Conf_Name + "'";
+		CommonDB.executeUpdate(con, updatePOGSubDeptFlag);
+	}
+
+	public void getDivisionNameTrim() throws Exception {
+		// String division_name_SQL = "select (division||'-'||division_name)as
+		// TDIVISION_NAME from sm_pog_division where bu_id='"+AppData.buId+ "' and
+		// rownum=1";
+		String division_name_SQL = "select (spd.division||'-'||spd.division_name) as TDIVISION_NAME from sm_pog_division spd INNER JOIN sm_pog_dept spdt ON spd.bu_id = spdt.bu_id AND spd.division = spdt.division INNER JOIN sm_pog_subdept spsd ON spsd.bu_id =  spd.bu_id AND spsd.division = spd.division AND spdt.dept = spsd.dept where spd.bu_id='"
+				+ AppData.buId + "' and rownum=1 AND spsd.subdept is not null AND spsd.subdept_name is not null";
+		storeColumnNameAndValue(division_name_SQL);
+	}
+	
+	public void getDivisionNameTrimWithSpaces() throws Exception {
+		// String division_name_SQL = "select (division||'-'||division_name)as
+		// TDIVISION_NAME from sm_pog_division where bu_id='"+AppData.buId+ "' and
+		// rownum=1";
+		String division_name_SQL = "select (spd.division||' - '||spd.division_name) as TDIVISION_NAME from sm_pog_division spd INNER JOIN sm_pog_dept spdt ON spd.bu_id = spdt.bu_id AND spd.division = spdt.division INNER JOIN sm_pog_subdept spsd ON spsd.bu_id =  spd.bu_id AND spsd.division = spd.division AND spdt.dept = spsd.dept where spd.bu_id='"
+				+ AppData.buId + "' and rownum=1 AND spsd.subdept is not null AND spsd.subdept_name is not null";
+		storeColumnNameAndValue(division_name_SQL);
+	}
+
+	public void getDepartmentNameTrim() throws Exception {
+		String[] division = getTempData("TDIVISION_NAME").split("-");
+		String department_name_SQL = "select (dept||'-'||dept_name)as TDEPART_NAME from sm_pog_dept where bu_id='"
+				+ AppData.buId + "' and division='" + division[0].trim() + "' and rownum=1";
+		storeColumnNameAndValue(department_name_SQL);
+	}
+
+	public void getSubDepartmentNameTrim() throws Exception {
+		String[] dept = getTempData("TDEPART_NAME").split("-");
+		String sub_department_name_SQL = "select (subdept||'-'||subdept_name) as TSUB_DEPARTMENT from sm_pog_subdept where bu_id='"
+				+ AppData.buId + "'and dept='" + dept[0] + "' and rownum=1";
+		storeColumnNameAndValue(sub_department_name_SQL);
+	}
+
+	public int getRMMSOSDLocCount() throws Exception {
+		String rms_Count_SQL = "select * from sm_rms_osd_map where bu_id='" + AppData.buId + "'";
+		int rms_loc_Count = getRowCount(rms_Count_SQL);
+		return rms_loc_Count;
+	}
+
+	public int getBrandGroupCount() throws Exception {
+		String brand_Count_SQL = "Select * from sm_brand_group where bu_id='" + AppData.buId + "'";
+		int brandgroup_loc_Count = getRowCount(brand_Count_SQL);
+		return brandgroup_loc_Count;
+	}
+
+	public void getBrandName() throws Exception {
+		String brand_Name_SQL = "SELECT su.description BRAND_CATEGORY, suv.description BRAND_NAME FROM sm_uda_values suv INNER JOIN sm_uda su ON ( su.bu_id = suv.bu_id AND su.uda_id = suv.uda_id AND su.module = 'I' AND su.uda_sys_code = 'ITEM_BRAND') "
+				+ "LEFT OUTER JOIN apex_collections acs ON (acs.collection_name = sm_pog_sql.get_brand_group_search_coll AND acs.n001 = suv.uda_id AND acs.n002 = suv.uda_value) WHERE suv.bu_id = '"
+				+ AppData.buId + "' AND "
+				+ "NOT EXISTS (SELECT 1 FROM apex_collections ac WHERE ac.collection_name = sm_pog_sql.get_brand_group_coll_name AND ac.n001 = suv.uda_id AND ac.n002 = suv.uda_value) fetch first row only";
+		storeColumnNameAndValue(brand_Name_SQL);
+	}
+
+	public void storeListId(String description) throws Exception {
+		String ListID_SQL = "select LIST_ID from sm_store_list_hdr where bu_id='" + AppData.buId + "'and LIST_DESC='"
+				+ description + "'";
+		storeColumnNameAndValue(ListID_SQL);
+	}
+
+	public int getStoreListCount() throws Exception {
+		String storeList_Count_SQL = "select * from sm_store_list_hdr where bu_id='" + AppData.buId + "'";
+		int storelist_loc_Count = getRowCount(storeList_Count_SQL);
+		return storelist_loc_Count;
+	}
+
+	public String getFloorPlanStore() throws Exception {
+		String store_SQL = "SELECT ( store|| ' - ' || store_name ) AS store, store as STORE_NUM, store_name as STORE_NAME FROM sm_active_stores WHERE store NOT IN ( SELECT sfp.store FROM sm_floor_plan sfp LEFT OUTER JOIN sm_floor_layout_dwg sfld ON ( sfp.bu_id = sfld.bu_id AND sfp.fp_version = sfld.fp_version AND sfp.store = sfld.store ) WHERE sfp.bu_id = '"
+				+ AppData.buId + "') AND bu_id = '" + AppData.buId + "' ORDER BY store ASC FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(store_SQL);
+		Map<String, String> fpStore = getColumnNameAndValue(store_SQL);
+		String store = fpStore.get("STORE");
+		return store;
+	}
+
+	public String getFloorPlanRequestID(int store) throws Exception {
+		String RequestID_SQL = " SELECT swf.seq_id request_no FROM sm_websession_files swf LEFT OUTER JOIN sm_store sas ON (sas.bu_id = swf.bu_id AND sas.store = swf.store) LEFT OUTER JOIN ax_code_detail_vw scdv ON (scdv.code_type = 'RQST' AND scdv.code = swf.status) LEFT OUTER JOIN sm_websession_files swf1 ON (swf.ref_seq_id = swf1.seq_id) WHERE swf.bu_id = '"
+				+ AppData.buId + "' AND sas.store=" + store
+				+ " ORDER BY swf.updated_datetime desc FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(RequestID_SQL);
+		Map<String, String> fpStore = getColumnNameAndValue(RequestID_SQL);
+		String reqNo = fpStore.get("REQUEST_NO");
+		return reqNo;
+	}
+
+	public void getPromotionPOG() throws Exception {
+		String promotion_Pog_SQL = "Select pog_code as PROM_POG , pog_version as PROM_POG_VER from sm_pog where bu_id='"
+				+ AppData.buId
+				+ "' and pog_type ='P' and (eff_end_date is null or  eff_end_date> ax_utility_sql.get_vdate + 30) and eff_start_date<=ax_utility_sql.get_vdate+1";
+		storeColumnNameAndValue(promotion_Pog_SQL);
+	}
+
+	public void getPromotionPOGexceptPOG(String pogCode, String pogVer) throws Exception {
+		if (getTempData(pogCode) != null) {
+			pogCode = getTempData(pogCode);
+		}
+		if (getTempData(pogVer) != null) {
+			pogVer = getTempData(pogVer);
+		}
+		String prom_POG_sqlExcept_pog = " SELECT pog_code AS prom_pog2, pog_version AS prom_pog_ver2 FROM sm_pog WHERE bu_id = '"
+				+ AppData.buId
+				+ "' AND pog_type = 'P' AND ( eff_end_date IS NULL OR eff_end_date > ax_utility_sql.get_vdate + 30 ) AND eff_start_date <= ax_utility_sql.get_vdate + 1 "
+				+ "AND pog_code<>'" + pogCode + "' and pog_version <>" + pogVer;
+		storeColumnNameAndValue(prom_POG_sqlExcept_pog);
+	}
+
+	public void getPromotionPOGWith2Version() throws Exception {
+		String promotion_Pog2Ver_SQL = "SELECT distinct POG_CODE as PROMPOG_2VER,min(pog_version) over (partition by POG_CODE) as PROM_VER1,Max(pog_version) over (partition by POG_CODE) as PROM_VER2 "
+				+ " FROM sm_pog WHERE pog_code IN (SELECT pog_code FROM sm_pog WHERE bu_id = '" + AppData.buId
+				+ "' AND pog_type = 'P' GROUP BY pog_code HAVING COUNT(pog_version) = 2) AND bu_id = '" + AppData.buId
+				+ "' AND pog_type = 'P' and (eff_end_date is null or  eff_end_date> ax_utility_sql.get_vdate + 30) and eff_start_date< ax_utility_sql.get_vdate + 1";
+		storeColumnNameAndValue(promotion_Pog2Ver_SQL);
+	}
+
+	public void getregularPOGWith2Version(String storeArea) throws Exception {
+		String regular_Pog2Ver_SQL;
+		if (getTempData(storeArea) != null) {
+			storeArea = getTempData(storeArea);
+		}
+		if (AppData.buId.equalsIgnoreCase("WTC")) {
+			regular_Pog2Ver_SQL = "SELECT distinct POG_CODE as REGPOG_2VER,min(pog_version) over (partition by POG_CODE) as REG_VER1,Max(pog_version) over (partition by POG_CODE) as REG_VER2 FROM sm_pog WHERE pog_code IN ( SELECT sp.pog_code FROM sm_pog sp INNER JOIN sm_area sa ON ( sp.bu_id = sa.bu_id ) "
+					+ " WHERE sp.bu_id = '" + AppData.buId + "' AND sp.pog_type = 'R'  and  ( sa.area = " + storeArea
+					+ " OR sa.area IS NULL ) AND sp.pog_region = " + storeArea
+					+ " GROUP BY sp.pog_code HAVING COUNT(sp.pog_version) = 2) AND bu_id = '" + AppData.buId
+					+ "' AND pog_type = 'R' and (eff_end_date is null or  eff_end_date> ax_utility_sql.get_vdate + 30) ORDER BY dbms_random.value FETCH FIRST 1 ROWS ONLY";
+
+		} else {
+			regular_Pog2Ver_SQL = "SELECT distinct POG_CODE as REGPOG_2VER,min(pog_version) over (partition by POG_CODE) as REG_VER1,Max(pog_version) over (partition by POG_CODE) as REG_VER2 "
+					+ " FROM sm_pog WHERE pog_code IN (SELECT pog_code FROM sm_pog WHERE bu_id = '" + AppData.buId
+					+ "' AND pog_type = 'R' GROUP BY pog_code HAVING COUNT(pog_version) = 2) AND bu_id = '"
+					+ AppData.buId
+					+ "' AND pog_type = 'R' and (eff_end_date is null or  eff_end_date> ax_utility_sql.get_vdate + 30) ORDER BY dbms_random.value FETCH FIRST 1 ROWS ONLY";
+		}
+		storeColumnNameAndValue(regular_Pog2Ver_SQL);
+	}
+
+	public void getAreaforStore(String store) throws Exception {
+		String area_perStore_SQL = "Select sa.area as AREA from sm_area sa INNER JOIN sm_region sr on (sa.bu_id=sr.bu_id and sa.area=sr.area) INNER JOIN sm_district sd on (sd.bu_id=sr.bu_id and sd.region=sr.region) INNER JOIN sm_store ss on (ss.bu_id=sa.bu_id and ss.district=sd.district) where ss.store="
+				+ store + " and sa.bu_id='" + AppData.buId + "'";
+		storeColumnNameAndValue(area_perStore_SQL);
+	}
+
+	public void getRandomStoreListItem() throws Exception {
+		String store_List_Item = "select distinct(LIST_ID) from sm_store_list_dtl where bu_id = '" + AppData.buId
+				+ "' ORDER BY dbms_random.value fetch first 1 rows only";
+		storeColumnNameAndValue(store_List_Item);
+	}
+}

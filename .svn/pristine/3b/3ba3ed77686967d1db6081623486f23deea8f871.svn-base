@@ -1,0 +1,20 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexError extends CommonPage {
+	
+	public ApexError(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+
+	public void validateErrorMessageIsPresent(String pageName, String fieldName) throws Exception {
+		By errorLabel 		= By.xpath("//div[contains(@id,'"+fieldName+"_error') and not(contains(@type,'hidden'))]");
+		validateTextEquals(pageName, fieldName, errorLabel, "Please fill out this field.");
+	}
+
+	
+}

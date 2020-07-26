@@ -1,0 +1,95 @@
+Feature: Validating Functionality Related To Tagging Template under POG Management in Manage Planogram
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Manage Planogram" Link
+@run
+Scenario: POGM_ManagePlanogram_TC001#Tag a POG with two versions to an Empty Location and upgrade the Version via UI in Manage Planogram
+		And Extract any Regular POG with two version
+		And Extract empty location for a single floor plan store
+		Then Update the Template with Add_POG Code "REGPOG_2VER", Add_POG_Version "REG_VER1", Add_Module "",Add_POG_Position "",Del_POG Code "",Del_POG Version "",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Store POG Module" Link
+		And Wait For "2" Second
+		When Type the parameters Store as "SFP_STORE",POG Code as "REGPOG_2VER" and POG Version "REG_VER1" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Apply Filter for Column "Location ID" with value "SFP_EMPTY_LOC"
+		And Validate column "Effective Start Date" with value as "vdate+1"
+		And Validate column "Effective End Date" with value as "MAX_END_DATE"
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Manage Planogram" Link
+		
+		Then Update the Template with Add_POG Code "", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "POG_SM",Del_POG Version "POGV_SM",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Store POG Module" Link
+		And Wait For "2" Second
+		When Type the parameters Store as "SFP_STORE",POG Code as "POG_SM" and POG Version "POGV_SM" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Remove Existing Filter
+		And Apply Filter for Column "Location ID" with value "SFP_EMPTY_LOC"
+		And Validate No data Found on Screen "Store POG Module" for table "store_pog_module"
+		
+		@run
+Scenario: POGM_ManagePlanogram_TC002#1 in 1 out with Child Promotion POG # Tag a preant POG1 as Vdate+1 then Child promotion PROMPOG vdate+1 to vdate+30 on LOC1//Now add POG2 from vdate+10 on same LOC1//Validate POG1 vdate+1 to vdate+9,PROMPOG vdate+1 to vdate+9 and UP_PROMPOG to vdate+10 to vdate+30 and POG2 to vdate+30 to max end date 
+		When Wait For "2" Second
+		When From Manage Planogram Page, Click On "Template" Button
+		And Extract empty location for a single floor plan store
+		And Extract the POG with ChildSpace for Promotion Tagging
+		And Update the Template with Add_POG Code "POGID_PCS", Add_POG_Version "POGVER_PCS", Add_Module "PARENT_PMOD",Add_POG_Position "",Del_POG Code "",Del_POG Version "",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Space Planning" Link
+		And Extract any Promotion POG
+    And Create and Tag the Promotion POG "PROM_POG" with ChildSpace "POGMOD_PCS" for Store "SFP_STORE" from start date "vdate+1" to end date "vdate+30" at location "SFP_EMPTY_LOC"
+    And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Space Planning" with filename as "PLAN_ID"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Manage Planogram" Link
+		And Extract the POG2 with ChildSpace for Promotion Tagging except POG "POGID_PCS" and Version "POGVER_PCS"
+		Then Update the Template with Add_POG Code "POGID2_PCS", Add_POG_Version "POGVER2_PCS", Add_Module "PARENT2_PMOD",Add_POG_Position "",Del_POG Code "POGID_PCS",Del_POG Version "POGVER_PCS",Del_POG Module "PARENT_PMOD",Store "SFP_STORE",EffectiveDate "vdate+10",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Store POG Module" Link
+		Then Type the parameters Store as "SFP_STORE",POG Code as "" and POG Version "" as to search for the Store POG Module with status as "P"
+		And From Store POG Module Page, Click On "Search" Button
+		And Apply Filter for Column "Location ID" with value "SFP_EMPTY_LOC"
+		And Update filter "Location ID" with value as "SFP_EMPTY_LOC"
+		And Apply Filter for Column "POG Code" with value "PROM_POG"
+		And Validate column "Effective Start Date" with value as "vdate+1"
+		And Validate column "Effective End Date" with value as "vdate+9"
+		And Update filter "POG Code" with value as "POGID_PCS"
+		And Validate column "Effective Start Date" with value as "vdate+1"
+		And Validate column "Effective End Date" with value as "vdate+9"
+		And Update filter "POG Code" with value as "POGID2_PCS"
+		And Validate column "Effective Start Date" with value as "vdate+10"
+		And Validate column "Effective End Date" with value as "MAX_END_DATE"
+		And Update filter "Location ID" with value as "UP_SFP_EMPTY_LOC"
+		And Update filter "POG Code" with value as "PROM_POG"
+		And Validate column "Effective Start Date" with value as "vdate+10"
+		And Validate column "Effective End Date" with value as "vdate+30"
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Manage Planogram" Link
+		And Update the Template with Add_POG Code "", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "POGID_PCS",Del_POG Version "POGVER_PCS",Del_POG Module "PARENT_PMOD",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+		And Update the Template with Add_POG Code "", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "POGID2_PCS",Del_POG Version "POGVER2_PCS",Del_POG Module "PARENT2_PMOD",Store "SFP_STORE",EffectiveDate "vdate+10",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "2"
+		And From Manage Planogram Page, Click On "Import" Button
+		And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+		And Validate Successful Message As "Record(s) Imported Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Space Planning" Link
+		And Delete the promotion with Plan ID as "PLAN_ID" and Promotion Number as "PROM_NUM"
+		And Validate Breadcrumb Header with Value as "Space Planning"

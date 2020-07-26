@@ -1,0 +1,68 @@
+package stepdefs.common;
+
+import cucumber.api.java.en.Then;
+import pages.apex.ApexMessage;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class ApexMessageSteps extends SuperStepdefs {
+
+	public ApexMessage apexMessage;
+	
+	public ApexMessageSteps(Hook hook) {
+		super(hook);
+		apexMessage = new ApexMessage(driver,testCaseId);
+	}
+    
+    /**
+     * @author Vinay.Kumar
+     	
+     	From Message Dialog, Validate Message Header As "Please confirm the following:"
+     	
+     */
+    @Then("^From Message Dialog, Validate Message Header As \"(.*)\"$")
+    public void verifyMessageHeader(String text) throws Exception {
+    	apexMessage.verifyMessageHeader(text);
+    	logger.pass("From Message Dialog, Validate Message Header As " + bold(text));
+    }
+    
+    /**
+     * @author Vinay.Kumar
+     	
+     	From Message Dialog, Validate Message "1" Content As "Do you want to receive pending quantity of this Item in a new Line?"
+     	From Message Dialog, Validate Message "2" Content As "Sell by date does not follow the product shelf life ( 360 Days ), Do you want to continue with this Sell By Date ?"
+     	
+     */
+    @Then("^From Message Dialog, Validate Message \"(.*)\" Content As \"(.*)\"$")
+    public void verifyMessageContent(int messageNo, String text) throws Exception {
+    	apexMessage.verifyMessageContent(messageNo, text);
+    	logger.pass("From Message Dialog, Validate Message "+bold(messageNo)+"Content As " + bold(text));
+    }
+    
+    /**
+     * @author Vinay.Kumar
+     	
+     	From Message Dialog, Validate Message Content As "Entered Invoice amount is 1000 while received quantity amount is 130, Do you still want to continue?"
+     	
+     */
+    @Then("^From Message Dialog, Validate Message Content As \"(.*)\"$")
+    public void verifyMessageContent_Type2(String text) throws Exception {
+    	apexMessage.verifyMessageContent(text);
+    	logger.pass("From Message Dialog, Validate Message Content As " + bold(text));
+    }
+    
+    
+    /**
+     * @author Vinay.Kumar
+     	
+     	From Message Dialog, Click On "Yes" Button
+     	From Message Dialog, Click On "No" Button
+     	
+     */
+    @Then("^From Message Dialog, Click On \"(.*)\" Button$")
+    public void clickOnButton(String buttonName) throws Exception {
+    	apexMessage.clickOnButton(buttonName);
+    	logger.pass("From Alert Dialog, Click On "+bold(buttonName)+" Button");
+    }
+
+}

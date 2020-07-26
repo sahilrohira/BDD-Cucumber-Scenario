@@ -1,0 +1,192 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_ITEM_MASTER_Table;
+import db.SM_POG_ITEM_Table;
+import db.SM_UDA_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import pages.Master.MasterStore;
+import pages.Master.Product;
+import pages.apex.ApexButton;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class Masters_ProductPageSteps extends SuperStepdefs {
+
+	private String pageName = "Masters_Product";
+	private CommonPageSteps commonPageSteps;
+	private String tableLabel = "area_master";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_UDA_Table sm_uda_table;
+	private SM_ITEM_MASTER_Table sm_item_master;
+	private ApexTextField apexTextField;
+	private MasterStore mstore;
+	private Product product;
+	private SM_POG_ITEM_Table sm_pog_item;
+
+	public Masters_ProductPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_uda_table = new SM_UDA_Table(con, testCaseId);
+		sm_item_master= new SM_ITEM_MASTER_Table(con, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		apexTextField =new ApexTextField(driver, testCaseId);
+		mstore=new MasterStore(driver, pageName);
+		product=new Product(driver, testCaseId);
+		sm_pog_item=new SM_POG_ITEM_Table(con, testCaseId);
+	}
+
+	/**
+	 * @author Vinay.Kumar
+	 * 
+	 *         From WHS_AreaMaster Page, Click On "Download" Button From
+	 *         WHS_AreaMaster Page, Click On "Save" Button From WHS_AreaMaster Page,
+	 *         Click On "Add Row" Button From WHS_AreaMaster Page, Click On "Reset"
+	 *         Button
+	 * 
+	 *         Note :- Edit Button is Not Supported With This Step
+	 * 
+	 */
+	@Then("^From Master_Product Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@When("^Enter the parameters to search for the item")
+	public void ItemSearch() throws Exception {
+		commonPageSteps.enterTextAreaFieldValue("P3_ITEM", "ITEM");
+		commonPageSteps.enterTextFieldValue("P3_SUPP_NAME", "");
+		commonPageSteps.enterTextFieldValue("P3_SUPPLIER_CODE", "");
+		commonPageSteps.selectDropDownValue("P3_ON_POG", "Yes");
+		if (sm_uda_table.getMainBrandValues() != null) {
+			commonPageSteps.enterTextFieldValue("MAIN_BRAND", "");
+		}
+		commonPageSteps.enterTextFieldValue("P3_DESCRIPTION", "DESCRIPTION");
+		commonPageSteps.enterTextFieldValue("P3_DESCRIPTION_SEC", "DESCRIPTION_LOCAL");
+		commonPageSteps.selectDropDownValue("P3_GROUP", "GROUP_NO");
+		commonPageSteps.enterTextFieldValue("P3_ITEM_BRAND", "");
+		commonPageSteps.selectDropDownValue("P3_DEPARTMENT", "DEPARTMENT");
+	}
+
+	@Then("^From Master_Product Page, For Row \"(.*)\", Clear And Type Text For Column \"(.*)\" As \"(.*)\"$")
+	public void clearAndType(int rowNo, String headerName, String value) throws Exception {
+		apexTable.clearAndTypeCellText(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From WHS AreaMaster Page, For Row " + bold(rowNo) + ", Clear And Type Text For Column "
+				+ bold(headerName) + " As " + bold(value));
+	}
+
+	@Then("^Validate all fields set to Default$")
+	public void ValidateallfieldtoDefault() throws Exception {
+		commonPageSteps.validateTextFieldValue("ITEM", "");
+		commonPageSteps.validateTextFieldValue("SUPP_NAME", "");
+		commonPageSteps.validateTextFieldValue("SUPPLIER_CODE", "");
+		commonPageSteps.validateDropDownValue("ON_POG", "--Select--");
+		if (sm_uda_table.getMainBrandValues() != null) {
+			commonPageSteps.enterTextFieldValue("MAIN_BRAND", "");
+		}
+		commonPageSteps.validateTextFieldValue("DESCRIPTION", "");
+		commonPageSteps.validateTextFieldValue("DESCRIPTION_SEC", "");
+		commonPageSteps.validateDropDownValue("GROUP", "--Select--");
+		commonPageSteps.validateTextFieldValue("ITEM_BRAND", "");
+		//commonPageSteps.validateDropDownValue("DEPARTMENT", "");
+	}
+	
+	@Then("^Fetch the Product Search details from DB")
+	public void fetchProductSearchAttri() throws Exception {
+		sm_item_master.fetchItemDetails();
+		logger.pass("Product Search details fetched from DB");
+	}
+	
+	@Then("^Validate all Product details from database for selected \"(.*)\"$")
+	public void validateStoreMasterdetailfromDB(String item) throws Exception {
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_ITEM", item);;
+		apexTextField.enterTexwithIDEquals(pageName, "P35_ITEM", item);
+		apextButton.clickOnButton(pageName, "Search Item");
+		sm_pog_item.fetchItemPOGBrandName(item);
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_BRAND_NAME", "BRAND_NAME");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_DESCRIPTION", "DESCRIPTION");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_DESCRIPTION_SECONDARY", "DESCRIPTION_LOCAL");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_SHORT_DESC", "SHORT_DESC");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_ITEM_GROUP", "GROUP_NO");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_DEPARTMENT", "DEPARTMENT");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_CLASS", "CLASS");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_SUB_CLASS", "SUBCLASS");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_BARCODE", "BARCODE");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_ITEM_SIZE_DESC", "ITEM_SIZE");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_SUPPLIER", "PRIM_SUPPLIER");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_SUPPLIER_NAME", "SUP_NAME");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_SUPP_COUNTRY", "PRIM_SUPP_COUNTRY");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_UOM", "STANDARD_UOM");
+		if(getTempData("PACK_IND").equals("N")) {apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_PACK_IND", "No");	}
+		else {apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_PACK_IND", "Yes");}
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_ON_POG", "Yes");
+		apexTextField.validateTextFieldValuewithIDEquals(pageName, "P35_SUPPLIER_TYPE", "SUPP_TYPE");
+		logger.pass("Successfully matched DB value to UI for Item Master");
+	}
+	
+	@Then("^Validate UDA Details Tab for Item \"(.*)\"$")
+	public void validateUDADetailsfromDB(String item) throws Exception {
+		if(getTempData(item)!=null) {item=getTempData(item);}
+		String Attribute_Count=sm_item_master.getItemUDAAttributesCount(item);
+		if (Attribute_Count.equals("0")) {apexTable.validateTableIsEmpty(pageName,tableLabel);	}
+		else{ 
+			mstore.validatePaginationCount("Item UDA Count","//div[contains(@class,'col col-6')][2]//span[@class='a-IRR-pagination-label']",Attribute_Count);
+		}
+		if (sm_item_master.getSystemUDAAttributesCount(item).equals("0")) {apexTable.validateTableIsEmpty(pageName,tableLabel);	}
+		else {
+		mstore.validatePaginationCount("System UDA Count","//div[contains(@class,'col col-6')]//span[@class='a-GV-pageRange']",sm_item_master.getSystemUDAAttributesCount(item));}
+	}
+	
+	@Then("^Validate POG Tab details for Item \"(.*)\"$")
+	public void validatePOGDetailsfromDB(String item) throws Exception {
+		if(getTempData(item)!=null) {item=getTempData(item);}
+		String Attribute_Count=sm_item_master.storeItemPOGCount(item);
+		if (Attribute_Count.equals("0")) {apexTable.validateTableIsEmpty(pageName,tableLabel);	}
+		else{ 
+			mstore.validatePaginationCount("pog Count","//div[contains(@id,'product_pog')]//span[@class='a-GV-pageRange']",Attribute_Count);
+		}
+	}
+	
+	@Then("^Validate Store Tab details for Item \"(.*)\"$")
+	public void validateStoreDetailsfromDB(String item) throws Exception {
+		if(getTempData(item)!=null) {item=getTempData(item);}
+		String Attribute_Count=sm_item_master.storeItemStoreCount(item);
+		if (Attribute_Count.equals("0")) {apexTable.validateTableIsEmpty(pageName,tableLabel);	}
+		else{ 
+			mstore.validatePaginationCount("pog Count","//div[contains(@id,'product_store')]//span[@class='a-GV-pageRange']",Attribute_Count);
+		}
+	}
+	
+	@Then("^Validate Segement Tab details for Item \"(.*)\"$")
+	public void validateSegmentDetailsfromDB(String item) throws Exception {
+		if(getTempData(item)!=null) {item=getTempData(item);}
+		String Attribute_Count=sm_item_master.storeItemSegmentCount(item);
+			mstore.validatePaginationCount("pog Count","//div[contains(@id,'product_segment')]//span[@class='a-GV-pageRange']",Attribute_Count);
+	}
+	
+	@Then("^Validate Dimension Tab details for Item \"(.*)\"$")
+	public void validateDimesionsDetailsfromDB(String item) throws Exception {
+		if(getTempData(item)!=null) {item=getTempData(item);}
+		sm_item_master.storeItemDimensions(item);
+		product.validateUnitSizeDim();
+		}
+	
+	@Then("^Validate Manage Images Tab for Item \"(.*)\"$")
+	public void validateManageImages(String item) throws Exception {
+		apextButton.validateButtonIsPresent(pageName, "Upload Image");
+		}
+	
+	@Then("^Validate Other Suppliers Tab for Item \"(.*)\"$")
+	public void validateOtherSuppliersfromDB(String item) throws Exception {
+		if(getTempData(item)!=null) {item=getTempData(item);}
+		String Attribute_Count=sm_item_master.storeItemOtherSegmentCount(item);
+			mstore.validatePaginationCount("pog Count","//div[contains(@id,'product_supplier')]//span[@class='a-GV-pageRange']",Attribute_Count);
+		}
+	
+}

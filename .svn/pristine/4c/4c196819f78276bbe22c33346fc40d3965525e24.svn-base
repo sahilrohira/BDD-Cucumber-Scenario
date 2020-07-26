@@ -1,0 +1,95 @@
+package utils;
+
+import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import db.SM_BU_SYSPRM_Table;
+import db.SM_SYSPRM_Table;
+
+
+public class AppDateUtil {
+
+	SM_BU_SYSPRM_Table sm_bu_sysprm;
+	SM_SYSPRM_Table sm_sysprm;
+	
+	public static String newDateInUIFormat(int variationInDays) throws Exception {
+		String currentAppDate = AppData.appDate;
+		SimpleDateFormat sdf = new SimpleDateFormat(AppData.appDateFormat);
+		Calendar c = Calendar.getInstance();
+		c.setTime(sdf.parse(currentAppDate));
+		c.add(Calendar.DAY_OF_MONTH, variationInDays);  
+		String newDate = sdf.format(c.getTime());  
+		System.out.println("Date after Addition: "+newDate);
+		return newDate;
+	}
+	
+	public static String sysDateInUIFormat(int variationInDays) throws Exception {
+		Date date = new Date(System.currentTimeMillis());
+		SimpleDateFormat sdf = new SimpleDateFormat(AppData.appDateFormat);
+		Calendar c = Calendar.getInstance();
+		String dt=sdf.format(date);
+		c.setTime(sdf.parse(dt));
+		c.add(Calendar.DAY_OF_MONTH, variationInDays);  
+		String newDate = sdf.format(c.getTime());  
+		System.out.println("Date after Addition: "+newDate);
+		return newDate;
+	}
+	
+	public static String sysDateInYYYYMMDDformat(int variationInDays) throws Exception {
+		Date date = new Date(System.currentTimeMillis());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Calendar c = Calendar.getInstance();
+		String dt=sdf.format(date);
+		c.setTime(sdf.parse(dt));
+		c.add(Calendar.DAY_OF_MONTH, variationInDays);  
+		String newDate = sdf.format(c.getTime());  
+		System.out.println("Date after Addition: "+newDate);
+		return newDate;
+	}
+	
+	public String getAppdate(Connection con, String testCaseId) throws Exception {
+		sm_sysprm = new SM_SYSPRM_Table(con, testCaseId);
+		sm_bu_sysprm = new SM_BU_SYSPRM_Table(con, testCaseId);
+		String date_format=sm_bu_sysprm.getSysConfValue("APPL_DATE_FORMAT");
+		date_format = date_format.replace("R", "y");
+		date_format = date_format.replace("D", "d");
+		String vDate=sm_sysprm.getVDate();
+        DateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date newDate = sdf.parse(vDate);
+        String newDateInAppFormat=new SimpleDateFormat(date_format).format(newDate);
+		return newDateInAppFormat;
+	}
+	
+	public String getAppdateFormat(Connection con) throws Exception {
+		sm_bu_sysprm = new SM_BU_SYSPRM_Table(con, "");
+		String date_format=sm_bu_sysprm.getSysConfValue("APPL_DATE_FORMAT");
+		date_format = date_format.replace("R", "y");
+		date_format = date_format.replace("D", "d");
+		return date_format;
+	}
+	
+	public static String getAppdateinPOGVersionFormat(int variationInDays) throws Exception {
+		@SuppressWarnings("deprecation")
+		Date date = new Date(AppData.appDate);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Calendar c = Calendar.getInstance();
+		String dt=sdf.format(date);
+		c.setTime(sdf.parse(dt));
+		c.add(Calendar.DAY_OF_MONTH, variationInDays);  
+		String newDate = sdf.format(c.getTime());  
+		System.out.println("Date after Addition: "+newDate);
+		return newDate;
+	}
+	
+	public static String getMaxEndDate() throws Exception {
+		String endDate="20491231";
+        DateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date newDate = sdf.parse(endDate);
+        String newDateInAppFormat=new SimpleDateFormat(AppData.appDateFormat).format(newDate);
+		return newDateInAppFormat;
+	}
+}

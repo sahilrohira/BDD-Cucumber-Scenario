@@ -1,0 +1,10 @@
+EnvironmentName = QA
+#AVailable EnvironmentName QA, UAT
+
+BrowserToUse=chrome
+#Available BrowserToUse = chrome,		firefox,	iexplorer
+
+implicitlyWaitInSecond=20
+
+# Report File Path
+SpaceReportFilePath=Test_Reports/Space_Automation_Report.html

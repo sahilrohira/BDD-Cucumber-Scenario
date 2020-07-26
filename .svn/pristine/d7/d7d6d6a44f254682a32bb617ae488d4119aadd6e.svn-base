@@ -1,0 +1,31 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexFrame extends CommonPage {
+	
+	public ApexFrame(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+
+	public void apexSwitchToFrame(int frameIndex) throws Exception {
+		switchToFrame(frameIndex);
+	}
+	
+	public void apexSwitchToFrame(String frameTitle) throws Exception {
+		switchToFrame(frameTitle);
+	}
+	
+	public void apexSwitchToDefaultContent() throws Exception {
+		switchToDefaultContent();
+	}
+	
+	public void validatePoupRowCount(String pageName,String expectedRowCount) throws Exception {
+		By popupRowCountLabel = By.xpath("//span[contains(@class,'a-IRR-pagination-label')]");
+		if(getTempData(expectedRowCount)!=null) {expectedRowCount=getTempData(expectedRowCount);}
+		validateTextContains(pageName, "Pagination Count", popupRowCountLabel, expectedRowCount);
+	} 
+}

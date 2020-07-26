@@ -1,0 +1,137 @@
+
+Feature: Validating Functionality Related To POG Hierarchy under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "POG Hierarchy" Link
+		
+@run
+Scenario: Masters_POGHierarchy_TC001#POGHierarchy:Add,Delete when POG_SUBDEPT_MANDATORY is Y	
+		When Update Query to change sys_conf_name "POG_SUBDEPT_MANDATORY"  value to "Y"
+		And Refresh Current Window
+		And Uncheck the checkbox for the row "1"
+		And Add Row "1" in the pog division table
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "3 errors have occurred"
+		Then From Apex Error Dialog, Validate Error Message Content As "Division must have some value."
+		Then From Apex Error Dialog, Validate Error Message Content As "Division Name must have some value."
+		Then From Apex Error Dialog, Validate Error Message Content As "Division must have at least one Department or delete this Division"
+		And Remove Apex Error Dialog
+		And From POG Hierarchy Page, For Row "1", Add Division with Division ID For Column "Division" As "AUTO_DIVID_" and Division Name For Column "Division Name" As "AUTO_DIVNAME_" and Usage Type For Column "Usage Type" As "Regular" and default Exclude Indicator
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		Then From Apex Error Dialog, Validate Error Message Content As "Division must have at least one Department or delete this Division"
+		And Remove Apex Error Dialog
+		And Add Row "1" in the pog department table
+		And From POG Hierarchy Page, For Row "1",Add Department with Department ID For Column "Department" As "AUTO_DEPT_" and Department Name For Column "Department Name" As "AUTO_DEPT_NAME_" and Short Description For Column "Short Description" As "SHORT_DESC_" and Category from database for Column "Category" and ExcludeInd for column "Exclude Indicator" as "No" and DisableInd for Column "Disable Indicator" as "No"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "2 errors have occurred"
+		Then From Apex Error Dialog, Validate Error Message Content As "Department must have at least one Sub Department or delete this Department"
+		Then From Apex Error Dialog, Validate Error Message Content As "Cannot disable this sub department as at least one sub department should be active."
+		And Remove Apex Error Dialog
+		And Add Row "1" in the pog Sub-department table
+		And From POG Hierarchy Page, For Row "1",Add SubDepartment with SubDepartment ID For Column "Sub Department" As "AUTO_SUB_DEPT_" and SubDepartment Name For Column "Sub Department Name" As "AUTO_SUB_DEPT_NAME_" and Short Description For Column "Short Description" As "SHORT_DESC_" and ExcludeInd for column "Exclude Indicator" as "No" and DisableInd for Column "Disable Indicator" as "No"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then Validate Successful Message As "Record(s) Updated Successfully."
+		And Remove Successful Message Notification
+		And Wait For "2" Second
+		And Filter Column "Division" with value "DIVISION_ID" by SearchIcon
+		And Delete the row number "1" from table "pog_subdepartment"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		Then From Apex Error Dialog, Validate Error Message Content As "Department must have at least one Sub Department or delete this Department"
+		And Remove Apex Error Dialog
+		And Refresh the row number "1" from table "pog_subdepartment"
+		And Wait For "2" Second
+		And Delete the row number "1" from table "pog_department"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		Then From Apex Error Dialog, Validate Error Message Content As "Division must have at least one Department or delete this Division"
+		And Remove Apex Error Dialog
+		And Refresh the row number "1" from table "pog_department"
+		And Wait For "2" Second
+		And Delete the row number "1" from table "pog_division"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		And Validate No data Found on Screen "Masters_POGHierarchy" for table "pog_division"
+		And Validate Select 1 Row in Master Region on Screen "Masters_POGHierarchy" for table "pog_department"
+		And Validate Select 1 Row in Master Region on Screen "Masters_POGHierarchy" for table "pog_subdepartment"
+		And Remove Existing Filter
+		
+		
+@run
+Scenario: Masters_POGHierarchy_TC002#POGHierarchy:Add,Delete when POG_SUBDEPT_MANDATORY is N
+		When Update Query to change sys_conf_name "POG_SUBDEPT_MANDATORY"  value to "N"
+		And Refresh Current Window
+		And Uncheck the checkbox for the row "1"
+		And Add Row "1" in the pog division table
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "3 errors have occurred"
+		Then From Apex Error Dialog, Validate Error Message Content As "Division must have some value."
+		Then From Apex Error Dialog, Validate Error Message Content As "Division Name must have some value."
+		Then From Apex Error Dialog, Validate Error Message Content As "Division must have at least one Department or delete this Division"
+		And Remove Apex Error Dialog
+		And From POG Hierarchy Page, For Row "1", Add Division with Division ID For Column "Division" As "AUTO_DIVID_" and Division Name For Column "Division Name" As "AUTO_DIVNAME_" and Usage Type For Column "Usage Type" As "Regular" and default Exclude Indicator
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		Then From Apex Error Dialog, Validate Error Message Content As "Division must have at least one Department or delete this Division"
+		And Remove Apex Error Dialog
+		And Add Row "1" in the pog department table
+		And Wait For "2" Second
+		And From POG Hierarchy Page, For Row "1",Add Department with Department ID For Column "Department" As "AUTO_DEPT_" and Department Name For Column "Department Name" As "AUTO_DEPT_NAME_" and Short Description For Column "Short Description" As "SHORT_DESC_" and Category from database for Column "Category" and ExcludeInd for column "Exclude Indicator" as "No" and DisableInd for Column "Disable Indicator" as "No"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then Validate Successful Message As "Record(s) Updated Successfully."
+		And Remove Successful Message Notification
+		And Filter Column "Division" with value "DIVISION_ID" by SearchIcon
+		And Add Row "1" in the pog Sub-department table
+		And From POG Hierarchy Page, For Row "1",Add SubDepartment with SubDepartment ID For Column "Sub Department" As "AUTO_SUB_DEPT_" and SubDepartment Name For Column "Sub Department Name" As "AUTO_SUB_DEPT_NAME_" and Short Description For Column "Short Description" As "SHORT_DESC_" and ExcludeInd for column "Exclude Indicator" as "No" and DisableInd for Column "Disable Indicator" as "No"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then Validate Successful Message As "Record(s) Updated Successfully."
+		And Remove Successful Message Notification
+		And Wait For "2" Second
+		And Remove Existing Filter
+		And Refresh Current Window
+		And Wait For "2" Second
+		And From Master POGHierarchy Page, Click On "Search" Button
+		And Select "P55_BASED_ON" Value As "Division"
+		And Enter Text Field "P55_VALUE" Value As "DIVISION_NAME"
+		And From Master POGHierarchy Page, Click On "Search in Hierarchy" Button
+		And Validate for tabel "pog_division" for row "1" with column "Division" have value "DIVISION_ID"
+		And From Master POGHierarchy Page, Click On "Search" Button
+		And Click On "Reset" Button with tableName "search_pog_hierarchy"
+		And Wait For "2" Second
+		And From Master POGHierarchy Page, Click On "Search" Button
+		And Select "P55_BASED_ON" Value As "Department"
+		And Enter Text Field "P55_VALUE" Value As "DEPARTMENT_NAME"
+		And From Master POGHierarchy Page, Click On "Search in Hierarchy" Button
+		And Validate for tabel "pog_department" for row "1" with column "Department" have value "DEPARTMENT_ID"
+		And From Master POGHierarchy Page, Click On "Search" Button
+		And Click On "Reset" Button with tableName "search_pog_hierarchy"
+		And Wait For "2" Second
+		And From Master POGHierarchy Page, Click On "Search" Button
+		And Select "P55_BASED_ON" Value As "Sub Department"
+		And Enter Text Field "P55_VALUE" Value As "SUB_DEPARTMENT_NAME"
+		And From Master POGHierarchy Page, Click On "Search in Hierarchy" Button
+		And Validate for tabel "pog_subdepartment" for row "1" with column "Sub Department" have value "SUB_DEPARTMENT_ID"
+		And From Master POGHierarchy Page, Click On "Search" Button
+		And Click On "Reset" Button with tableName "search_pog_hierarchy"
+		And Filter Column "Division" with value "DIVISION_ID" by SearchIcon
+		And Delete the row number "1" from table "pog_subdepartment"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		And Validate No data Found on Screen "Masters_POGHierarchy" for table "pog_subdepartment"
+		And Wait For "2" Second
+		And Delete the row number "1" from table "pog_department"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		Then From Apex Error Dialog, Validate Error Message Content As "Division must have at least one Department or delete this Division"
+		And Remove Apex Error Dialog
+		And Wait For "2" Second
+		And Delete the row number "1" from table "pog_division"
+		And From Master POGHierarchy Page, Click On "Save" Button
+		And Validate No data Found on Screen "Masters_POGHierarchy" for table "pog_division"
+		And Validate Select 1 Row in Master Region on Screen "Masters_POGHierarchy" for table "pog_department"
+		And Validate Select 1 Row in Master Region on Screen "Masters_POGHierarchy" for table "pog_subdepartment"
+		And Remove Existing Filter

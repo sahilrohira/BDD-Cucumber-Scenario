@@ -1,0 +1,709 @@
+package stepdefs.common;
+
+import java.util.List;
+import cucumber.api.java.en.Then;
+import db.SM_GENERAL_Table;
+import pages.apex.ApexDropDown;
+import pages.apex.ApexError;
+import pages.apex.ApexFrame;
+import pages.apex.ApexItemOption;
+import pages.apex.ApexLink;
+import pages.apex.ApexListOfValue;
+import pages.apex.ApexPageHeader;
+import pages.apex.ApexTable;
+import pages.apex.ApexButton;
+import pages.apex.ApexDownload;
+import pages.apex.ApexTextField;
+import pages.apex.ApexWindow;
+import pages.login.LoginPage;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppDateUtil;
+import utils.CSV_Util;
+import utils.ExcelUtil;
+
+public class CommonPageSteps extends SuperStepdefs {
+
+	private String pageName = "CommonPage";
+	private ApexFrame apexFrame;
+	private ApexWindow apexWindow;
+	private ApexTextField apexTextField;
+	private ApexError apexError;
+	private ApexPageHeader apexPageHeader;
+	private ApexButton apexButton;
+	private ApexLink apexLink;
+	private ApexDropDown apexDropDown;
+	private ApexItemOption apexItemOption;
+	private ApexListOfValue apexListOfValue;
+	private ApexTable apexTable;
+	private ApexDownload apexDownload;
+	private SM_GENERAL_Table sm_gen_table;
+	private LoginPage loginPage;
+
+
+
+	public CommonPageSteps(Hook hook) {
+		super(hook);
+		apexFrame = new ApexFrame(driver, testCaseId);
+		apexWindow = new ApexWindow(driver, testCaseId);
+		apexTextField = new ApexTextField(driver, testCaseId);
+		apexError  = new ApexError(driver, testCaseId);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+		apexButton = new ApexButton(driver, testCaseId);
+		apexLink  = new ApexLink(driver, testCaseId);
+		apexDropDown = new ApexDropDown(driver, testCaseId);
+		apexListOfValue = new ApexListOfValue(driver, testCaseId);
+		apexItemOption = new ApexItemOption(driver, testCaseId);
+		apexDownload= new ApexDownload(driver, testCaseId);
+		apexTable=new ApexTable(driver, testCaseId);
+		sm_gen_table=new SM_GENERAL_Table(con, testCaseId);
+		loginPage = new LoginPage(driver, testCaseId); 
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Wait For "1" Second
+
+	 */
+	@Then("^Wait For \"(.*)\" Second$")
+	public void waitForSecond(int secondUnit ) throws Exception {
+		Thread.sleep(secondUnit*1000);
+		logger.pass("Wait For "+bold(secondUnit) +" Second");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Switch To Frame with Index "0"
+
+	 */
+	@Then("^Switch To Frame with Index \"(.*)\"$")
+	public void switchToFrameWithIndex(int frameIndex ) throws Exception {
+		apexFrame.apexSwitchToFrame(frameIndex);
+		logger.pass("Switch To Frame with Index "+bold(frameIndex));
+	}
+
+	@Then("^Switch To Frame with Title \"(.*)\"$")
+	public void switchToFrameWithTitle(String frametitle ) throws Exception {
+		apexFrame.apexSwitchToFrame(frametitle);
+		logger.pass("Switch To Frame with Title "+bold(frametitle));
+	}
+	/**
+	 * @author Vinay.Kumar
+
+     	Switch To Original Window
+
+	 */
+	@Then("^Switch To Original Window$")
+	public void switchToDefaultContent() throws Exception {
+		apexFrame.apexSwitchToDefaultContent();
+		logger.pass("Switch To Original Window");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Refresh Current Window
+
+	 */
+	@Then("^Refresh Current Window$")
+	public void apexRefreshCurrentWindow() throws Exception {
+		apexWindow.apexRefreshCurrentWindow();
+		logger.pass("Refresh Current Window");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Close Window PopUp
+
+	 */
+	@Then("^Close Window PopUp$")
+	public void closePopupWindow() throws Exception {
+		apexWindow.closePopupWindow();
+		logger.pass("Close Window PopUp");
+	}
+
+	@Then("^Filter Column \"(.*)\" with value \"(.*)\" by SearchIcon$")
+	public void filterbySearchIcon(String filterColumn,String filterValue) throws Exception {
+		if(getTempData(filterValue)!=null) filterValue=getTempData(filterValue);
+		apexButton.clickOnButtonwithTitle(pageName, "Select columns to search");
+		apexButton.clickOnButtonInSpan(pageName, filterColumn);
+		apexTextField.enterText(pageName, "search_field", filterValue);
+		apexButton.clickOnButton(pageName, "Go");
+		Thread.sleep(2000);
+		logger.pass("Filter applied for Column "+bold(filterColumn)+" with value as " +bold(filterValue));
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	From Top Menu, Click On "Home" Link
+     	From Top Menu, Click On "Receiving" Link
+     	From Top Menu, Click On "PO Receiving" Link
+	 */
+	@Then("^From Top Menu, Click On \"(.*)\" Link$")
+	public void clickOnTopMenuLink(String linkName) throws Exception {
+		apexPageHeader.clickOnLink(pageName, linkName);
+		logger.pass("Top Menu, Click On "+bold(linkName)+" Link");
+	} 
+	
+	@Then("^Clear the download folder$")
+	public void clearandrecreateDownloadFolder() throws Exception {
+		createDirectory("Test_Reports/" + this.testCaseId + "/Download/");
+		logger.pass("Cleared the download folder for testcase "+this.testCaseId);
+	} 
+	
+	@Then("^Upload File \"(.*)\" for Popup on Page \"(.*)\"$")
+	public void browseandUploadFile(String pageName, String filename) throws Exception {
+		apexWindow.inputPopupWindow(pageName, filename);
+		apexWindow.clickPopupWindow(pageName);
+		logger.pass("File "+bold(filename)+" uploaded Successfully");
+	} 
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Click On "PO" Span Link
+     	Click On "Receipt Detail" Span Link
+     	Click On "Putaway Detail" Span Link
+	 */
+	@Then("^Click On \"(.*)\" Span Link$")
+	public void clickOnSpanLink(String linkName) throws Exception {
+		apexPageHeader.clickOnSpanLink(pageName, linkName);
+		logger.pass("Click On "+bold(linkName)+" Span Link");
+	} 
+
+	@Then("^Click On Link with text \"(.*)\"$")
+	public void clickOnLinkText(String linkName) throws Exception {
+		apexLink.clickonLinkwithText(pageName, linkName);
+		logger.pass("Click On "+bold(linkName)+" Link");
+	} 
+	
+	@Then("^Click On Link \"(.*)\" in table \"(.*)\"$")
+	public void clickOnLinkTextintable(String linkName,String tableName) throws Exception {
+		apexTable.clickOnTableCellWithHyperlink(pageName, tableName, linkName);
+		logger.pass("Click On "+bold(linkName)+" Link");
+	} 
+	
+	@Then("^Click On Link in Breadcrum with text \"(.*)\"$")
+	public void clickOnBreadcrumLinkText(String linkName) throws Exception {
+		apexPageHeader.clickOnLink(pageName, linkName);
+		logger.pass("Click On "+bold(linkName)+" Link");
+	} 
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate "Receive PO" Link Is not Present
+	 */
+	@Then("^Validate \"(.*)\" Link Is not Present$")
+	public void clickOnOrder(String buttonName) throws Exception {
+		apexLink.validateLinkIsNotPresent(pageName, buttonName);
+		logger.pass("Validate " + bold(buttonName)+" Link Is not Present");
+	}
+
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate "Apply" Button Is Present
+     	Validate "Prev" Button Is Present
+     	Validate "Cancel" Button Is Present
+
+	 */
+	@Then("^Validate \"(.*)\" Button Is Present$")
+	public void validateButtonIsPresent(String buttonName) throws Exception {
+		apexButton.validateButtonIsPresent(pageName, buttonName);
+		logger.pass("Validate "+bold(buttonName)+" Button Is Present");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate "Receive PO" Button Is not Present
+	 */
+	@Then("^Validate \"(.*)\" Button Is not Present$")
+	public void validateButtonIsNotPresent(String buttonName) throws Exception {
+		apexButton.validateButtonIsNotPresent(pageName, buttonName);
+		logger.pass("Validate " + bold(buttonName)+" Button Is not Present");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Click On "Search" Button
+     	Click On "Reset" Button
+     	Click On "Cancel" Button
+     	Click On "Download" Button
+     	Click On "Modify Search" Button
+     	Click On "Apply Sub Type" Button
+     	Click On "Save" Button
+
+
+	 */
+	@Then("^Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apexButton.clickOnButton(pageName, buttonName);
+		logger.pass("Click On "+bold(buttonName)+" Button");
+
+	}
+
+	@Then("^Click On \"(.*)\" Button with tableName \"(.*)\"$")
+	public void clickOnButtononTable(String buttonName,String tableName) throws Exception {
+		Thread.sleep(2000);
+		apexButton.clickOnButtonwithTable(pageName, tableName, buttonName);
+		logger.pass("Click On "+bold(buttonName)+" Button on Table "+bold(tableName));
+
+	}
+
+	@Then("^Update filter \"(.*)\" with value as \"(.*)\"$")
+	public void updateApexFilter(String filterName,String filterValue) throws Exception {
+		String forUPLoc="";
+		if (filterValue.contains("UP_")){
+			forUPLoc=filterValue;
+			filterValue=filterValue.substring(3);
+		}
+		if(getTempData(filterValue)!=null) {filterValue=getTempData(filterValue);}
+		apexLink.clickonLinkwithTextSpanContains(pageName, filterName);
+		Thread.sleep(1000);
+		apexDropDown.selectDropDownValue(pageName, "OPERATOR", "equals");
+		Thread.sleep(1000);
+		if (forUPLoc.contains("UP_")) {
+			filterValue="UP_"+filterValue;
+		}
+		if(filterValue.toLowerCase().contains("vdate")) 
+		{String varindays=filterValue.substring(5);
+		filterValue=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		apexTextField.enterText(pageName, "ig_store_pog_module_ig_FD_VALUE", filterValue);
+		Thread.sleep(1000);
+		apexButton.clickOnButtonWithText(pageName, "Save");
+		logger.pass("Applied filter for "+bold(filterName)+"with equal operator");
+	}
+	
+	@Then("^Click on Button with title \"(.*)\"$")
+	public void clickOnButtonWithTitle(String titleName) throws Exception {
+		apexButton.clickOnButtonwithTitle(pageName, titleName);
+		logger.pass("Click On "+bold(titleName)+" Button");
+
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Click On Label "Edit" Button
+	 */
+	@Then("^Click On Label \"(.*)\" Button$")
+	public void clickOnEditButton(String buttonName) throws Exception {
+		apexButton.clickOnLabelButton(pageName, buttonName);
+		logger.pass("Click On Label  "+bold(buttonName)+" Button");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Remove Existing Filter
+
+	 */
+	@Then("^Remove Existing Filter$")
+	public void removeFilter() throws Exception {
+		apexButton.removeFilter(pageName);
+		logger.pass("Remove Existing Filter");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Text Field "COMMENTS" Text As "ABC"
+
+	 */
+	@Then("^Validate Text Field \"(.*)\" Text As \"(.*)\"$")
+	public void validateTextFieldText(String fieldName, String fieldValue) throws Exception {
+		apexTextField.validateTextFieldText(pageName, fieldName, fieldValue);
+		logger.pass("Validate Text Field " + bold(fieldName) + " Text As "+bold(fieldValue));
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Text Field "DC" Value As "DC_CODE_1"
+		Validate Text Field "ORDER_NO" Value As "ORDER_NO1"
+     	Validate Text Field "STORER" Value As "STORER_1"
+		Validate Text Field "EXT_ORDER_NO" Value As "ORDER_NO1"
+		Validate Text Field "CONSIGNEE" Value As "CONSIGNEE_1"
+		Validate Text Field "APPT_NO" Value As ""
+		Validate Text Field "APPT_DATE" Value As ""
+		Validate Text Field "COMMENTS" Value As "Test PO"
+
+     	Validate Text Field "DC" Value As "ABC"
+
+	 */
+	@Then("^Validate Text Field \"(.*)\" Value As \"(.*)\"$")
+	public void validateTextFieldValue(String fieldName, String fieldValue) throws Exception {
+		apexTextField.validateTextFieldValue(pageName, fieldName, fieldValue);
+		logger.pass("Validate Text Field " + bold(fieldName) + " Value As "+bold(fieldValue));
+	}
+
+
+
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Text Field "DC" Value As "DC_CODE_1" With Description
+     	Validate Text Field "STORER" Value As "STORER_1" With Description
+     	Validate Text Field "CONSIGNEE" Value As "CONSIGNEE_1" With Description
+
+	 */
+	@Then("^Validate Text Field \"(.*)\" Value As \"(.*)\" With Description$")
+	public void validateTextFieldValueWithDesc(String fieldName, String fieldValue) throws Exception {
+		apexTextField.validateTextFieldValue(pageName, fieldName, fieldValue);
+		logger.pass("Validate Text Field " + bold(fieldName) + " Value As "+bold(fieldValue) + " With Description");
+	}
+
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Text Field "CONSIGNEE" Is Read Only
+
+	 */
+	@Then("^Validate Text Field \"(.*)\" Is Read Only$")
+	public void validateTextFieldIsReadOnly(String fieldName) throws Exception {
+		apexTextField.validateTextFieldIsReadOnly(pageName, fieldName);
+		logger.pass("Validate Text Field " + bold(fieldName) + " Is Read Only");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Text Field "CONSIGNEE" Is Disabled
+
+	 */
+	@Then("^Validate Text Field \"(.*)\" Is Disabled$")
+	public void validateTextFieldIsDisabled(String fieldName) throws Exception {
+		apexTextField.validateTextFieldIsDisabled(pageName, fieldName);
+		logger.pass("Validate Text Field " + bold(fieldName) + " Is Disabled");
+	}
+
+
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Enter Text Field "COMMENTS" Value As ""
+     	Enter Text Field "STORER" Value As "STORER_1"
+		Enter Text Field "ORDER_NO" Value As "ORDER_NO1"
+
+	 */
+	@Then("^Enter Text Field \"(.*)\" Value As \"(.*)\"$")
+	public void enterTextFieldValue(String fieldName, String fieldValue) throws Exception {
+		if(getTempData(fieldValue)!=null) fieldValue=getTempData(fieldValue);
+		apexTextField.enterText(pageName, fieldName, fieldValue);
+		logger.pass("Enter Text Field " + bold(fieldName) + " Value As "+bold(fieldValue));
+	}
+
+	@Then("^Enter Text Area \"(.*)\" Value As \"(.*)\"$")
+	public void enterTextAreaFieldValue(String fieldName, String fieldValue) throws Exception {
+		if(getTempData(fieldValue)!=null) fieldValue=getTempData(fieldValue);
+		apexTextField.enterTextArea(pageName, fieldName, fieldValue);
+		logger.pass("Enter Text Field " + bold(fieldName) + " Value As "+bold(fieldValue));
+	}
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Error Message For "STORER" Is Present
+     	Validate Error Message For "APPT_TIME" Is Present
+     	Validate Error Message For "APPT_DATE" Is Present
+
+	 */
+	@Then("^Validate Error Message For \"(.*)\" Is Present$")
+	public void validateErrorMessageIsPresent(String fieldName) throws Exception {
+		apexError.validateErrorMessageIsPresent(pageName, fieldName);
+		logger.pass("Validate Error Message For "+bold(fieldName)+" Is Present");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Drop Down "DC_CODE" Value Selected As "303"
+     	Validate Drop Down "MODE" Value Selected As "Edit"           			
+     	Validate Drop Down "ORDER_TYPE" Value Selected As "Normal PO"					
+     	Validate Drop Down "ORDER_SUB_TYPE" Value Selected As "Test"				
+     	Validate Drop Down "ORDER_STATUS" Value Selected As "Initial"					
+
+	 */
+	@Then("^Validate Drop Down \"(.*)\" Value Selected As \"(.*)\"$")
+	public void validateDropDownValue(String fieldName, String fieldValue) throws Exception {
+		if(getTempData(fieldValue)!=null) fieldValue=getTempData(fieldValue);
+		apexDropDown.validateDropDownValueSelected(pageName, fieldName, fieldValue);
+		logger.pass("Validate Drop Down " + bold(fieldName) + " Value Selected As "+bold(fieldValue));
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Drop Down "DC_CODE" Value Selected As "DC_CODE_1" With Description
+     	Validate Drop Down "ORDER_TYPE" Value Selected As "NPO" With Description					// XPO
+     	Validate Drop Down "ORDER_SUB_TYPE" Value Selected As "T" With Description				//N
+     	Validate Drop Down "ORDER_STATUS" Value Selected As "I" With Description					//I,P,F,C
+
+	 */
+	@Then("^Validate Drop Down \"(.*)\" Value Selected As \"(.*)\" With Description$")
+	public void validateDropDownValueWithDescription(String fieldName, String fieldValue) throws Exception {
+		if(getTempData(fieldValue)!=null) fieldValue=getTempData(fieldValue);
+		apexDropDown.validateDropDownValueSelected(pageName, fieldName, fieldValue);
+		logger.pass("Validate Drop Down " + bold(fieldName) + " Value Selected As "+bold(fieldValue) + " With Description");
+	}
+
+	@Then("^Validate Breadcrumb Header with Value as \"(.*)\"$")
+	public void validateBreadCrumbHeaderValue(String fieldValue) throws Exception {
+		apexPageHeader.waitForPresenceOfHeader1(pageName, fieldValue);
+		logger.pass("Validate BreadCrumb Header with Value As "+bold(fieldValue));
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Select "DC_CODE" Value As "DC_CODE_1"
+     	Select "MODE" Value As "ADD"           			// VIEW,    CHANGE_SUB_TYPE
+     	Select "ORDER_TYPE" Value As "NPO"				// XPO
+
+     	Select "ORDER_SUB_TYPE" Value As "T"			//N
+     	Select "ORDER_STATUS" Value As "I"				//I,P,F,C
+
+     	//For Change Order Type Only Page 
+     	Select "ORDER_SUB_TYPE" Value As "T"
+
+
+	 */
+	@Then("^Select \"(.*)\" Value As \"(.*)\"$")
+	public void selectDropDownValue(String fieldName, String fieldValue) throws Exception {
+		if(getTempData(fieldValue)!=null) fieldValue=getTempData(fieldValue);
+		apexDropDown.selectDropDownValue(pageName, fieldName, fieldValue);
+		logger.pass("From " + pageName + ", Select " + bold(fieldName) + " Value As "+bold(fieldValue));
+	}
+
+	@Then("^Validate No data Found on Screen \"(.*)\" for table \"(.*)\"$")
+	public void ValidateNoDataFound(String pageName,String tableLabel) throws Exception {
+		apexTable.validateTableIsEmpty(pageName,tableLabel);
+		logger.pass("Validate No data Found on "+pageName+" for table "+bold(tableLabel));
+	} 
+	
+	@Then("^Validate Select 1 Row in Master Region on Screen \"(.*)\" for table \"(.*)\"$")
+	public void ValidateSelect1RowInMasterRegion(String pageName,String tableLabel) throws Exception {
+		apexTable.validateTableIsEmptyWithSelectRowMessage(pageName,tableLabel);
+		logger.pass("Validate Select 1 Row in Master Region Found on "+pageName+" for table "+bold(tableLabel));
+	} 
+
+	
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Select Date "ORDER_DATE" Value As ""
+     	Select Date "APPT_DATE" Value As ""
+     	Select Date "DELIVERY_DATE" Value As ""
+
+	 */
+	/* @Then("^Select Date \"(.*)\" Value As \"(.*)\"$")
+    public void selectDatePickerValue(String fieldName, String fieldValue) throws Exception {
+
+    	apexDatePicker.selectDate(pageName, fieldName, fieldValue);
+    	logger.pass("Select Date " + bold(fieldName) + " Value Selected As "+bold(fieldValue));
+    }*/
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Select From LOV "STORER" Value As "STORER_1" At Frame "1"
+     	Select From LOV "ORDER_NO" Value As "ORDER_NO1" At Frame "1"
+     	Select From LOV "EXT_ORDER_NO" Value As "ORDER_NO1" At Frame "1"
+     	Select From LOV "CONSIGNEE" Value As "2600830145" At Frame "1"
+     	Select From LOV "APPT_NO" Value As "100" At Frame "1"
+
+	 */
+	@Then("^Select From LOV \"(.*)\" Value As \"(.*)\" At Frame \"(.*)\"$")
+	public void selectLOV(String fieldName, String fieldValue, String frameTitle) throws Exception {
+		apexListOfValue.selectFromLOV(pageName, fieldName, fieldValue, frameTitle);
+		logger.pass("Select From LOV " + bold(fieldName) + " Value As "+bold(fieldValue) + " At Frame " +bold(frameTitle));
+	}
+
+	/***
+	 * @author Shubhank
+	 * @param fieldName
+	 * @param fieldValue
+	 * @param frameNo
+	 * @throws Exception
+	 */
+	@Then("^Validate From LOV \"(.*)\" Value As \"(.*)\" At Frame \"(.*)\" Is Not Present$")
+	public void validateValueIsAbsentFromLOV(String fieldName, String fieldValue, int frameNo) throws Exception {
+
+		apexListOfValue.validateValueIsAbsentFromLOV(pageName, fieldName, fieldValue, frameNo);
+		logger.pass("Validate From LOV " + bold(fieldName) + " Value As "+bold(fieldValue) + " At Frame " +bold(frameNo) + " Is Not Present");
+	}
+
+
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Select Item Option "PUTAWAY" Value As "Y"
+     	Select Item Option "PUTAWAY" Value As "N"
+     	Select Item Option "ORDER_TO_CLOSE" Value As "Y"
+     	Select Item Option "ORDER_TO_CLOSE" Value As "N"
+
+	 */
+	@Then("^Select Item Option \"(.*)\" Value As \"(.*)\"$")
+	public void select_item_option_y_n_Value(String fieldName, String y_n_Value) throws Exception {
+		apexItemOption.select_y_n_Value(pageName, fieldName,y_n_Value);
+
+		if(fieldName.equalsIgnoreCase("PUTAWAY") && y_n_Value.equalsIgnoreCase("Y")) {
+			storeTempData("MODE", "PutawayPending");
+		}else if(fieldName.equalsIgnoreCase("ORDER_TO_CLOSE") && y_n_Value.equalsIgnoreCase("Y") ) {
+			storeTempData("MODE", "OrderToClose");
+		}
+
+		logger.pass("Select Item Option "+bold(fieldName)+" Value As "+bold(y_n_Value));
+	}
+
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Item Option "ORDER_TO_CLOSE" Is Enabled
+     	Validate Item Option "PUTAWAY" Is Enabled
+
+	 */
+	@Then("^Validate Item Option \"(.*)\" Is Enabled$")
+	public void validate_y_n_ValueIsEnabled(String fieldName) throws Exception {
+		apexItemOption.validate_y_n_ValueIsEnabled(pageName, fieldName);
+		logger.pass("Validate Item Option "+bold(fieldName)+" Is Enabled");
+	}
+
+	@Then("^Click on Row Actions for table \"(.*)\" on row number \"(.*)\"$")
+	public void clickTableRowActions(String tableLabel,int rowNo) throws Exception {
+		apexTable.clickOnTableCellRowActions(pageName, tableLabel, rowNo);
+		logger.pass("Click On Row Actions for row "+bold(rowNo));
+	}
+	/**
+	 * @author Vinay.Kumar
+
+     	Validate Item Option "ORDER_TO_CLOSE" Is Disabled
+
+	 */
+	@Then("^Validate Item Option \"(.*)\" Is Disabled$")
+	public void validate_y_n_ValueIsDisabled(String fieldName) throws Exception {
+		apexItemOption.validate_y_n_ValueIsDisabled(pageName, fieldName);
+		logger.pass("Validate Item Option "+bold(fieldName)+" Is Disabled");
+	}
+
+	@Then("^Validate Downloaded CSV File Content with File Name As \"(.*)\" and Tablename as \"(.*)\"$")
+	public void validatedownloadedCSVFile (String fileName,String tableid) throws Exception {
+		apexDownload.downloadCSVFile(fileName,tableid);
+		int recordFoundInCSV = CSV_Util.getRecordCount(testCaseId, fileName);
+		List<String> headerListInCSV = CSV_Util.getCSV_HeaderList(testCaseId, fileName);
+		if (!tableid.equals("fixture_label")) {
+			headerListInCSV.add(0,"");
+		}
+		//apexTable.loadAllContentOfTable(tableid);
+		apexTable.validateTableContentAgainstCSV_File(pageName, tableid, recordFoundInCSV, headerListInCSV);;
+
+		logger.pass("Validate Downloaded CSV File Content with File Name As" + bold(fileName));
+	}
+
+	@Then("^Validate Downloaded XLSX File Content with File Name As \"(.*)\" and Tablename as \"(.*)\"$")
+	public void validatedownloadedXLSXFile (String fileName,String tableid) throws Exception {
+		apexDownload.downloadXLSXFile(fileName,tableid);
+		Thread.sleep(5000);
+		int recordFoundInXSLX = ExcelUtil.getRowCountFromExcel("Test_Reports/"+testCaseId+"/Download/"+fileName,"");
+		List<String> headerListInXSLX = ExcelUtil.getHeaderDataFromExcel("Test_Reports/"+testCaseId+"/Download/"+fileName,"");
+		switch (tableid) {
+		case "fixture_label":
+			break;
+		case "store_master":
+			break;
+		case "virtul_pog":
+			break;	
+		case "store_list_ig":
+			headerListInXSLX.add(0,"");
+			headerListInXSLX.add(2,"Preview");
+			break;	
+		case "loading_container":
+			if (fileName.equals("Virtual Host")) {
+				headerListInXSLX.add(0,"Delete");
+			}
+			break;
+		case "BenchmarkStoreLocator":
+			break;
+		case "StoreProfileUDA":
+			break;	
+		default:
+			headerListInXSLX.add(0,"");		
+		}
+		//apexTable.loadAllContentOfTable(tableid);
+		apexTable.validateTableContentAgainstXLSX_File(pageName, tableid, recordFoundInXSLX, headerListInXSLX);;
+
+		logger.pass("Validate Downloaded Excel File Content with File Name As" + bold(fileName));
+	}
+
+
+
+
+	@Then("^Validate Downloaded CSV File Content with File Name As \"(.*)\" and Tablename as \"(.*)\" without Action Column$")
+	public void validatedownloadedCSVFilewihtoutActionColumn (String fileName,String tableid) throws Exception {
+		apexDownload.downloadCSVFile(fileName,tableid);
+		int recordFoundInCSV = CSV_Util.getRecordCount(testCaseId, fileName);
+		List<String> headerListInCSV = CSV_Util.getCSV_HeaderList(testCaseId, fileName);
+		//apexTable.loadAllContentOfTable(tableid);
+		apexTable.validateTableContentAgainstCSV_File(pageName, tableid, recordFoundInCSV, headerListInCSV);;
+
+		logger.pass("Validate Downloaded CSV File Content with File Name As" + bold(fileName));
+	}
+	/**
+	 * @author Vinay.Kumar
+
+     	Enter Text Field "COMMENTS" Value As ""
+     	Enter Text Field "STORER" Value As "STORER_1"
+		Enter Text Field "ORDER_NO" Value As "ORDER_NO1"
+
+	 */
+	@Then("^Delete Row number \"(.*)\" from table \"(.*)\"$")
+	public void deleteRowinTable(int rowNo, String tableLabel) throws Exception {
+		apexTable.deleteTableRow(pageName, tableLabel, rowNo);
+		logger.pass("Deleted Row" + bold(rowNo) + " from table "+bold(tableLabel));
+	}    
+
+	@Then("^Enter File Path in Window Popup for Screen \"(.*)\" with filename as \"(.*)\"$")
+	public void enterPathinPopup(String pageName,String fileName) throws Exception {
+		apexWindow.inputPopupWindow(pageName, fileName);
+		apexWindow.clickPopupWindow(pageName);
+		Thread.sleep(2000);
+		logger.pass("Uploaded File " + bold(fileName));
+	}    
+	
+	
+	@Then("^Extract Area for Store \"(.*)\"$")
+	public void storeStoreAreaforStore(String store) throws Exception {
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		sm_gen_table.getAreaforStore(store);
+		logger.pass("Extracted Store area for Store " + bold(store));
+	}   
+	
+	@Then("^Validate Downloaded XLSX File Name As \"(.*)\"$")
+	public void validatedownloadedXLSXFileName (String fileName) throws Exception {
+		Thread.sleep(2000);
+		int recordFoundInXSLX = ExcelUtil.getRowCountFromExcel("Test_Reports/"+testCaseId+"/Download/"+fileName,"");
+		if(recordFoundInXSLX>0) {
+			logger.pass("Validate Downloaded Excel File name As" + bold(fileName));
+		}
+	}
+	
+	@Then("^Logout and then Login again with userName \"(.*)\" and Password \"(.*)\"$")
+    public void LogoutAndLoginAgain(String userName, String password) throws Exception {
+        apexButton.ClickOnHeaderUserNameLabelButton(pageName);
+        apexLink.clickonLinkwithText(pageName,"Log Out");
+        loginPage.enterCredential(userName, password);
+        logger.pass("User successfully logged in again");
+    }
+}

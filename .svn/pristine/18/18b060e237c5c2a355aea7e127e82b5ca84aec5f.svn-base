@@ -1,0 +1,48 @@
+
+Feature: Validating Functionality Related To Product under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "Product" Link
+@run
+Scenario: Masters_Product_TC001#Product Basic Test
+		
+		When From Master_Product Page, Click On "Reset" Button
+		And From Master_Product Page, Click On "Search" Button
+		And Wait For "2" Second
+		Then From Message Dialog, Validate Message Content As "Please select/input at least one criteria"
+		And From Message Dialog, Click On "Ok" Button
+		When From Master_Product Page, Click On "Cancel" Button
+		Then Validate Breadcrumb Header with Value as "Product"
+		And From Master_Product Page, Click On "Modify Search" Button
+		And Fetch the Product Search details from DB
+		When Enter the parameters to search for the item
+		And From Master_Product Page, Click On "Reset" Button
+		Then Validate all fields set to Default
+		When Enter Text Area "ITEM" Value As "974586543848846585"
+		And From Master_Product Page, Click On "Search" Button
+	  Then Validate No data Found on Screen "Product" for table "loading_container"
+	  When From Master_Product Page, Click On "Modify Search" Button
+	  And From Master_Product Page, Click On "Reset" Button
+		And Enter the parameters to search for the item
+		And From Master_Product Page, Click On "Search" Button
+		And Click On Link with text "ITEM"
+		Then Validate all Product details from database for selected "ITEM"
+		And Validate UDA Details Tab for Item "ITEM"
+		When  Click On "POG" Span Link
+		And Validate POG Tab details for Item "ITEM"
+		When Click On "Store" Span Link
+		And Validate Store Tab details for Item "ITEM"
+		When Click On "Segment" Span Link
+		And Validate Segement Tab details for Item "ITEM"
+		When Click On "Dimensions" Span Link
+		And Validate Dimension Tab details for Item "ITEM"
+		When Click On "Manage Images" Span Link
+		And Validate Manage Images Tab for Item "ITEM"
+		When Click On "Other Suppliers" Span Link
+		And Validate Other Suppliers Tab for Item "ITEM"
+		

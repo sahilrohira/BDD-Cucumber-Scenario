@@ -1,0 +1,21 @@
+package db;
+
+import java.sql.Connection;
+import java.util.List;
+import utils.AppData;
+
+public class SM_BU_SYSPRM_Table extends CommonDB {
+
+	public SM_BU_SYSPRM_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "AX_BU_SYSPRM";
+
+	public String getSysConfValue(String conf_name) throws Exception {
+		String SM_BU_SYSPRM_sql = "Select sys_conf_value from "+tableName+" where bu_id='"+AppData.buId+"' and sys_conf_name = '"+conf_name+"'";
+		List<String> columnValue = getColumnValues(SM_BU_SYSPRM_sql,"SYS_CONF_VALUE");
+		return columnValue.get(0);
+	}
+	
+}

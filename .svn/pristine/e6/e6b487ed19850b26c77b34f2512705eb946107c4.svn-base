@@ -1,0 +1,102 @@
+package stepdefs.common;
+
+import cucumber.api.java.en.Then;
+import pages.apex.ApexNotification;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class ApexNotificationSteps extends SuperStepdefs {
+
+	public ApexNotification apexNotification;
+
+	public ApexNotificationSteps(Hook hook) {
+		super(hook);
+		apexNotification = new ApexNotification(driver, testCaseId);
+	}
+
+	/**
+	 * @author Vinay.Kumar
+	 * 
+	 *         Validate Records Updated Successfully Message
+	 * 
+	 */
+	@Then("^Validate Records Updated Successfully Message$")
+	public void validateRecordsUpdatedSuccessfullyMessage() throws Exception {
+		apexNotification.validateRecordsUpdatedSuccessfullyMessage();
+		logger.pass("Validate Records Updated Successfully Message");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+	 * 
+	 *         Validate Successful Message As "1 Manifest Generated"
+	 * 
+	 */
+	@Then("^Validate Successful Message As \"(.*)\"$")
+	public void validateSuccessfulMessage(String messageContent) throws Exception {
+		apexNotification.validateSuccessfulMessage(messageContent);
+		logger.pass("Validate Successful Message As " + bold(messageContent));
+	}
+
+	public String getSuccessfulMessageContent() throws Exception {
+		return apexNotification.getSuccessfulMessageContent();
+	}
+
+	/**
+	 * @author Vinay.Kumar
+	 * 
+	 *         Remove Successful Message Notification
+	 * 
+	 */
+	@Then("^Remove Successful Message Notification$")
+	public void removeSuccessfulMessage() throws Exception {
+		apexNotification.removeRecordsUpdatedSuccessfullyMessage();
+		;
+		logger.pass("Remove Successful Message Notification");
+	}
+
+	/**
+	 * @author Vinay.Kumar
+	 * 
+	 *         From Apex Error Dialog, Validate Error Message Header As "4 errors
+	 *         have occurred"
+	 * 
+	 */
+	@Then("^From Apex Error Dialog, Validate Error Message Header As \"(.*)\"$")
+	public void verifyErrorMessageHeaderText(String text) throws Exception {
+		apexNotification.verifyErrorMessageHeaderText(text);
+		logger.pass("From Apex Error Dialog, Validate Error Message Header As" + bold(text));
+	}
+
+	/**
+	 * @author Vinay.Kumar
+	 * 
+	 *         From Apex Error Dialog, Validate Error Message Content As "Area must
+	 *         have some value." From Apex Error Dialog, Validate Error Message
+	 *         Content As "Area Description must have some value." From Apex Error
+	 *         Dialog, Validate Error Message Content As "Floor must have some
+	 *         value." From Apex Error Dialog, Validate Error Message Content As
+	 *         "Area Type must have some value."
+	 * 
+	 */
+	@Then("^From Apex Error Dialog, Validate Error Message Content As \"(.*)\"$")
+	public void verifyErrorMessageContent(String text) throws Exception {
+		if (getTempData(text) != null)
+			text = getTempData(text);
+		apexNotification.verifyErrorMessageContent(text);
+		logger.pass("From Apex Error Dialog, Validate Error Message Content As " + bold(text));
+	}
+
+	/**
+	 * @author Vinay.Kumar
+	 * 
+	 *         Remove Apex Error Dialog
+	 * 
+	 */
+	@Then("^Remove Apex Error Dialog$")
+	public void removeErrorMessage() throws Exception {
+		apexNotification.removeErrorMessage();
+		logger.pass("Remove Apex Error Dialog");
+	}
+
+}

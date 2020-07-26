@@ -1,0 +1,80 @@
+
+Feature: Validating Floor Plan Request Functionality
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Portal" Link
+@skip
+Scenario: Portal_Planogram_TC001#SMART Template||Planogram||Planogram Reminder
+		When Click On Span Text "SMART Template" Button
+		Then Switch To Frame with Title "Export SMART Template"
+		And Validate the SMART Template is downloaded
+		When Click On Span Text "Planogram" Button
+		When From "Planogram" Page, Validate Record Count from Database
+		And Extract the Planned Planogram to be Implemented 
+		And In Table "ig_planogram_heading" apply Filter for Column "Store" with value "STORE"
+		And Wait For "5" Second
+		And In Table "ig_planogram_heading" apply Filter for Column "POG Code" with value "POG_CODE"
+		And Wait For "5" Second
+		And In Table "ig_planogram_heading" apply Filter for Column "POG Version" with value "POG_VERSION"
+		And Validate all filtered columns for POG Code "POG_CODE" and POG Version "POG_VERSION" in Table "ig_planogram"
+		Then Validate Downloaded XLSX File Content with File Name As "Planogram" and Tablename as "ig_planogram"
+		And Click On Link with text "View"
+		Then Switch To Frame with Title "Planogram Locations"
+		And In Table "ig_planogram_locations" apply Filter for Column "Parent POG Module" with value "POG_MODULE"
+		And In Table "ig_planogram_locations" apply Filter for Column "FP Version" with value "FP_VERSION"
+		And In Table "ig_planogram_locations" apply Filter for Column "Location ID" with value "LOCATION_ID"
+		And Validate the column "Effective Start Date" as "EFF_START_DATE" in table "ig_planogram_locations"
+		And Validate the column "Effective End Date" as "EFF_END_DATE" in table "ig_planogram_locations"
+		Then In Table "ig_planogram_locations" Select First Filtered checkbox
+		And Click On "Save" Button
+		And Click On Link with text "View"
+		Then Switch To Frame with Title "Planogram Locations"
+		Then In Table "ig_planogram_locations" Select First Filtered checkbox
+		And Click On "Save" Button
+		And Click On "Implement" Button
+		And Click On Link with text "View"
+		Then Switch To Frame with Title "Planogram Locations"
+		And Validate the column "Implemented Date" as "VDATE" in table "ig_planogram_locations"
+		And Click on Button with title "Close"
+		And Click On Link in Breadcrum with text "Portal"
+		And Extract the Live Planogram to be Implemented
+		And In Table "ig_planogram_rem" apply Filter for Column "Store" with value "STORE"
+		And In Table "ig_planogram_rem" apply Filter for Column "POG Code" with value "POG_CODE"
+		And In Table "ig_planogram_rem" apply Filter for Column "POG Version" with value "POG_VERSION"
+		And Validate all filtered columns for POG Code "POG_CODE" and POG Version "POG_VERSION" in Table "ig_planogram_rem" for Planogram Reminder
+		Then Validate Downloaded XLSX File Content with File Name As "Planogram Reminder" and Tablename as "ig_planogram_rem"
+		Then In Table "ig_planogram_rem" Select First Filtered checkbox
+		And Click On "Download POG PDF" Button
+		And Validate the downloaded file as "FILE_NAME"
+		And Click On "Implement" Button
+		And Validate Successful Message As "Record(s) Updated Successfully."
+		Then Validate No data Found on Screen "Planogram Reminder" for table "ig_planogram_rem"
+		
+	@run	
+	Scenario: Portal_FloorPlan_TC002#Floor Plan||Floor Plan Reminder	
+		When Click On Span Text "Floor Plan" Button
+		And Extract the Planned Floor Plan to be Implemented
+		And In Table "ig_floorplan" apply Filter for Column "Store" with value "STORE"
+		And Wait For "5" Second
+		And In Table "ig_floorplan" apply Filter for Column "FP Version" with value "FP_VERSION"
+    And Validate all filtered columns for Store "STORE" and FP Version "FP_VERSION" in Table "ig_floorplan"
+    Then Validate Downloaded XLSX File Content with File Name As "Floor Plan " and Tablename as "ig_floorplan"
+    Then In Table "ig_floorplan" Select First Filtered checkbox
+    And Click On "Implement" Button
+    And Validate the column "Implemented Date" as "SYSDATE" in table "ig_floorplan"
+    And Click On Link in Breadcrum with text "Portal"
+    And Click On Link with Span Text "Floor Plan Reminder"
+    And Extract the Live Floor Plan to be Implemented
+    And In Table "ig_fp_reminder" apply Filter for Column "Store" with value "STORE"
+		And Wait For "5" Second
+		And In Table "ig_fp_reminder" apply Filter for Column "FP Version" with value "FP_VERSION"
+		And Validate all filtered columns for Store "STORE" and FP Version "FP_VERSION" in Table "ig_fp_reminder"
+		Then Validate Downloaded XLSX File Content with File Name As "Floor Plan Reminder" and Tablename as "ig_fp_reminder"
+		Then In Table "ig_fp_reminder_ig_summary" Select All Filtered checkbox
+		And Click On "Implement" Button
+		And Validate Successful Message As "Record(s) Updated Successfully."
+		Then Validate No data Found on Screen "Floor Plan Reminder" for table "ig_fp_reminder"

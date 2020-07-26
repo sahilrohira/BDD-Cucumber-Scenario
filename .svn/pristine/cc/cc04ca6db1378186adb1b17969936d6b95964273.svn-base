@@ -1,0 +1,104 @@
+package stepdefs.common;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
+
+import org.openqa.selenium.WebDriver;
+
+import com.aventstack.extentreports.ExtentTest;
+
+import dataProviders.EnvironmentData;
+import dataProviders.EnvironmentFileReader;
+
+public class SuperStepdefs {
+
+	protected WebDriver driver;
+	protected String testCaseId;
+	protected ExtentTest logger;
+	protected Connection con;
+	protected EnvironmentData envData;
+
+	public SuperStepdefs(Hook hook) {
+		this.driver = hook.getWebDriver();
+		this.testCaseId = hook.getTestCaseId();
+		logger = hook.getLogger();
+		con = hook.getDBConnection();
+		this.envData = new EnvironmentFileReader().getEnvironmentData();
+	}
+
+	protected String bold(int name) {
+		return "<b>" + name + "</b>";
+	}
+
+	protected String bold(String name) {
+		if (name.equals("")) {
+			return "<b>[" + name + "]</b>";
+		} else {
+			return "<b>" + name + "</b>";
+		}
+
+	}
+
+	protected String bold(byte[] name) {
+		return "<b>" + new String(name) + "</b>";
+	}
+
+	protected String bold(List<String> name) {
+		String listString = "";
+
+		for (String n : name) {
+			listString += n + "\t";
+		}
+
+		return "<b>" + listString + "</b>";
+	}
+
+	public void storeTempData(String key, String value) throws IOException {
+
+		Properties prop = new Properties();
+		InputStream in = new FileInputStream("Test_Data/TempData/" + testCaseId + ".properties");
+		prop.load(in);
+		in.close();
+		OutputStream out = new FileOutputStream("Test_Data/TempData/" + testCaseId + ".properties");
+		prop.setProperty(key, value);
+		prop.store(out, null);
+	}
+
+	public String getTempData(String key) throws Exception {
+
+		Properties prop = new Properties();
+		InputStream in = new FileInputStream("Test_Data/TempData/" + testCaseId + ".properties");
+		prop.load(in);
+		String val = prop.getProperty(key);
+		in.close();
+
+		/*
+		 * if(val==null) { throw new Exception("Variable ["
+		 * +key+"] was not found in temporary data file [ Test_Data/TempData/"
+		 * +testCaseId+".properties ]"); }
+		 */
+		return val;
+	}
+
+	public void createDirectory(final String downloadFolderPath) {
+		final File dir = new File(downloadFolderPath);
+		final String[] entries = dir.list();
+		if (entries != null) {
+			String[] array;
+			for (int length = (array = entries).length, i = 0; i < length; ++i) {
+				final String s = array[i];
+				final File currentFile = new File(dir.getPath(), s);
+				currentFile.delete();
+			}
+		}
+		dir.mkdirs();
+	}
+}

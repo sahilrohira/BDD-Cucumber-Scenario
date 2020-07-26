@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><SERVICEMSG>
+
+
+<MSGHEAD>
+<FROM_SYSTEM_NAME>SPACEMAN</FROM_SYSTEM_NAME>
+<SERVICE_NAME>POG</SERVICE_NAME>
+<TRANSACTION_NO>20200420132320</TRANSACTION_NO>
+<BU_CODE>WTCHK</BU_CODE>
+<SYSTEM_TIME>2020-04-20 13:23:20</SYSTEM_TIME>
+<MD5_CODE>E31564A00137D0028FD6307978FB9DF8</MD5_CODE>
+<ENCODING>UTF-8</ENCODING>
+<ANNOTATION/>
+</MSGHEAD>
+
+<POG_CODE_LIST>
+
+<POG>
+<POG_CODE>&lt;Untit</POG_CODE>
+<ACTION_IND>C</ACTION_IND>
+<POG_TYPE>R</POG_TYPE>
+<POG_NAME>&lt;Untit</POG_NAME>
+<POG_MODULE_LIST>
+<POG_MODULES/>
+</POG_MODULE_LIST>
+</POG>
+
+<POG>
+<POG_CODE>AutoTest28745</POG_CODE>
+<ACTION_IND>C</ACTION_IND>
+<POG_TYPE>R</POG_TYPE>
+<POG_DIVISION>M</POG_DIVISION>
+<POG_DEPT>07</POG_DEPT>
+<POG_DEPT_DISPLAY>M-07</POG_DEPT_DISPLAY>
+<POG_NAME>AutoTest28745</POG_NAME>
+<POG_WIDTH>100</POG_WIDTH>
+<POG_HEIGHT>145</POG_HEIGHT>
+<POG_DEPTH>35</POG_DEPTH>
+<METERAGE>100</METERAGE>
+<POG_MODULE_LIST>
+<POG_MODULES>
+  <POG_MODULE>
+    <POG_MODULE_CODE>A</POG_MODULE_CODE>
+    <SEQ_NO>1</SEQ_NO>
+    <MODULE_SUBDEPT>0701</MODULE_SUBDEPT>
+    <REMARKS>Eyes</REMARKS>
+    <POG_FIXEL_LIST>
+      <POG_FIXELS>
+        <POG_FIXEL>
+          <FIXEL_ID>A</FIXEL_ID>
+          <FIXEL_TYPE>8</FIXEL_TYPE>
+          <FIXEL_NAME>0701_Eyes</FIXEL_NAME>
+          <POS_X>0</POS_X>
+          <POS_Y>10</POS_Y>
+          <POS_Z>-1</POS_Z>
+          <FIXEL_HEIGHT>135</FIXEL_HEIGHT>
+          <FIXEL_WIDTH>100</FIXEL_WIDTH>
+          <FIXEL_DEPTH>1</FIXEL_DEPTH>
+          <SLOPE>0</SLOPE>
+          <ROTATION>0</ROTATION>
+          <COLOUR>0</COLOUR>
+          <FIXEL_ITEM_MAX_HEIGHT>0</FIXEL_ITEM_MAX_HEIGHT>
+          <POG_ITEM_LIST>
+            <POG_ITEMS>
+</POG_ITEMS>
+          </POG_ITEM_LIST>
+        </POG_FIXEL>
+        <POG_FIXEL>
+          <FIXEL_ID>A02</FIXEL_ID>
+          <FIXEL_TYPE>0</FIXEL_TYPE>
+          <POS_X>0</POS_X>
+          <POS_Y>104</POS_Y>
+          <POS_Z>0</POS_Z>
+          <FIXEL_HEIGHT>3</FIXEL_HEIGHT>
+          <FIXEL_WIDTH>100</FIXEL_WIDTH>
+          <FIXEL_DEPTH>24</FIXEL_DEPTH>
+          <SLOPE>0</SLOPE>
+          <ROTATION>0</ROTATION>
+          <COLOUR>12632256</COLOUR>
+          <FIXEL_ITEM_MAX_HEIGHT>15</FIXEL_ITEM_MAX_HEIGHT>
+          <POG_ITEM_LIST>
+            <POG_ITEMS>
+              <POG_ITEM>
+                <POSITION_ID>12--1-2-3</POSITION_ID>
+                <ITEM>214508</ITEM>
+                <HORIZ_FACING>2</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>36.4666</HORIZ_SPACE>
+                <HORIZ_UNITS>2</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>16</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>0</ITEM_POS_X>
+                <ITEM_POS_Y>107</ITEM_POS_Y>
+                <ITEM_POS_Z>1.6</ITEM_POS_Z>
+                <ITEM_WIDTH>4.6</ITEM_WIDTH>
+                <ITEM_HEIGHT>8</ITEM_HEIGHT>
+                <ITEM_DEPTH>2.8</ITEM_DEPTH>
+                <LOCATION_ID>4</LOCATION_ID>
+              </POG_ITEM>
+              <POG_ITEM>
+                <POSITION_ID>4--1</POSITION_ID>
+                <ITEM>224657</ITEM>
+                <HORIZ_FACING>2</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>36.2666</HORIZ_SPACE>
+                <HORIZ_UNITS>2</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>16</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>63.7333</ITEM_POS_X>
+                <ITEM_POS_Y>107</ITEM_POS_Y>
+                <ITEM_POS_Z>0</ITEM_POS_Z>
+                <ITEM_WIDTH>4.5</ITEM_WIDTH>
+                <ITEM_HEIGHT>8.7</ITEM_HEIGHT>
+                <ITEM_DEPTH>3</ITEM_DEPTH>
+                <LOCATION_ID>5</LOCATION_ID>
+              </POG_ITEM>
+            </POG_ITEMS>
+          </POG_ITEM_LIST>
+        </POG_FIXEL>
+        <POG_FIXEL>
+          <FIXEL_ID>A03</FIXEL_ID>
+          <FIXEL_TYPE>0</FIXEL_TYPE>
+          <POS_X>0</POS_X>
+          <POS_Y>77</POS_Y>
+          <POS_Z>0</POS_Z>
+          <FIXEL_HEIGHT>3</FIXEL_HEIGHT>
+          <FIXEL_WIDTH>100</FIXEL_WIDTH>
+          <FIXEL_DEPTH>24</FIXEL_DEPTH>
+          <SLOPE>0</SLOPE>
+          <ROTATION>0</ROTATION>
+          <COLOUR>12632256</COLOUR>
+          <FIXEL_ITEM_MAX_HEIGHT>24</FIXEL_ITEM_MAX_HEIGHT>
+          <POG_ITEM_LIST>
+            <POG_ITEMS>
+              <POG_ITEM>
+                <POSITION_ID>13--1</POSITION_ID>
+                <ITEM>227168</ITEM>
+                <HORIZ_FACING>2</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>25.65</HORIZ_SPACE>
+                <HORIZ_UNITS>2</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>12</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>0</ITEM_POS_X>
+                <ITEM_POS_Y>80</ITEM_POS_Y>
+                <ITEM_POS_Z>1.2</ITEM_POS_Z>
+                <ITEM_WIDTH>3.8</ITEM_WIDTH>
+                <ITEM_HEIGHT>15</ITEM_HEIGHT>
+                <ITEM_DEPTH>3.8</ITEM_DEPTH>
+                <LOCATION_ID>1</LOCATION_ID>
+              </POG_ITEM>
+              <POG_ITEM>
+                <POSITION_ID>2--1</POSITION_ID>
+                <ITEM>251299</ITEM>
+                <HORIZ_FACING>1</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>7</HORIZ_SPACE>
+                <HORIZ_UNITS>1</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>5</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>65.95</ITEM_POS_X>
+                <ITEM_POS_Y>80</ITEM_POS_Y>
+                <ITEM_POS_Z>0</ITEM_POS_Z>
+                <ITEM_WIDTH>7</ITEM_WIDTH>
+                <ITEM_HEIGHT>10.2</ITEM_HEIGHT>
+                <ITEM_DEPTH>4.8</ITEM_DEPTH>
+              </POG_ITEM>
+              <POG_ITEM>
+                <POSITION_ID>2--1-2</POSITION_ID>
+                <ITEM>253419</ITEM>
+                <HORIZ_FACING>1</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>4.2</HORIZ_SPACE>
+                <HORIZ_UNITS>1</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>5</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>43.7</ITEM_POS_X>
+                <ITEM_POS_Y>80</ITEM_POS_Y>
+                <ITEM_POS_Z>2.5</ITEM_POS_Z>
+                <ITEM_WIDTH>4.2</ITEM_WIDTH>
+                <ITEM_HEIGHT>11.6</ITEM_HEIGHT>
+                <ITEM_DEPTH>4.3</ITEM_DEPTH>
+              </POG_ITEM>
+              <POG_ITEM>
+                <POSITION_ID>51--1-2-3-4--13</POSITION_ID>
+                <ITEM>248827</ITEM>
+                <HORIZ_FACING>1</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>9</HORIZ_SPACE>
+                <HORIZ_UNITS>1</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>2</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>91</ITEM_POS_X>
+                <ITEM_POS_Y>80</ITEM_POS_Y>
+                <ITEM_POS_Z>6</ITEM_POS_Z>
+                <ITEM_WIDTH>9</ITEM_WIDTH>
+                <ITEM_HEIGHT>23.5</ITEM_HEIGHT>
+                <ITEM_DEPTH>9</ITEM_DEPTH>
+                <LOCATION_ID>4</LOCATION_ID>
+              </POG_ITEM>
+            </POG_ITEMS>
+          </POG_ITEM_LIST>
+        </POG_FIXEL>
+        <POG_FIXEL>
+          <FIXEL_ID>A04</FIXEL_ID>
+          <FIXEL_TYPE>0</FIXEL_TYPE>
+          <POS_X>0</POS_X>
+          <POS_Y>55</POS_Y>
+          <POS_Z>0</POS_Z>
+          <FIXEL_HEIGHT>3</FIXEL_HEIGHT>
+          <FIXEL_WIDTH>100</FIXEL_WIDTH>
+          <FIXEL_DEPTH>24</FIXEL_DEPTH>
+          <SLOPE>0</SLOPE>
+          <ROTATION>0</ROTATION>
+          <COLOUR>12632256</COLOUR>
+          <FIXEL_ITEM_MAX_HEIGHT>19</FIXEL_ITEM_MAX_HEIGHT>
+          <POG_ITEM_LIST>
+            <POG_ITEMS>
+              <POG_ITEM>
+                <POSITION_ID>85--1-2-3-4--13</POSITION_ID>
+                <ITEM>253423</ITEM>
+                <HORIZ_FACING>2</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>43.8</HORIZ_SPACE>
+                <HORIZ_UNITS>2</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>4</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>56.2</ITEM_POS_X>
+                <ITEM_POS_Y>58</ITEM_POS_Y>
+                <ITEM_POS_Z>2</ITEM_POS_Z>
+                <ITEM_WIDTH>13</ITEM_WIDTH>
+                <ITEM_HEIGHT>17</ITEM_HEIGHT>
+                <ITEM_DEPTH>11</ITEM_DEPTH>
+                <LOCATION_ID>8</LOCATION_ID>
+              </POG_ITEM>
+              <POG_ITEM>
+                <POSITION_ID>85--1-2-3-4--7</POSITION_ID>
+                <ITEM>253422</ITEM>
+                <HORIZ_FACING>2</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>38.4</HORIZ_SPACE>
+                <HORIZ_UNITS>2</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>4</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>0</ITEM_POS_X>
+                <ITEM_POS_Y>58</ITEM_POS_Y>
+                <ITEM_POS_Z>3.4</ITEM_POS_Z>
+                <ITEM_WIDTH>10.3</ITEM_WIDTH>
+                <ITEM_HEIGHT>16.9</ITEM_HEIGHT>
+                <ITEM_DEPTH>10.3</ITEM_DEPTH>
+                <LOCATION_ID>7</LOCATION_ID>
+              </POG_ITEM>
+            </POG_ITEMS>
+          </POG_ITEM_LIST>
+        </POG_FIXEL>
+        <POG_FIXEL>
+          <FIXEL_ID>A05</FIXEL_ID>
+          <FIXEL_TYPE>0</FIXEL_TYPE>
+          <POS_X>0</POS_X>
+          <POS_Y>33</POS_Y>
+          <POS_Z>0</POS_Z>
+          <FIXEL_HEIGHT>3</FIXEL_HEIGHT>
+          <FIXEL_WIDTH>100</FIXEL_WIDTH>
+          <FIXEL_DEPTH>24</FIXEL_DEPTH>
+          <SLOPE>0</SLOPE>
+          <ROTATION>0</ROTATION>
+          <COLOUR>12632256</COLOUR>
+          <FIXEL_ITEM_MAX_HEIGHT>19</FIXEL_ITEM_MAX_HEIGHT>
+          <POG_ITEM_LIST>
+            <POG_ITEMS>
+              <POG_ITEM>
+                <POSITION_ID>4--1-2</POSITION_ID>
+                <ITEM>265857</ITEM>
+                <HORIZ_FACING>1</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>7</HORIZ_SPACE>
+                <HORIZ_UNITS>1</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>2</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>57.8</ITEM_POS_X>
+                <ITEM_POS_Y>36</ITEM_POS_Y>
+                <ITEM_POS_Z>1.2</ITEM_POS_Z>
+                <ITEM_WIDTH>7</ITEM_WIDTH>
+                <ITEM_HEIGHT>17.7</ITEM_HEIGHT>
+                <ITEM_DEPTH>11.4</ITEM_DEPTH>
+              </POG_ITEM>
+              <POG_ITEM>
+                <POSITION_ID>85--1-2-3-4--12</POSITION_ID>
+                <ITEM>253425</ITEM>
+                <HORIZ_FACING>1</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>19.5</HORIZ_SPACE>
+                <HORIZ_UNITS>1</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>3</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>80.5</ITEM_POS_X>
+                <ITEM_POS_Y>36</ITEM_POS_Y>
+                <ITEM_POS_Z>3.9</ITEM_POS_Z>
+                <ITEM_WIDTH>19.5</ITEM_WIDTH>
+                <ITEM_HEIGHT>17</ITEM_HEIGHT>
+                <ITEM_DEPTH>6.7</ITEM_DEPTH>
+                <LOCATION_ID>5</LOCATION_ID>
+              </POG_ITEM>
+              <POG_ITEM>
+                <POSITION_ID>85--1-2-3-4--9</POSITION_ID>
+                <ITEM>253424</ITEM>
+                <HORIZ_FACING>2</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>42.1</HORIZ_SPACE>
+                <HORIZ_UNITS>2</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>4</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>0</ITEM_POS_X>
+                <ITEM_POS_Y>36</ITEM_POS_Y>
+                <ITEM_POS_Z>0</ITEM_POS_Z>
+                <ITEM_WIDTH>13.2</ITEM_WIDTH>
+                <ITEM_HEIGHT>17</ITEM_HEIGHT>
+                <ITEM_DEPTH>12</ITEM_DEPTH>
+                <LOCATION_ID>4</LOCATION_ID>
+              </POG_ITEM>
+            </POG_ITEMS>
+          </POG_ITEM_LIST>
+        </POG_FIXEL>
+        <POG_FIXEL>
+          <FIXEL_ID>A06</FIXEL_ID>
+          <FIXEL_TYPE>0</FIXEL_TYPE>
+          <POS_X>0</POS_X>
+          <POS_Y>10</POS_Y>
+          <POS_Z>0</POS_Z>
+          <FIXEL_HEIGHT>3</FIXEL_HEIGHT>
+          <FIXEL_WIDTH>100</FIXEL_WIDTH>
+          <FIXEL_DEPTH>34</FIXEL_DEPTH>
+          <SLOPE>0</SLOPE>
+          <ROTATION>0</ROTATION>
+          <COLOUR>12632256</COLOUR>
+          <FIXEL_ITEM_MAX_HEIGHT>20</FIXEL_ITEM_MAX_HEIGHT>
+          <POG_ITEM_LIST>
+            <POG_ITEMS>
+              <POG_ITEM>
+                <POSITION_ID>1--1</POSITION_ID>
+                <ITEM>200075</ITEM>
+                <HORIZ_FACING>2</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>29.75</HORIZ_SPACE>
+                <HORIZ_UNITS>2</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>12</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>22.75</ITEM_POS_X>
+                <ITEM_POS_Y>13</ITEM_POS_Y>
+                <ITEM_POS_Z>10</ITEM_POS_Z>
+                <ITEM_WIDTH>6.5</ITEM_WIDTH>
+                <ITEM_HEIGHT>10.5</ITEM_HEIGHT>
+                <ITEM_DEPTH>4</ITEM_DEPTH>
+                <LOCATION_ID>4</LOCATION_ID>
+              </POG_ITEM>
+              <POG_ITEM>
+                <POSITION_ID>3--1-2-3-4-5-16</POSITION_ID>
+                <ITEM>208291</ITEM>
+                <HORIZ_FACING>1</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>6</HORIZ_SPACE>
+                <HORIZ_UNITS>1</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>5</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>0</ITEM_POS_X>
+                <ITEM_POS_Y>13</ITEM_POS_Y>
+                <ITEM_POS_Z>4</ITEM_POS_Z>
+                <ITEM_WIDTH>6</ITEM_WIDTH>
+                <ITEM_HEIGHT>19</ITEM_HEIGHT>
+                <ITEM_DEPTH>6</ITEM_DEPTH>
+                <LOCATION_ID>3</LOCATION_ID>
+              </POG_ITEM>
+              <POG_ITEM>
+                <POSITION_ID>8--1-2</POSITION_ID>
+                <ITEM>265411</ITEM>
+                <HORIZ_FACING>2</HORIZ_FACING>
+                <VERT_FACING>1</VERT_FACING>
+                <HORIZ_SPACE>30.75</HORIZ_SPACE>
+                <HORIZ_UNITS>2</HORIZ_UNITS>
+                <VERT_UNITS>1</VERT_UNITS>
+                <TOTAL_UNITS>6</TOTAL_UNITS>
+                <ORIENTATION>0</ORIENTATION>
+                <ITEM_POS_X>69.25</ITEM_POS_X>
+                <ITEM_POS_Y>13</ITEM_POS_Y>
+                <ITEM_POS_Z>2.8</ITEM_POS_Z>
+                <ITEM_WIDTH>7</ITEM_WIDTH>
+                <ITEM_HEIGHT>18</ITEM_HEIGHT>
+                <ITEM_DEPTH>10.4</ITEM_DEPTH>
+                <LOCATION_ID>7</LOCATION_ID>
+              </POG_ITEM>
+            </POG_ITEMS>
+          </POG_ITEM_LIST>
+        </POG_FIXEL>
+        <POG_FIXEL>
+          <FIXEL_ID>CHANGE A</FIXEL_ID>
+          <FIXEL_TYPE>13</FIXEL_TYPE>
+          <POS_X>0</POS_X>
+          <POS_Y>-10</POS_Y>
+          <POS_Z>34</POS_Z>
+          <FIXEL_HEIGHT>10</FIXEL_HEIGHT>
+          <FIXEL_WIDTH>100</FIXEL_WIDTH>
+          <FIXEL_DEPTH>1</FIXEL_DEPTH>
+          <SLOPE>0</SLOPE>
+          <ROTATION>0</ROTATION>
+          <COLOUR>16777215</COLOUR>
+          <TEXTFIELD>CHANGE : NO</TEXTFIELD>
+          <FIXEL_ITEM_MAX_HEIGHT>0</FIXEL_ITEM_MAX_HEIGHT>
+          <POG_ITEM_LIST>
+            <POG_ITEMS/>
+          </POG_ITEM_LIST>
+        </POG_FIXEL>
+        <POG_FIXEL>
+          <FIXEL_ID>MODULE A</FIXEL_ID>
+          <FIXEL_TYPE>13</FIXEL_TYPE>
+          <POS_X>0</POS_X>
+          <POS_Y>0</POS_Y>
+          <POS_Z>34</POS_Z>
+          <FIXEL_HEIGHT>10</FIXEL_HEIGHT>
+          <FIXEL_WIDTH>100</FIXEL_WIDTH>
+          <FIXEL_DEPTH>1</FIXEL_DEPTH>
+          <SLOPE>0</SLOPE>
+          <ROTATION>0</ROTATION>
+          <COLOUR>16777215</COLOUR>
+          <TEXTFIELD>MODULE A</TEXTFIELD>
+          <FIXEL_ITEM_MAX_HEIGHT>0</FIXEL_ITEM_MAX_HEIGHT>
+		  
+          <POG_ITEM_LIST>
+          <POG_ITEMS/>
+          </POG_ITEM_LIST>
+		  
+        </POG_FIXEL>
+      </POG_FIXELS>
+    </POG_FIXEL_LIST>
+  </POG_MODULE>
+</POG_MODULES>
+</POG_MODULE_LIST>
+</POG>
+
+</POG_CODE_LIST></SERVICEMSG>

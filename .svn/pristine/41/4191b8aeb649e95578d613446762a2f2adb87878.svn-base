@@ -1,0 +1,80 @@
+package stepdefs.MSO;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_STORE_Table;
+import pages.Mso.MSO_Insights_Page;
+import pages.apex.ApexButton;
+import pages.apex.ApexListOfValue;
+import pages.apex.ApexPageHeader;
+import pages.apex.ApexTextField;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class MSO_Insights extends SuperStepdefs {
+
+	public ApexPageHeader apexPageHeader;
+	private String pageName = "BSL_Insights";
+	private ApexButton apextButton;
+	private ApexTextField apextext;
+	private SM_STORE_Table sm_store_table;
+	private ApexListOfValue listofvalues;
+	private MSO_Insights_Page mso_insight;
+	
+	public MSO_Insights(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+		apextext= new ApexTextField(driver, testCaseId);
+		apextButton=new ApexButton(driver, testCaseId);
+		sm_store_table = new SM_STORE_Table(con, testCaseId);
+		listofvalues = new ApexListOfValue(driver, testCaseId);
+		mso_insight=new MSO_Insights_Page(driver,testCaseId);
+	}
+    
+    /**
+     * @author Chitresh.Goyal
+     	
+     	From Home Page, Click On "Benchmark Store Locator" Link
+     	From Home Page, Click On "Optimization Generator" Link
+     	
+     */
+    @Then("^From MSO_Insights Page, Click On \"(.*)\" Link$")
+    public void clickOnLink(String linkName) throws Exception {
+    	apexPageHeader.clickOnHeader3Link("Optimization Page", linkName);
+    	logger.pass("From BSL_Insights Page, Click On "+bold(linkName)+" Link");
+    }      
+    @When("^From MSO_Insights Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+    @When("^From MSO_Insights Page, Click On \"([^\"]*)\" Button Id$")
+   	public void clickOnButtonId(String id) throws Exception {
+    	Thread.sleep(2000);
+   		apextButton.clickOnButtonWithId(pageName, id);
+   		logger.pass("From " + pageName + ", Click On " + bold(id) + " Button");
+   	}
+    @Then("^From MSO_Insights Page, Validate Text For \"(.*)\" As \"(.*)\"$")
+	public void validateTextFieldValuewithIDEquals(String fieldname,String text) throws Exception {
+    	apextext.validateTextFieldValuewithIDEquals(pageName, fieldname, text);    	
+		logger.pass("Successfully matched DB value to UI for Item Master");
+	}
+    @Then("^From MSO_Insights Page, Validate Number For \"(.*)\" As \"(.*)\"$")
+	public void validateSpanFieldValuewithNumberFormat(String fieldname,String text) throws Exception {
+    	apextext.validateSpanFieldValuewithNumberFormat(pageName, fieldname, text);    	
+		logger.pass("Successfully matched DB value to UI for Item Master");
+	}
+    @When("^From MSO_Insights Page, Select \"(.*)\" With \"(.*)\"$")
+	public void SelectStore(String store,String fieldname) throws Exception {
+		sm_store_table.storeNameAndNum();
+		String storeid = getTempData(store);
+		mso_insight.selectFromLOVAndClickSelectButton(pageName, storeid, 1);
+		logger.pass("From BSL_Store_Identifier Page, Store " + bold(storeid) + " is selected");
+	}
+    @When("^From MSO_Insights Page, Click On Label \"(.*)\" Button$")
+	public void clickOnLabelButton(String buttonName) throws Exception {
+		apextButton.clickOnDivLabelButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On Label " + bold(buttonName) + " Button");
+	}
+}

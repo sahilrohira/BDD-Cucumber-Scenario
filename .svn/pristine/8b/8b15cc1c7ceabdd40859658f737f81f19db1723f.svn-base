@@ -1,0 +1,39 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+public class SM_FIXTURELABEL_Table extends CommonDB {
+
+	public SM_FIXTURELABEL_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "SM_FIXTURE_LABELS";
+
+	public void removeExistingFixtureLabel() throws Exception {
+		String delFixLabel_SQL = "delete from  " + tableName + " where bu_id='" + AppData.buId
+				+ "' and fixture_label='CNTR' and description='Counter'";
+		executeUpdate(con, delFixLabel_SQL);
+	}
+
+	public int getFixtureLabelCount() throws Exception {
+		String fixturelabel_Count_SQL = "select * from  " + tableName + " where bu_id='" + AppData.buId + "'";
+		int fixturelabel_count = getRowCount(fixturelabel_Count_SQL);
+		return fixturelabel_count;
+	}
+
+	public void getFixtureLabel() throws Exception {
+		String fixture_lbl_name_SQL = "select (fixture_label||' - '||description)as FIXTURE_LABEL from " + tableName
+				+ " where bu_id='" + AppData.buId + "' order by dbms_random.value fetch first 1 rows only";
+		storeColumnNameAndValue(fixture_lbl_name_SQL);
+	}
+
+	public void getFixtureLabelwithLabelName() throws Exception {
+		String fixture_lbl_name_SQL = "select (fixture_label) as FIXTURE_LABEL from " + tableName + " where bu_id='"
+				+ AppData.buId + "' order by dbms_random.value fetch first 1 rows only";
+		storeColumnNameAndValue(fixture_lbl_name_SQL);
+	}
+
+}

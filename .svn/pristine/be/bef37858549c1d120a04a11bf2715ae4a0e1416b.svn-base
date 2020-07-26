@@ -1,0 +1,115 @@
+package stepdefs.MSO;
+
+import org.openqa.selenium.By;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_BU_SYSPRM_Table;
+import pages.Mso.MSO_BSL_Page;
+import pages.apex.ApexButton;
+import pages.apex.ApexMessage;
+import pages.apex.ApexPageHeader;
+import pages.apex.ApexTextField;
+import pages.commom.CommonPage;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class BSL_Bench_Store_Locator extends SuperStepdefs {
+
+	public ApexPageHeader apexPageHeader;
+	private String pageName = "BSL_Bench_Store_Locator";
+	private CommonPageSteps commonPageSteps;
+	private CommonPage commonPage;
+	private ApexButton apextButton;
+	private ApexMessage apexMessage;
+	private ApexTextField apextext;
+	private SM_BU_SYSPRM_Table sm_bu_sysprm;
+	private MSO_BSL_Page mso_bsl_page;
+
+	public BSL_Bench_Store_Locator(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver, testCaseId);
+		apextext = new ApexTextField(driver, testCaseId);
+		sm_bu_sysprm = new SM_BU_SYSPRM_Table(con, testCaseId);
+		apextButton = new ApexButton(driver, testCaseId);
+		mso_bsl_page = new MSO_BSL_Page(driver, testCaseId);
+		commonPage = new CommonPage(driver, testCaseId);
+		apexMessage = new ApexMessage(driver, testCaseId);
+	}
+
+	/**
+	 * @author Chitresh.Goyal
+	 * 
+	 *         From Home Page, Click On "Benchmark Store Locator" Link From Home
+	 *         Page, Click On "Optimization Generator" Link
+	 * 
+	 */
+	@Then("^From BSL_Bench_Store_Locator Page, Click On \"(.*)\" Link$")
+	public void clickOnLink(String linkName) throws Exception {
+		apexPageHeader.clickOnHeader3Link("Optimization Page", linkName);
+		logger.pass("From BSL_Bench_Store_Locator Page, Click On " + bold(linkName) + " Link");
+	}
+
+	@When("^From BSL_Bench_Store_Locator Page, Click On \"([^\"]*)\" Button Id$")
+	public void clickOnButtonId(String id) throws Exception {
+		apextButton.clickOnButtonInId(pageName, id);
+		logger.pass("From " + pageName + ", Click On " + bold(id) + " Button");
+	}
+
+	@Then("^From BSL_Bench_Store_Locator Page, Validate Text For \"(.*)\" As \"(.*)\"$")
+	public void validateSpanFieldValuewithIDContains(String fieldname, String text) throws Exception {
+		apextext.validateSpanFieldValuewithIDContains(pageName, fieldname, text);
+		logger.pass("Successfully Validated Numbe");
+	}
+	
+	@Then("^From Store Selection Page, Validate Text For \"(.*)\" As \"(.*)\"$")
+	public void validateInputFieldValuewithIDContains(String fieldname, String text) throws Exception {
+		apextext.validateTextFieldValue(pageName, fieldname, text);
+		logger.pass("Successfully Validated Numbe");
+	}
+	
+	@Then("^From Store Selection Page, Validate Text For \"(.*)\" As \"(.*)\" for Hidden Text$")
+	public void validateInputFieldValuewithIDContainsForHidden(String fieldname, String text) throws Exception {
+		apextext.validateHiddenTextFieldValue(pageName, fieldname, text);
+		logger.pass("Successfully Validated Numbe");
+	}
+
+	@Then("^From BSL_Bench_Store_Locator Page, Validate Number For \"(.*)\" As \"(.*)\"$")
+	public void validateSpanFieldValuewithNumberFormat(String fieldname, String text) throws Exception {
+		apextext.validateSpanFieldValuewithNumberFormat(pageName, fieldname, text);
+		logger.pass("Successfully Validated Number");
+	}
+	
+	@Then("^From Store Information Page, Validate Number For \"(.*)\" As \"(.*)\"$")
+	public void validateInputFieldValuewithNumberFormat(String fieldname, String text) throws Exception {
+		apextext.validateTextFieldValuewithNumberFormat(pageName, fieldname, text);
+		logger.pass("Successfully Validated Number");
+	}
+
+	@Then("^Validate Element \"([^\"]*)\" Attribute \"([^\"]*)\" Value As \"([^\"]*)\"$")
+	public void validate_Element_Attribute_Value_As(String id, String att, String value) throws Exception {
+		mso_bsl_page.validate_Element_Attribute_Value_As(pageName, id, att, value);
+	}
+
+	@Then("^From BSL_Bench_Store_Locator Page, Validate Benchmark Store Count$")
+	public void validate_Benchamrk_Store_Count() throws Exception {
+		String storeCount = sm_bu_sysprm.getSysConfValue("NO_OF_COMPARABLE_STORE");
+		mso_bsl_page.validate_Benchamrk_Store_Count(pageName, storeCount);
+		logger.pass("Successfully Validated Benchamrk store count");
+
+	}
+
+	@Then("^Waiting for loader to dissappear$")
+	public void waitForLoader() throws Exception {
+		mso_bsl_page.waitForLoader(pageName);
+		logger.pass("Waiting for loader");
+	}
+
+	@Then("^Verify Text Box \"(.*)\"  Error Message as \"(.*)\"$")
+	public void verifyTextBoxErrorMessage(String fieldId, String txt) throws Exception {
+		apexMessage.verifyTextBoxErrorMessage(fieldId, txt);
+		logger.pass("Error Message" + txt + "for text field" + fieldId + "is validated successfully");
+	}
+
+}

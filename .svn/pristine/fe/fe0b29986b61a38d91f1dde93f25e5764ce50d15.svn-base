@@ -1,0 +1,73 @@
+Feature: Validating Functionality Related To Tagging Template under POG Management in Manage Planogram
+
+  Background: 
+    Given Open DB Connection
+    And Open Browser
+    And Log In To Application With Provided Credential
+    And From Home Page, Click On "POG Management" Link
+    And From Masters Page, Click On "Manage Planogram" Link
+
+  @run
+  Scenario: POGM_ManagePlanogram_TC001#Tag a POG with two versions to an Empty Location and upgrade the Version via UI in Manage Planogram
+    When Wait For "2" Second
+    And From Manage Planogram Page, Click On "Template" Button
+    And Extract empty location for a single floor plan store
+    And Extract Area for Store "SFP_STORE"
+    Then Extract any Regular POG with two version having Store Area as "AREA"
+    Then Update the Template with Add_POG Code "REGPOG_2VER", Add_POG_Version "REG_VER1", Add_Module "",Add_POG_Position "",Del_POG Code "",Del_POG Version "",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+    And From Manage Planogram Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And Click On Link in Breadcrum with text "POG Management"
+    And From Masters Page, Click On "Store POG Module" Link
+    And Wait For "2" Second
+    When Type the parameters Store as "SFP_STORE",POG Code as "REGPOG_2VER" and POG Version "REG_VER1" as to search for the Store POG Module with status as "P"
+    And From Store POG Module Page, Click On "Search" Button
+    And Apply Filter for Column "Location ID" with value "SFP_EMPTY_LOC"
+    And Validate column "Effective Start Date" with value as "vdate+1"
+    And Validate column "Effective End Date" with value as "MAX_END_DATE"
+    And Click On Link in Breadcrum with text "POG Management"
+    And From Masters Page, Click On "Manage Planogram" Link
+    And From Search Planogram, select effDate as "vdate+1" with pog version as "Latest" and pog code as "REGPOG_2VER"
+    And From Manage Planogram Page, Click On "Search" Button
+    And Wait For "5" Second
+    And From Search Planogram, select effDate as "vdate+30" with pog version as "Latest" and pog code as "REGPOG_2VER"
+    And From Manage Planogram Page, Select Planogram/Store List Description row no. "1" from table "planogram_ig_grid"
+    And Apply Filter for Column "Store List Description" with value "All Store"
+    And From Manage Planogram Page, Select Planogram/Store List Description row no. "1" from table "store_list_ig_grid"
+    And From Manage Planogram Page, Click On "Preview" Button
+    And From Dialog Box, click on Store Count value "" Link from column "Store Count"
+    And Close Window PopUp
+    And From Manage Planogram Page, Click On "Save" Button
+    And Click On Link in Breadcrum with text "POG Management"
+    And From Masters Page, Click On "Store POG Module" Link
+    And Wait For "2" Second
+    When Type the parameters Store as "SFP_STORE",POG Code as "REGPOG_2VER" and POG Version "" as to search for the Store POG Module with status as "P"
+    And From Store POG Module Page, Click On "Search" Button
+    And Apply Filter for Column "POG Version" with value "REG_VER1"
+    And Validate column "Effective Start Date" with value as "vdate+1"
+    And Validate column "Effective End Date" with value as "vdate+30"
+    And Remove Existing Filter
+    And Apply Filter for Column "POG Version" with value "REG_VER2"
+    And Validate column "Effective Start Date" with value as "vdate+30"
+    And Validate column "Effective End Date" with value as "MAX_END_DATE"
+    And Remove Existing Filter
+    And Click On Link in Breadcrum with text "POG Management"
+    And From Masters Page, Click On "Manage Planogram" Link
+    Then Update the Template with Add_POG Code "", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "REGPOG_2VER",Del_POG Version "REG_VER1",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+1",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+    And From Manage Planogram Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    Then Update the Template with Add_POG Code "", Add_POG_Version "", Add_Module "",Add_POG_Position "",Del_POG Code "REGPOG_2VER",Del_POG Version "REG_VER2",Del_POG Module "",Store "SFP_STORE",EffectiveDate "vdate+30",Location_ID "SFP_EMPTY_LOC",From Location_ID "" in row number "1"
+    And From Manage Planogram Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "Manage Planogram" with filename as "Template POG"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And Click On Link in Breadcrum with text "POG Management"
+    And From Masters Page, Click On "Store POG Module" Link
+    And Wait For "2" Second
+    When Type the parameters Store as "SFP_STORE",POG Code as "REGPOG_2VER" and POG Version "" as to search for the Store POG Module with status as "P"
+    And From Store POG Module Page, Click On "Search" Button
+    And Remove Existing Filter
+    And Apply Filter for Column "Location ID" with value "SFP_EMPTY_LOC"
+    And Validate No data Found on Screen "Store POG Module" for table "store_pog_module"
+    And Remove Existing Filter

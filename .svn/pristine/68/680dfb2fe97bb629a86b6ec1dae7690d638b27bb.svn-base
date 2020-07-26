@@ -1,0 +1,249 @@
+package stepdefs.MSO;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_GENERAL_Table;
+import db.SM_STORE_Table;
+import pages.Mso.MSO_BSL_Page;
+import pages.apex.ApexButton;
+import pages.apex.ApexListOfValue;
+import pages.apex.ApexPageHeader;
+import pages.apex.ApexTextField;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+
+public class BSL_Store_Identifier extends SuperStepdefs {
+
+	public ApexPageHeader apexPageHeader;
+	private String pageName = "BSL_Store_Identifier";
+	private CommonPageSteps commonPageSteps;
+	private ApexButton apextButton;
+	private ApexTextField apextext;
+	private SM_STORE_Table sm_store_table;
+	private ApexListOfValue listofvalues;
+	private MSO_BSL_Page mso_bsl_page;
+	private SM_GENERAL_Table sm_general_table;
+
+	public BSL_Store_Identifier(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apextext = new ApexTextField(driver, testCaseId);
+		sm_general_table = new SM_GENERAL_Table(con, testCaseId);
+		sm_store_table = new SM_STORE_Table(con, testCaseId);
+		listofvalues = new ApexListOfValue(driver, testCaseId);
+		mso_bsl_page = new MSO_BSL_Page(driver, testCaseId);
+	}
+
+	/**
+	 * @author Chitresh.Goyal
+	 * 
+	 *         From Home Page, Click On "Benchmark Store Locator" Link From Home
+	 *         Page, Click On "Optimization Generator" Link
+	 * 
+	 */
+	@Then("^From BSL_Store_Identifier Page, Click On \"(.*)\" Link$")
+	public void clickOnLink(String linkName) throws Exception {
+		apexPageHeader.clickOnHeader3Link("Optimization Page", linkName);
+		logger.pass("From BSL_Store_Identifier Page, Click On " + bold(linkName) + " Link");
+	}
+
+	@When("^From BSL_Store_Identifier Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@When("^From variable settings page, Click On \"(.*)\" Button Icon$")
+	public void clickOnCollapsibleButton(String tableName) throws Exception {
+		apextButton.clickOnCollapsibleButtonWithSpan(pageName, tableName);
+		logger.pass("From " + pageName + ", Click On " + bold(tableName) + " Button");
+	}
+
+	@When("^From Store Selection page, Click On \"(.*)\" Button Icon$")
+	public void clickOnCollapsibleButtonWithAriaLabelled(String tableName) throws Exception {
+		apextButton.clickOnButtonWithAriaLabelledTag(pageName, tableName);
+		logger.pass("From " + pageName + ", Click On " + bold(tableName) + " Button");
+	}
+	
+	
+	@When("^From BSL_Store_Identifier Page, Click On Label \"(.*)\" Button$")
+	public void clickOnLabelButton(String buttonName) throws Exception {
+		apextButton.clickOnSpanLabelButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@When("^From BSL_Store_Identifier Page, Select \"(.*)\" With \"(.*)\"$")
+	public void SelectStore(String store, String fieldname) throws Exception {
+		sm_store_table.storeNameAndNum();
+		String storeid = getTempData(store);
+		listofvalues.selectFromLOV_UsingSpanText(pageName, fieldname, storeid, 1);
+		logger.pass("From BSL_Store_Identifier Page, Store " + bold(storeid) + " is selected");
+	}
+	
+	@When("^Execute query to fetch store details$")
+	public void executeQueryToFetchStoreDetails() throws Exception {
+		sm_store_table.storeNameAndNum();
+	}
+
+	@When("^From BSL_Store_Identifier Page, Enter Text For \"(.*)\" As \"(.*)\"$")
+	public void EnterText(String fieldname, String text) throws Exception {
+		apextext.clickTextField(pageName, fieldname);
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 999);
+		text = text + ranNum;
+		apextext.enterText(pageName, fieldname, text);
+		if (text.contains("TestCaseName_")) {
+			storeTempData("Test Case Name", text);
+		}
+		logger.pass("From BSL_Store_Identifier Page, Enter Text For " + bold(text) + "");
+	}
+
+	@Then("^Enter Text Field Name \"(.*)\" Value As \"(.*)\"$")
+	public void enterTextFieldValue(String fieldName, String fieldValue) throws Exception {
+		if (getTempData(fieldValue) != null)
+			fieldValue = getTempData(fieldValue);
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 999);
+		fieldValue = fieldValue + ranNum;
+		apextext.enterText(pageName, fieldName, fieldValue);
+		if (fieldValue.contains("autoTestTemplate_")) {
+			storeTempData("Template Name", fieldValue);
+		} else if (fieldValue.contains("autoTestScenario_1_")) {
+			storeTempData("Scenario Name 1", fieldValue);
+		} else if (fieldValue.contains("autoTestScenario_2_")) {
+			storeTempData("Scenario Name 2", fieldValue);
+		}
+		logger.pass("Enter Text Field " + bold(fieldName) + " Value As " + bold(fieldValue));
+	}
+
+	@When("^Click on Text Field \"(.*)\"$")
+	public void clickTextField(String fieldname) throws Exception {
+		apextext.clickTextField(pageName, fieldname);
+		logger.pass("Clicked On Text Field" + fieldname + "Successfully");
+	}
+
+	@When("^From BSL_Store_Identifier Page, Select Checkbox \"(.*)\"$")
+	public void SelectCheckBox(String id) throws Exception {
+		mso_bsl_page.clickOnBenchmarkCheckBox(pageName, id);
+		logger.pass("From BSL_Store_Identifier Page, Select Checkbox " + bold(id) + "");
+	}
+
+	@When("^Select Benchmark for field \"(.*)\" and switch to frame \"(.*)\" and filter column \"(.*)\" with text \"(.*)\" for table \"(.*)\"$")
+	public void selectBenchMarkStores(String fieldName, int frameNo, String filterColName, String text, String tableId)
+			throws Exception {
+		mso_bsl_page.selectBenchmarkStores(pageName, fieldName, frameNo, filterColName, text, tableId);
+	}
+
+	@When("^From BSL_Store_Identifier Page, Click On \"([^\"]*)\" Button Id$")
+	public void clickOnButtonId(String id) throws Exception {
+		apextButton.clickOnButtonWithId(pageName, id);
+		logger.pass("From " + pageName + ", Click On " + bold(id) + " Button");
+
+	}
+
+	@When("^From BSL_Store_Identifier Page, Select Segment \"([^\"]*)\" from List$")
+	public void selectSegmentFromList(String value) throws Exception {
+		mso_bsl_page.selectFromLOVAndClickSelectButton(pageName, value, 1);
+		logger.pass("From " + pageName + ", Click On " + bold(value));
+	}
+
+	@Then("^Validate Store Informatio details with store name id as \"([^\"]*)\" segment id as \"([^\"]*)\" addressId as \"([^\"]*)\" grossAreaId as \"([^\"]*)\" netTradingId as \"([^\"]*)\"$")
+	public void validateStoreMasterdetailfromDB(String storeNameId, String segmentId, String addressId,
+			String grossAreaId, String netTradingId) throws Exception {
+		apextext.validateTextFieldValuewithIDEquals(pageName, storeNameId, "STORE_NAME");
+		apextext.validateSpanFieldValuewithIDContains(pageName, segmentId, "STORE_SEGMENT");
+		apextext.validateTextFieldValuewithIDEquals(pageName, addressId, "STORE_ADDRESS");
+		apextext.validateTextFieldValuewithNumberFormat(pageName, grossAreaId, "STORE_TOTAL_AREA");
+		apextext.validateTextFieldValuewithNumberFormat(pageName, netTradingId, "STORE_TRADING_AREA");
+		logger.pass("Successfully matched DB value to UI for Item Master");
+	}
+	
+	@Then("^Validate Store Selection details with store name id as \"([^\"]*)\" segment id as \"([^\"]*)\" addressId as \"([^\"]*)\" grossAreaId as \"([^\"]*)\" netTradingId as \"([^\"]*)\"$")
+	public void validateStoreSelectiondetailfromDB(String storeNameId, String segmentId, String addressId,
+			String grossAreaId, String netTradingId) throws Exception {
+		apextext.validateHiddenTextFieldValue(pageName, storeNameId, "STORE_NAME");
+		apextext.validateTextFieldValueContainswithIDEquals(pageName, segmentId, "STORE_SEGMENT");
+		apextext.validateTextFieldValuewithIDEquals(pageName, addressId, "STORE_ADDRESS");
+		apextext.validateTextFieldValuewithNumberFormat(pageName, grossAreaId, "STORE_TOTAL_AREA");
+		apextext.validateTextFieldValuewithNumberFormat(pageName, netTradingId, "STORE_TRADING_AREA");
+		logger.pass("Successfully matched DB value to UI for Item Master");
+	}
+	
+
+	@Then("^Validate Store Information on Insights with store name id as \"([^\"]*)\" segment id as \"([^\"]*)\" addressId as \"([^\"]*)\" grossAreaId as \"([^\"]*)\" netTradingId as \"([^\"]*)\"$")
+	public void validateStoreInformationdetailfromDB(String storeNameId, String segmentId, String addressId,
+			String grossAreaId, String netTradingId) throws Exception {
+		apextext.validateTextFieldValuewithIDEquals(pageName, storeNameId, "STORE_NAME");
+		apextext.validateTextFieldValueContainswithIDEquals(pageName, segmentId, "STORE_SEGMENT");
+		apextext.validateTextFieldValuewithIDEquals(pageName, addressId, "STORE_ADDRESS");
+		apextext.validateTextFieldValuewithNumberFormat(pageName, grossAreaId, "STORE_TOTAL_AREA");
+		apextext.validateTextFieldValuewithNumberFormat(pageName, netTradingId, "STORE_TRADING_AREA");
+		logger.pass("Successfully matched DB value to UI for Item Master");
+	}
+	
+	@Then("^Validate Store Informatio details for Store Id \"(.*)\" having value \"(.*)\" for Store Name Id \"(.*)\" having value \"(.*)\" for Address Id \"(.*)\" having value \"(.*)\" for gross area Id \"(.*)\" having value \"(.*)\" for net trading area \"(.*)\" having value \"(.*)\" for avg weekly sales \"(.*)\" having value \"(.*)\" for avg weekly margin \"(.*)\" having value \"(.*)\" for min margin per \"(.*)\" having value \"(.*)\" for total store meterage \"(.*)\" having value \"(.*)\"$")
+	public void validateStoreInformationDetails(String storeId, String storeIdVal, String storeNameId,
+			String storeNameVal, String addressId, String addressVal, String grossAreaId, String grossAreaVal,
+			String netTradingAreaId, String netTradingAreaVal, String avgWeeklySalesId, String avgWeeklySales,
+			String avgWeeklyMarginId, String avgWeeklyMargin, String minMarginPerId, String minMarginPer,
+			String totalStoreMeterageId, String totalStoreMeterage) throws Exception {
+		apextext.validateTextFieldValuewithNumberFormat(pageName, storeId, storeIdVal);
+		apextext.validateTextFieldValuewithIDEquals(pageName, storeNameId, storeNameVal);
+		apextext.validateTextFieldValuewithIDEquals(pageName, addressId, addressVal);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, grossAreaId, grossAreaVal);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, netTradingAreaId, netTradingAreaVal);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, avgWeeklySalesId, avgWeeklySales);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, avgWeeklyMarginId, avgWeeklyMargin);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, minMarginPerId, minMarginPer);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, totalStoreMeterageId, totalStoreMeterage);
+
+		logger.pass("Successfully matched Store Information for New Store Case");
+	}
+	
+	@Then("^Validate Store Selection details for Store Id \"(.*)\" having value \"(.*)\" for Store Name Id \"(.*)\" having value \"(.*)\" for Address Id \"(.*)\" having value \"(.*)\" for gross area Id \"(.*)\" having value \"(.*)\" for net trading area \"(.*)\" having value \"(.*)\" for avg weekly sales \"(.*)\" having value \"(.*)\" for avg weekly margin \"(.*)\" having value \"(.*)\" for total store meterage \"(.*)\" having value \"(.*)\"$")
+	public void validateStoreSelectionDetails(String storeId, String storeIdVal, String storeNameId,
+			String storeNameVal, String addressId, String addressVal, String grossAreaId, String grossAreaVal,
+			String netTradingAreaId, String netTradingAreaVal, String avgWeeklySalesId, String avgWeeklySales,
+			String avgWeeklyMarginId, String avgWeeklyMargin,
+			String totalStoreMeterageId, String totalStoreMeterage) throws Exception {
+		apextext.validateTextFieldValuewithNumberFormat(pageName, storeId, storeIdVal);
+		apextext.validateHiddenTextFieldValue(pageName, storeNameId, storeNameVal);
+		apextext.validateTextFieldValuewithIDEquals(pageName, addressId, addressVal);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, grossAreaId, grossAreaVal);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, netTradingAreaId, netTradingAreaVal);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, avgWeeklySalesId, avgWeeklySales);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, avgWeeklyMarginId, avgWeeklyMargin);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, totalStoreMeterageId, totalStoreMeterage);
+
+		logger.pass("Successfully matched Store Information for New Store Case");
+	}
+	
+	@Then("^Validate Insightg details for Store Id \"(.*)\" having value \"(.*)\" for Store Name Id \"(.*)\" having value \"(.*)\" for Address Id \"(.*)\" having value \"(.*)\" for gross area Id \"(.*)\" having value \"(.*)\" for net trading area \"(.*)\" having value \"(.*)\" for avg weekly sales \"(.*)\" having value \"(.*)\" for avg weekly margin \"(.*)\" having value \"(.*)\" for total store meterage \"(.*)\" having value \"(.*)\"$")
+	public void validateInsightDetails(String storeId, String storeIdVal, String storeNameId,
+			String storeNameVal, String addressId, String addressVal, String grossAreaId, String grossAreaVal,
+			String netTradingAreaId, String netTradingAreaVal, String avgWeeklySalesId, String avgWeeklySales,
+			String avgWeeklyMarginId, String avgWeeklyMargin,
+			String totalStoreMeterageId, String totalStoreMeterage) throws Exception {
+		apextext.validateTextFieldValuewithNumberFormat(pageName, storeId, storeIdVal);
+		apextext.validateTextFieldValuewithIDEquals(pageName, storeNameId, storeNameVal);
+		apextext.validateTextFieldValuewithIDEquals(pageName, addressId, addressVal);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, grossAreaId, grossAreaVal);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, netTradingAreaId, netTradingAreaVal);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, avgWeeklySalesId, avgWeeklySales);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, avgWeeklyMarginId, avgWeeklyMargin);
+		apextext.validateTextFieldValuewithNumberFormat(pageName, totalStoreMeterageId, totalStoreMeterage);
+
+		logger.pass("Successfully matched Store Information for New Store Case");
+	}
+
+	@Then("^Fetch the value from database for Division, Department, Sub Department")
+	public void storeDivDepSubDepFixLabel() throws Exception {
+		sm_general_table.getDivisionNameTrimWithSpaces();
+		sm_general_table.getDepartmentNameTrim();
+		sm_general_table.getSubDepartmentNameTrim();
+		logger.pass("Successfully stored the values for Division,Department,Sub Department");
+	}
+
+}

@@ -1,0 +1,45 @@
+package pages.apex;
+
+
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexDownload extends CommonPage {
+	
+	public ApexDownload(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+
+	public void validateButtonIsPresent(String pageName, String buttonName) throws Exception {
+		By buttonLink 			= By.xpath("//button[text()='"+buttonName+"']");
+		waitForPresenceOfElement(pageName, buttonName+" Button",buttonLink);
+	}
+	
+	public void clickOnDownloadButton(String tableLabel) throws Exception {
+		By buttonLink 			= By.xpath("//button[contains(@id,'"+tableLabel+"')]/parent::div//span[text()='Download']");
+		clickOnElement("DownLoad", "Download_Button",buttonLink);
+	}
+	
+	public void downloadCSVFile(String fileName,String testCaseId) throws Exception {
+		//String home = System.getProperty("user.home");
+				//File defaultDownLoadFolder = new File(home+"/Downloads"); 
+				//FileUtils.cleanDirectory(defaultDownLoadFolder);
+				clickOnElement("Action", "Actions Button", By.xpath("//button//span[text()='Actions']"));
+				clickOnElement("Action", "Download Button", By.xpath("//span//button[text()='Download']"));
+				By downloadButtonOnDownloadPopup = By.xpath("//div[@class='ui-dialog-buttonset']//button[text()='Download']");
+				clickOnElementThenWait("DownLoad", "PopUp_Download", downloadButtonOnDownloadPopup, 10);
+				//defaultDownLoadFolder = new File(home+"/Downloads"); 
+				//File downloadedFile = defaultDownLoadFolder.listFiles()[0];
+				//File downloadFilePath = new File ( "Test_Reports/"+testCaseId+"/Download/"+fileName+".csv");
+				//FileUtils.copyFile(downloadedFile, downloadFilePath);
+	}
+	
+	public void downloadXLSXFile(String fileName,String tableid) throws Exception {
+				By downloadButtonOnDownloadPopup = By.xpath("//div[contains(@id,'"+tableid+"')]//button//span[text()='Download']");
+				clickOnElementThenWait("DownLoad", "PopUp_Download", downloadButtonOnDownloadPopup, 10);
+	}
+	
+}

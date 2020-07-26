@@ -1,0 +1,51 @@
+
+Feature: Validating Functionality Related To Fixture Label under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "Fixture Label" Link
+@run
+Scenario: Masters_FixtureLabel_TC001#Label Fixture 
+    
+		When From Master_FixtureLabel Page, Validate Record Count from Database
+		Then Validate Downloaded XLSX File Content with File Name As "Fixture Label" and Tablename as "fixture_label"
+		And From Master_FixtureLabel Page, Click On "Add" Button
+		And Switch To Frame with Title "Manage Fixture Label"
+		And From Master_FixtureLabel Page, Add POG fixture Label as "CNTR-Counter" with Pog Ind as "Y", Prom Ind as "Y",Util Ind as "Y" and Meter Ind as "Y"
+		And Validate Successful Message As "Record(s) Added Successfully."
+		When Enter Text Field "search_field" Value As "CNTR"
+		And Click On "Go" Button
+		When Click On Link with text "CNTR"
+		And Switch To Frame with Title "Manage Fixture Label"
+		And Select Item Option "PROM_IND" Value As "N"
+		And Click On "Save" Button
+		Then From Master_FixtureLabel Page, For Row "1", Validate value For Column "Promotion Indicator" As "No"
+		When Click On Link with text "CNTR"
+		And Switch To Frame with Title "Manage Fixture Label"
+		And Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		Then Validate Successful Message As "Record(s) Deleted Successfully."
+		And Remove Existing Filter
+		When From Master_FixtureLabel Page, Click On "Add" Button
+		And Switch To Frame with Title "Manage Fixture Label"
+		And Select "LABEL_TYPE" Value As "Fixture"
+		And Click On "Create" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "2 errors have occurred"
+		And From Master_FixtureLabel Page, Add Fixture with Label as "AUTO TEST",Excl Ind as "N", Description as "Auto_Script_Test" Pog Ind as "Y", Prom Ind as "Y",BO Ind as "Y",Merch Ind as "Y",Portal Ind as "Y" and Price Ind as "Y"
+		And Validate Successful Message As "Record(s) Added Successfully."
+		When Enter Text Field "search_field" Value As "AUTO TEST"
+		And Click On "Go" Button
+		When Click On Link with text "AUTO TEST"
+		And Switch To Frame with Title "Manage Fixture Label"
+		And Select Item Option "BO_IND" Value As "N" 
+		And Click On "Save" Button
+		Then From Master_FixtureLabel Page, For Row "1", Validate value For Column "BO Indicator" As "No"
+		When Click On Link with text "AUTO TEST"
+		And Switch To Frame with Title "Manage Fixture Label"
+		And Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		Then Validate Successful Message As "Record(s) Deleted Successfully."

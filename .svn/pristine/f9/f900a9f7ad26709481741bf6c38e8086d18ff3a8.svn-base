@@ -1,0 +1,35 @@
+package pages.login;
+
+import org.openqa.selenium.WebDriver;
+
+import pages.apex.ApexButton;
+import pages.apex.ApexLink;
+import pages.apex.ApexTextField;
+import pages.commom.CommonPage;
+
+public class LoginPage extends CommonPage {
+	ApexTextField apexTextField;
+	ApexButton apexButton;
+	ApexLink apexLink;
+
+	public LoginPage(WebDriver driver, String testCaseId) {
+		super(driver, testCaseId);
+		apexTextField = new ApexTextField(driver, testCaseId);
+		apexButton = new ApexButton(driver, testCaseId);
+		apexLink = new ApexLink(driver, testCaseId);
+	}
+
+	public void enterCredential(String userName, String password) throws Exception {
+		apexTextField.enterText("LoginPage", "USERNAME", userName);
+		apexTextField.enterText("LoginPage", "PASSWORD", password);
+		apexButton.clickOnButton("LoginPage", "Log In");
+
+	}
+
+	public void navigateFromSecurityPage() throws Exception {
+		apexButton.clickOnButtonWithId("LoginPage", "details-button");
+		apexLink.clickonLinkwithContainsText("LoginPage", "Proceed to");
+
+	}
+
+}

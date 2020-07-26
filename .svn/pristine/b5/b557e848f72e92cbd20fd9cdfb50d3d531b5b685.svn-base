@@ -1,0 +1,120 @@
+package pages.POGManagement;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.WebDriver;
+import utils.ExcelUtil;
+
+public class SMART_Template extends ExcelUtil {
+
+	//private String pageName = "POG Detail";
+
+	public SMART_Template(WebDriver driver, String testCaseId) {
+		super();
+	}
+
+	public void updateSMARTTemplate(String fileName, String fixtureLabel,String pogCode,String pogVer,String mod,String meterage,String inDis,String outDis,String store,String locID) throws IOException{
+		int row_Num=getSMARTTempRowIndexFromExcel(fileName, "","Store *,Location ID *", store+","+locID);
+		setCellDataToExcel(fileName+".xlsx", "", "POG ID", row_Num, pogCode);
+		setCellDataToExcel(fileName+".xlsx", "", "POG Version", row_Num, pogVer);
+		setCellDataToExcel(fileName+".xlsx", "", "Fixture Label", row_Num, fixtureLabel);
+		setCellDataToExcel(fileName+".xlsx", "", "POG Module", row_Num, mod);
+		setCellDataToExcel(fileName+".xlsx", "", "Eq. Meterage (m)", row_Num, meterage);
+		setCellDataToExcel(fileName+".xlsx", "", "Inside Display", row_Num, inDis);
+		setCellDataToExcel(fileName+".xlsx", "", "Outside Display", row_Num, outDis);
+	}
+	
+	public int getSMARTTempRowIndexFromExcel(String filePath, String sheetName, String columnsName, String columnsValue) throws IOException{
+		List<String> listColumnsName = new ArrayList<String>();
+		String[] arrColumnsName = columnsName.trim().split(",");
+		for (String tmp : arrColumnsName) {
+			listColumnsName.add(tmp);
+		}
+
+		List<String> listColumnsValue = new ArrayList<String>();
+		String[] arrColumnsValue = columnsValue.trim().split(",");
+		for (String tmp : arrColumnsValue) {
+			listColumnsValue.add(tmp);
+		}
+		
+		int rowCount = getSMARTTemplateRowCountFromExcel(filePath, sheetName);
+		
+		List<Integer> headersIndex = new ArrayList<Integer>();
+		
+		for (String columnName : listColumnsName) {
+			int hederIndex = getHeaderIndexFromExcel(filePath+".xlsx", sheetName, columnName);
+			headersIndex.add(hederIndex);
+		}
+		
+		for(int currentRow = 5; currentRow <= rowCount; currentRow++) {
+			
+			List<String> rowData = getSMARTTemplateRowDataFromExcel(filePath+".xlsx", sheetName, currentRow);
+			//System.out.println(rowData);
+			boolean matchingRowFound = true;
+			int colValueIndex =0;
+			for (int headerIndex : headersIndex) {
+				if(! rowData.get(headerIndex).equalsIgnoreCase(listColumnsValue.get(colValueIndex)) ){
+					matchingRowFound = false;
+					break;
+				}
+				colValueIndex++;
+			}
+			
+			if(matchingRowFound==true) {
+				return currentRow-1;
+			}
+			
+		}
+        return -1;
+	}
+	
+	public int getSMARTTemplateRowCountFromExcel(String fileName, String sheetName) throws IOException{
+		int rowCount=0;
+		FileInputStream file = null;
+		XSSFSheet sheet;
+		file = new FileInputStream(new File(fileName+".xlsx"));
+		XSSFWorkbook workbook = new XSSFWorkbook(file);
+		sheet = workbook.getSheetAt(0);
+		rowCount = sheet.getPhysicalNumberOfRows()+2;
+		workbook.close();
+		file.close();
+		return rowCount;
+	}
+	
+	public List<String> getSMARTTemplateRowDataFromExcel(String filePath, String sheetName, int rowNo) throws IOException{
+		List<String> rowData = new ArrayList<String>();
+		
+		int columnCount = getSMARTTemplateColumnCountFromExcel(filePath);
+		
+		for (int currentColumnIndex = 0; currentColumnIndex < columnCount; currentColumnIndex++) {
+			String cellData =  getCellDataFromExcel(filePath, sheetName, currentColumnIndex, rowNo-1);
+			rowData.add(cellData);
+		}
+		return rowData;
+	}
+	
+	public int getSMARTTemplateColumnCountFromExcel(String filePath) throws IOException{
+		int columnCount=-1;
+		XSSFSheet sheet;
+		FileInputStream file = new FileInputStream(new File(filePath));
+        XSSFWorkbook workbook = new XSSFWorkbook(file);
+			sheet = workbook.getSheetAt(0);
+			columnCount = sheet.getRow(3).getPhysicalNumberOfCells();
+			System.out.println(columnCount);
+        workbook.close();
+        file.close();
+        return columnCount;
+	}
+	
+	public String validateSMARTTemplateColumnValue(String fileName, String sheetName,int rowIndex,String columnName,String expValue) throws Exception{
+		String actVal=getCellDataFromExcel(fileName, sheetName, columnName, rowIndex);
+		if (expValue.equalsIgnoreCase(actVal)) {return "pass";}
+		else {return "Expected Value: "+expValue+" not matched with Actual Value: "+actVal ;}
+	}
+}

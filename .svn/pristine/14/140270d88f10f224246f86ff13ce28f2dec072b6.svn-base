@@ -1,0 +1,24 @@
+package db;
+
+import java.sql.Connection;
+import java.util.List;
+
+public class SM_SYSPRM_Table extends CommonDB {
+
+	public SM_SYSPRM_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "AX_SYSPRM";
+
+	public String getSysConfValue(String sysConfName) throws Exception {
+		String vdate_sql = "select * from  " + tableName + " WHERE SYS_CONF_NAME='"+sysConfName+"'";
+		List<String> columnValue = getColumnValues(vdate_sql,"SYS_CONF_VALUE");
+		return columnValue.get(0);
+	}
+	
+	public String getVDate() throws Exception {
+		return getSysConfValue("VDATE");
+	}
+
+}

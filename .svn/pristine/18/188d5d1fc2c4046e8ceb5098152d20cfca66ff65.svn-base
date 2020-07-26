@@ -1,0 +1,19 @@
+
+Feature: Validating Floor Plan Request Functionality
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Floor Plan Request" Link
+@run
+Scenario: FloorPlanRequest_TC001#Floor Plan Request 
+		When From Floor Plan Request Page, Click On "Submit" Button
+		And From Message Dialog, Validate Message Content As "Please enter mandatory fields to proceed."
+		And From Message Dialog, Click On "Ok" Button
+		Then From Floor Plan Request Page, submit the request for Floor Plan PDF
+		And Validate the request added
+		Then Run Batch "store_plan_pdf_request" irrespective of BU_ID
+		And Validate the file generated successfully
+		And Delete the request

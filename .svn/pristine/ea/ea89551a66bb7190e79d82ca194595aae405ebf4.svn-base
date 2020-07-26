@@ -1,0 +1,79 @@
+package utils;
+
+import java.util.Vector;
+
+import org.openqa.selenium.WebDriver;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
+
+public class SFTPFunctions {
+
+	private static SFTPFunctions SFTPFileTrancsfer;
+	JSch jsch = new JSch();
+	Session session = null;
+	ChannelSftp sftpChannel = null;
+
+	public static SFTPFunctions getSFTP(WebDriver driver, String testCaseId) {
+		return (SFTPFileTrancsfer == null) ? new SFTPFunctions() : SFTPFileTrancsfer;
+	}
+
+	public void getSFTPConnection(String username, String pass, String ipAddress, int port) throws Throwable {
+		
+		session = jsch.getSession(username, ipAddress, port);
+		session.setConfig("StrictHostKeyChecking", "no");
+		session.setPassword(pass);
+		session.connect(30000);
+	}
+
+	public void downloadSFTPFile(String src, String destination) throws Throwable {
+		Channel channel = session.openChannel("sftp");
+		channel.connect();
+		sftpChannel = (ChannelSftp) channel;
+		sftpChannel.get(src, destination);
+	}
+
+	public void uploadSFTPFile(String Src, String Destination) throws Throwable {
+		Channel channel = session.openChannel("sftp");
+		channel.connect();
+		sftpChannel = (ChannelSftp) channel;
+		sftpChannel.put(Src, Destination);
+		sftpChannel.chmod(Integer.parseInt("511"), Destination); // 511 dec = 777 octal
+	}
+
+	public void disconnectSFTP() throws Throwable {
+		sftpChannel.exit();
+		session.disconnect();
+	}
+	
+	public String getLatestFile(String fileName) throws SftpException, JSchException {
+		String finalFileName = null;
+		int mTime = 0;
+		
+		Channel channel = session.openChannel("sftp");
+		channel.connect();
+		sftpChannel = (ChannelSftp) channel;
+		
+		@SuppressWarnings("rawtypes")
+		//Vector filelist = sftpChannel.ls("/u01/spc_sit_db/hbs2spc/ifiles/outbox");
+		Vector filelist = sftpChannel.ls("/u01/spc_sit_db/hbs2spc/ifiles/outbox/"+fileName+"*"); 
+        for(int i=0; i<filelist.size();i++){
+        	LsEntry entry = (LsEntry) filelist.get(i);
+        	String fileFound = entry.getFilename();
+        	if(fileFound.contains(fileName)) {
+        		 int tempMTime = entry.getAttrs().getMTime();
+        		 if(mTime < tempMTime) {
+                	 finalFileName = fileFound;
+                	 mTime = tempMTime;
+                 }
+        	}
+        }
+        return finalFileName;
+	}
+
+}

@@ -1,0 +1,36 @@
+
+Feature: Validating Functionality Related To POG Master under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "POG Master" Link
+@run
+Scenario Outline: POGM_POGMaster_TC001#POG Master
+		When From POG Master Page, Click On "Cancel" Button
+		And From POG Master Page, Click On "Modify Search" Button
+		And Retreive the Search details from DB for POG Status as "<POGStatus>"
+		When Type the parameters to search for the POG with status as "<POGStatus>"
+		And From POG Master Page, Click On "Reset" Button
+		Then Verify all fields set to Default on POG Master Search Popup
+		When Enter Text Field "POG_CODE" Value As "974586543848846585"
+		And From POG Master Page, Click On "Search" Button
+	  Then Validate No data Found on Screen "POG Master" for table "pog_master"
+	  When From POG Master Page, Click On "Modify Search" Button
+	  And From POG Master Page, Click On "Reset" Button
+		And Type the parameters to search for the POG with status as "<POGStatus>"
+		And From POG Master Page, Click On "Search" Button
+		And Validate POG Module Count with title as "View POG Modules"
+		And Validate Meterage with title as "POG Layout"
+		And Validate all POG Master details from database for selected "POG_CODE" with status as "<POGStatus>"
+		
+		
+			Examples:-
+		| POGStatus |
+    | L  |
+    | H  |
+    | N  |
+    | P  |

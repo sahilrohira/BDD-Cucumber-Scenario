@@ -1,0 +1,62 @@
+
+Feature: Validating Functionality Related To Store List under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "Store List" Link
+@run
+Scenario: Masters_StoreList_TC001#Store List 
+		When From Master_StoreList Page, Validate Record Count from Database
+		And Validate Downloaded XLSX File Content with File Name As "Store List" and Tablename as "store_list_ig"
+		And From Master_StoreList Page, Click On "Add Row" Button
+		And From Master_StoreList Page, For Row "2", Enter Text For Column "Description" As "Auto_Script"
+		And From Master_StoreList Page, For Row "2", Select Drop Down Value For Column "Active" As "Yes"
+		When Enter Text Field "search_field" Value As "Auto_Script"
+		And From Master_StoreList Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Content As "Master List must have at least one child value defined"
+		And Remove Apex Error Dialog
+		#Then Validate Successful Message As "Changes saved"
+		#And From Master_StoreList Page, Click On "Add Row" Button
+		#And From Master_StoreList Page, For Row "2", Enter Text For Column "Description" As "Auto_Script"
+		#And From Master_StoreList Page, For Row "2", Select Drop Down Value For Column "Active" As "Yes"
+		#And From Master_StoreList Page, Click On "Save" Button
+		#Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		#And From Apex Error Dialog, Validate Error Message Content As "SM-0056 Record Already Exists"
+		#When Store the List Id generated from database for description as "Auto_Script"
+		#When Click On Link with text "Preview"
+		#And Switch To Frame with Title "Store List Preview"
+		#Then Validate No data Found on Screen "Store List Priview"
+		#And Close Window PopUp
+		And From Master_StoreList Page, Click On "Add" Button
+		And Fetch the details for Store List Details,UDA List of Values, UDA Free Text and UDA Dates
+		And Switch To Frame with Title "Store List Details"
+		Then Enter all required deatils for adding a store 
+		And From Master_StoreList Page, Click On "Add" Button
+		And From Master_StoreList Page, Click On "Save" Button
+		Then Validate Successful Message As "Record(s) Updated Successfully."
+		And Remove Successful Message Notification
+		And From Master_StoreList Page, Click On "Add Row" Button
+		And From Master_StoreList Page, For Row "2", Enter Text For Column "Description" As "Auto_Script"
+		And From Master_StoreList Page, For Row "2", Select Drop Down Value For Column "Active" As "Yes"
+		And From Master_StoreList Page, Click On "Add" Button
+		And Switch To Frame with Title "Store List Details"
+		And Fetch the details for Store List Details,UDA List of Values, UDA Free Text and UDA Dates
+		Then Enter all required deatils for adding a store 
+		And From Master_StoreList Page, Click On "Add" Button
+		And From Master_StoreList Page, Click On "Save" Button	
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		And From Apex Error Dialog, Validate Error Message Content As "SM-0056 Record Already Exists"
+		When Store the List Id generated from database for description as "Auto_Script"
+		And Apply Filter for "LIST_ID" to get unique record
+		And From Alert Dialog, Click On OK Button
+    And Click On Link "Preview" in table "store_list_ig"
+		And Switch To Frame with Title "Store List Preview"
+		#Then Validate Row Count on Screen "Store List Priview" as "1"
+		And Close Window PopUp
+		And Delete Row number "1" from table "store_list_ig"
+		
+		

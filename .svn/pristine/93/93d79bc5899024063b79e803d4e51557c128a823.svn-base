@@ -1,0 +1,35 @@
+package stepdefs.home;
+
+import cucumber.api.java.en.Then;
+import pages.apex.ApexPageHeader;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class HomePageSteps extends SuperStepdefs {
+
+	public ApexPageHeader apexPageHeader;
+	
+	public HomePageSteps(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+	}
+    
+    /**
+     * @author Vinay.Kumar
+     	
+     	From Home Page, Click On "Masters" Link
+     	From Home Page, Click On "POG Management" Link
+     	From Home Page, Click On "Distribution" Link
+     	From Home Page, Click On "Portal" Link
+     	From Home Page, Click On "Reports" Link
+     	From Home Page, Click On "Administration" Link
+     	From Home Page, Click On "Floor Plan Request" Link
+     	
+     */
+    @Then("^From Home Page, Click On \"(.*)\" Link$")
+    public void clickOnLink(String linkName) throws Exception {
+    	apexPageHeader.clickOnHeader3Link("HomePage", linkName);
+    	logger.pass("From Home Page, Click On "+bold(linkName)+" Link");
+    }      
+
+}

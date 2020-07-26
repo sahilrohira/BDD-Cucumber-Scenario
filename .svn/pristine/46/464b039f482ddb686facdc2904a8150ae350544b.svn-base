@@ -1,0 +1,179 @@
+Feature: Download Interface FUnctionality
+
+Background:
+
+		Given Open DB Connection
+@skip	
+Scenario: Download_Interface_TC001#Validate Download BO_Fixture_Matser
+		When Download Interface For Batch "BO_FIXTURE_MASTER_DNLD"
+@skip		
+Scenario: Download_Interface_TC002#Validate Download BO_Item_Matser	
+		When Download Interface For Batch "BO_ITEM_MASTER_DNLD"
+
+Scenario: Download_Interface_TC003#Validate Download BO_POG_Matser
+		When Download Interface For Batch "BO_POG_MASTER_DNLD"
+@skip
+Scenario: Download_Interface_TC004#Validate Download BO_POG_Module_Matser	
+		When Download Interface For Batch "BO_POG_MODULE_MASTER_DNLD"
+@skip			
+Scenario: Download_Interface_TC005#Validate Download BO_Store_Attr_Master	
+		When Download Interface For Batch "BO_STORE_ATTR_MASTER_DNLD"
+@skip				
+Scenario: Download_Interface_TC006#Validate Download BO_Store_Attr_Val_Master	
+		When Download Interface For Batch "BO_STORE_ATTR_VAL_MASTER_DNLD"
+@skip
+Scenario: Download_Interface_TC007#Validate Download BO_Store_Master	
+		When Download Interface For Batch "BO_STORE_MASTER_DNLD"
+@skip
+Scenario: Download_Interface_TC008#Validate Download POG_MASTER_JSON_DNLD	
+		When Download Interface For Batch "POG_MASTER_JSON_DNLD"
+@skip
+Scenario: Download_Interface_TC009#Validate Download RETEK_POG_MASTER_DNLD	
+		When Download Interface For Batch "RETEK_POG_MASTER_DNLD"
+@skip
+Scenario: Download_Interface_TC010#Validate Download BO_FLOOR_LAYOUT_DNLD	
+		When Download Interface For Batch "BO_FLOOR_LAYOUT_DNLD"
+@skip
+Scenario: Download_Interface_TC011#Validate Download BO_FLOOR_PLAN_DNLD	
+		When Download Interface For Batch "BO_FLOOR_PLAN_DNLD"	
+@skip
+Scenario: Download_Interface_TC012#Validate Download BO_ITEM_PACK_DNLD	
+		When Download Interface For Batch "BO_ITEM_PACK_DNLD"	
+@skip
+Scenario: Download_Interface_TC013#Validate Download BO_ITEM_UDA_DNLD	
+		When Download Interface For Batch "BO_ITEM_UDA_DNLD"
+@skip
+Scenario: Download_Interface_TC014#Validate Download BO_STORE_ATTR_DNLD	
+		When Download Interface For Batch "BO_STORE_ATTR_DNLD"
+@skip
+Scenario: Download_Interface_TC015#Validate Download BO_POG_MODULE_DNLD	
+		When Download Interface For Batch "BO_POG_MODULE_DNLD"
+@skip
+Scenario: Download_Interface_TC016#Validate Download BO_STORE_UDA_DNLD	
+		When Download Interface For Batch "BO_STORE_UDA_DNLD"
+@skip
+Scenario: Download_Interface_TC017#Validate Download BO_UDA_VALUES_DNLD	
+		When Download Interface For Batch "BO_UDA_VALUES_DNLD"
+@skip
+Scenario: Download_Interface_TC018#Validate Download DAILY_STORE_OSD_DNLD	
+		When Download Interface For Batch "DAILY_STORE_OSD_DNLD"
+@skip
+Scenario: Download_Interface_TC019#Validate Download DNLD_DWG_PDF	
+		When Download Interface For Batch "DNLD_DWG_PDF"
+@skip
+Scenario: Download_Interface_TC020#Validate Download DNLD_FLOOR_PLAN_PDF	
+		When Download Interface For Batch "DNLD_FLOOR_PLAN_PDF"	
+@skip
+Scenario: Download_Interface_TC021#Validate Download DNLD_LIVE_FP_PDF	
+		When Download Interface For Batch "DNLD_LIVE_FP_PDF"	
+@skip
+Scenario: Download_Interface_TC022#Validate Download DNLD_FLOOR_PLAN_PDF	
+		When Download Interface For Batch "DNLD_FLOOR_PLAN_PDF"	
+@skip
+Scenario: Download_Interface_TC023#Validate Download DNLD_LIVE_POG_PDF	
+		When Download Interface For Batch "DNLD_LIVE_POG_PDF"	
+@skip
+Scenario: Download_Interface_TC024#Validate Download DNLD_LIVE_POG_PDF_DELTA	
+		When Download Interface For Batch "DNLD_LIVE_POG_PDF_DELTA"	
+@skip
+Scenario: Download_Interface_TC025#Validate Download DNLD_POG_PDF	
+		When Download Interface For Batch "DNLD_POG_PDF"	
+@skip
+Scenario: Download_Interface_TC026#Validate Download MSO_ORG_HIER_DNLD	
+		When Download Interface For Batch "MSO_ORG_HIER_DNLD"	
+@skip
+Scenario: Download_Interface_TC027#Validate Download MSO_POG_HIER_DNLD	
+		When Download Interface For Batch "MSO_POG_HIER_DNLD"	
+@skip
+Scenario: Download_Interface_TC028#Validate Download MSO_STORE_DNLD	
+		When Download Interface For Batch "MSO_STORE_DNLD"	
+@skip
+Scenario: Download_Interface_TC029#Validate Download POG_HIER_JSON_DNLD	
+		When Download Interface For Batch "POG_HIER_JSON_DNLD"	
+@skip
+Scenario: Download_Interface_TC030#Validate Download POGC_STORE_TARGET_JSON_DNLD	
+		When Download Interface For Batch "POGC_STORE_TARGET_JSON_DNLD"	
+@skip
+Scenario: Download_Interface_TC031#Validate Download PPTM_PRICE_TAG_DNLD	
+		When Download Interface For Batch "PPTM_PRICE_TAG_DNLD"	
+@skip
+Scenario: Download_Interface_TC032#Validate Download PROM_STORE_OSD_DNLD	
+		When Download Interface For Batch "PROM_STORE_OSD_DNLD"	
+@skip
+Scenario: Download_Interface_TC033#Validate Download RETEK_POG_ITEM_DNLD	
+		When Download Interface For Batch "RETEK_POG_ITEM_DNLD"	
+@skip
+Scenario: Download_Interface_TC034#Validate Download RETEK_POG_ITEM_MY_DNLD	
+		When Download Interface For Batch "RETEK_POG_ITEM_MY_DNLD"	
+@skip
+Scenario: Download_Interface_TC035#Validate Download RETEK_POG_ITEM_SG_DNLD	
+		When Download Interface For Batch "RETEK_POG_ITEM_SG_DNLD"	
+@skip
+Scenario: Download_Interface_TC036#Validate Download RETEK_POG_ITEM_TW_DNLD	
+		When Download Interface For Batch "RETEK_POG_ITEM_TW_DNLD"	
+@skip
+Scenario: Download_Interface_TC037#Validate Download RETEK_POG_STORE_DNLD	
+		When Download Interface For Batch "RETEK_POG_STORE_DNLD"	
+@skip
+Scenario: Download_Interface_TC038#Validate Download RETEK_POG_STORE_MY_DNLD	
+		When Download Interface For Batch "RETEK_POG_STORE_MY_DNLD"
+@skip
+Scenario: Download_Interface_TC039#Validate Download RETEK_POG_STORE_SG_DNLD	
+		When Download Interface For Batch "RETEK_POG_STORE_SG_DNLD"
+@skip
+Scenario: Download_Interface_TC040#Validate Download RETEK_PRICE_TAB_ERR_DNLD	
+		When Download Interface For Batch "RETEK_PRICE_TAB_ERR_DNLD"
+@skip
+Scenario: Download_Interface_TC041#Validate Download RETEK_STORE_ITEM_DETAIL_DNLD	
+		When Download Interface For Batch "RETEK_STORE_ITEM_DETAIL_DNLD"
+@skip
+Scenario: Download_Interface_TC042#Validate Download RETEK_STORE_ITEM_DTL_DNLD_PH	
+		When Download Interface For Batch "RETEK_STORE_ITEM_DTL_DNLD_PH"
+@skip
+Scenario: Download_Interface_TC043#Validate Download RSIM_PRICE_TAG_DNLD	
+		When Download Interface For Batch "RSIM_PRICE_TAG_DNLD"
+@skip
+Scenario: Download_Interface_TC044#Validate Download RSIM_PRICE_TAG_DNLD_DELTA	
+		When Download Interface For Batch "RSIM_PRICE_TAG_DNLD_DELTA"
+@skip
+Scenario: Download_Interface_TC045#Validate Download RSIM_PRICE_TAG_DNLD_FL	
+		When Download Interface For Batch "RSIM_PRICE_TAG_DNLD_FL"
+@skip
+Scenario: Download_Interface_TC046#Validate Download RSIM_PRICE_TAG_DNLD_MFL	
+		When Download Interface For Batch "RSIM_PRICE_TAG_DNLD_MFL"
+@skip
+Scenario: Download_Interface_TC047#Validate Download SPACE_RK_FIXTURE_DNLD	
+		When Download Interface For Batch "SPACE_RK_FIXTURE_DNLD"
+@skip
+Scenario: Download_Interface_TC048#Validate Download SPACE_RK_POG_DNLD	
+		When Download Interface For Batch "SPACE_RK_POG_DNLD"
+@skip
+Scenario: Download_Interface_TC049#Validate Download SPACE_RK_POG_MODULE_DNLD	
+		When Download Interface For Batch "SPACE_RK_POG_MODULE_DNLD"
+@skip
+Scenario: Download_Interface_TC050#Validate Download SPACE_RK_PROD_STORE_DNLD	
+		When Download Interface For Batch "SPACE_RK_PROD_STORE_DNLD"
+@skip
+Scenario: Download_Interface_TC051#Validate Download SPACE_RK_STORE_FIXTURE_DNLD	
+		When Download Interface For Batch "SPACE_RK_STORE_FIXTURE_DNLD"
+@skip
+Scenario: Download_Interface_TC052#Validate Download SPACE_RK_STORE_POG_MODULE_DNLD	
+		When Download Interface For Batch "SPACE_RK_STORE_POG_MODULE_DNLD"
+@skip
+Scenario: Download_Interface_TC053#Validate Download SPACE_RK_STORE_POG_PROD_DNLD	
+		When Download Interface For Batch "SPACE_RK_STORE_POG_PROD_DNLD"
+@skip
+Scenario: Download_Interface_TC054#Validate Download SPACEMAN_ITEM_DIM_DNLD	
+		When Download Interface For Batch "SPACEMAN_ITEM_DIM_DNLD"
+@skip
+Scenario: Download_Interface_TC055#Validate Download SPACEMAN_ITEM_MAS_DNLD	
+		When Download Interface For Batch "SPACEMAN_ITEM_MAS_DNLD"
+@skip
+Scenario: Download_Interface_TC056#Validate Download SPACEMAN_POG_STORE_DNLD	
+		When Download Interface For Batch "SPACEMAN_POG_STORE_DNLD"
+@skip
+Scenario: Download_Interface_TC057#Validate Download STORE_FIXTURE_POG_JSON_DNLD	
+		When Download Interface For Batch "STORE_FIXTURE_POG_JSON_DNLD"
+@skip
+Scenario: Download_Interface_TC058#Validate Download STORE_PORTAL_POG_DNLD	
+		When Download Interface For Batch "STORE_PORTAL_POG_DNLD"

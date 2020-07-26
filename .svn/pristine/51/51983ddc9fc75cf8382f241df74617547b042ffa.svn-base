@@ -1,0 +1,38 @@
+
+Feature: Validating Functionality pRelated To Virtual POG under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Virtual POG" Link
+@run
+Scenario: POGM_VirtualPOG_TC001#Virtual POG 
+		When From Virtual POG Page, Validate Record Count from Database
+	  Then Validate Downloaded XLSX File Content with File Name As "Virtual POG" and Tablename as "virtul_pog"
+		And From Virtual POG Page, Click On "Add" Button
+		And Add Virtual POG with all required details
+		And From Virtual POG Page, Click On "Save" Button
+		And From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		And From Apex Error Dialog, Validate Error Message Content As "POG Module for POG %s1 doesn't exist"
+		And From Virtual POG Page, Click On "Add Module" Button
+		And Switch To Frame with Title "Manage Virtual POG Details"
+		And Enter the module as a Random Alphabet and Remarks as "Testing"
+		And From Virtual POG Page, Click On "Add Row" Button
+		And Add an item to the module from DB
+		And Wait For "150" Second
+	  Then Validate Records Updated Successfully Message
+		And Validate the Preview functionality for added VPOG
+		And Validate the Import Functionality for file "SIT_VPOG_ITEM.xlsx"
+		And Validate Copy From Excel Functionality for file "SIT_VPOG_ITEM_CFE.xlsx"
+		And From Virtual POG Page, Click On "Back" Button
+		And From Virtual POG Page, Filter Table content for Column "POG Code" ascending With Value "VPOG"
+		And Click On Link with text "VPOG"
+		And From Virtual POG Page, Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		Then Validate Successful Message As "Record(s) Deleted Successfully."
+		And Click On Link in Breadcrum with text "POG Management"
+		And From Masters Page, Click On "Virtual POG" Link
+		Then Validate No data Found on Screen "Virtual POG" for table "virtul_pog"

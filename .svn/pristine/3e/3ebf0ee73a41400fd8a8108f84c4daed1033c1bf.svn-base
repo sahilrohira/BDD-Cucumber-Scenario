@@ -1,0 +1,210 @@
+package stepdefs.Reports;
+
+import java.io.File;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import cucumber.api.java.en.Then;
+import db.AX_PROGRAM_MASTER_Table;
+import db.SM_GENERAL_Table;
+import db.SM_STORE_Table;
+import pages.Reports.Reports_All_Reports_Page;
+import pages.apex.ApexButton;
+import pages.apex.ApexFrame;
+import pages.apex.ApexNotification;
+import pages.apex.ApexPageHeader;
+import pages.apex.ApexTable;
+import pages.commom.CommonPage;
+import stepdefs.batch.DownLoadSteps;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class All_Reports extends SuperStepdefs {
+
+	public String pageName = "List of Reports";
+	public ApexPageHeader apexPageHeader;
+	public Reports_All_Reports_Page reportsAllReports;
+	public ApexButton apexButton;
+	public AX_PROGRAM_MASTER_Table ax_program_master;
+	public ApexTable apexTable;
+	public ApexNotification apexNotification;
+	public CommonPage commonPage;
+	public CommonPageSteps commonPageSteps;
+	public SM_STORE_Table sm_store_table;
+	public SM_GENERAL_Table sm_general_table;
+	public DownLoadSteps downloadSteps;
+	public ApexFrame apexFrame;
+	String result = null;
+	String reportNameString = null;
+
+	public All_Reports(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver, testCaseId);
+		reportsAllReports = new Reports_All_Reports_Page(driver, testCaseId);
+		apexButton = new ApexButton(driver, testCaseId);
+		ax_program_master = new AX_PROGRAM_MASTER_Table(con, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		apexFrame = new ApexFrame(driver, testCaseId);
+		apexNotification = new ApexNotification(driver, testCaseId);
+		commonPage = new CommonPage(driver, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		downloadSteps = new DownLoadSteps(hook);
+		sm_store_table = new SM_STORE_Table(con, testCaseId);
+		sm_general_table = new SM_GENERAL_Table(con, testCaseId);
+	}
+
+	@Then("^From All Reports Page, Click On \"(.*)\" Link$")
+	public void clickOnLink(String linkName) throws Exception {
+		apexPageHeader.clickOnHeader3Link("All Reports", linkName);
+		logger.pass("From All Reports Page, Click On " + bold(linkName) + " Link");
+	}
+
+	@Then("^From All Reports Page, Click On Desc \"(.*)\" Link$")
+	public void clickOnDescLink(String Desc) throws Exception {
+		apexPageHeader.clickOnDivText("All Reports", Desc);
+		logger.pass("From All Reports Page, Click On " + bold(Desc) + " Link");
+	}
+
+	@Then("^From All Reports Page, Verify Element \"(.*)\" Present$")
+	public void verifyTextLabelPresent(String text) throws Exception {
+		reportsAllReports.verifyTextLabelPresent(text);
+		logger.pass("From All Reports Page, element " + bold(text) + " Present");
+	}
+
+	@Then("^From All Reports Page, Verify Button \"(.*)\" Present$")
+	public void verifyButtonPresent(String buttonName) throws Exception {
+		apexButton.validateButtonIsPresent("All Repors", buttonName);
+		logger.pass("From All Reports Page, button " + bold(buttonName) + " Present");
+	}
+
+	@Then("^From All Reports Page, Click On Button \"(.*)\"$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apexButton.clickOnButton("Reports", buttonName);
+		logger.pass("From All Reports Page, Click on button " + bold(buttonName));
+	}
+
+	@Then("^From All Reports page, Switch to \"([^\"]*)\"$")
+	public void switchToFrameWithTitle(String title) throws Exception {
+		reportsAllReports.waitThenSwitchToFrameWithTitle(title);
+		logger.pass("From All Reports Page, switch to " + bold(title) + " frame");
+	}
+
+	@Then("^Extract the QUEUE_ID for the Report name \"([^\"]*)\"$")
+	public void getQueueIDforReport(String reportName) throws Exception {
+		ax_program_master.getQueueIDforReport(reportName);
+		logger.pass("Extracted Queue ID for Report " + reportName + "is " + getTempData("QUEUE_ID"));
+	}
+
+	@Then("^From Reports Page, Filter Table content for Column \"([^\"]*)\" With Value \"([^\"]*)\"$")
+	public void from_Rports_Page_Filter_Table_content_for_Column(String columnName, String filterValue)
+			throws Throwable {
+		Thread.sleep(2000);
+		apexTable.filterScrollingTableContent("Batch Reports", "batch_reports", columnName, filterValue);
+		Thread.sleep(1000);
+		apexTable.clickOnTableCell("Batch Reports", "batch_reports", 1, "");
+		logger.pass("From Reports Page, Filter Table content for Column " + bold(columnName) + " With Value  "
+				+ bold(getTempData(filterValue)));
+	}
+
+	@Then("^Validate the Report successfully downloaded as \"([^\"]*)\"$")
+	public void validateDownloadedReport(String reportName) throws Throwable {
+		String report_Path = System.getProperty("user.dir") + File.separator + "Test_Reports" + File.separator
+				+ testCaseId + File.separator + "Download" + File.separator + reportName;
+		File tempFile = new File(report_Path);
+		int time_to_wait = 20;
+		int time_counter = 0;
+		while (!tempFile.exists()) {
+			Thread.sleep(10000);
+			time_counter += 1;
+			if (time_counter > time_to_wait) {
+				logger.fail("Report " + bold(reportName) + " not downloaded");
+				break;
+			} else {
+				logger.pass("Validated that Report " + bold(reportName) + "successfully downloaded");
+			}
+		}
+	}
+
+	@Then("^Validate the Batch Report Functionality for the Frames with title \"([^\"]*)\" and download reports by clicking on \"([^\"]*)\" button$")
+	public void batchReportOutput(String title, String buttonName) throws Throwable {
+		List<WebElement> cardItems = driver.findElements(By.xpath("//li[@class='t-Cards-item ']//a"));
+		List<WebElement> reportHeader = driver.findElements(By.xpath("//li[@class='t-Cards-item ']//h3"));
+
+		for (int i = 0; i <= cardItems.size(); i++) {
+			storeTempData("totalReports", Integer.toString(cardItems.size()));
+			reportNameString = reportHeader.get(i).getText();
+			cardItems.get(i).click();
+			reportsAllReports.switchToFrameWithTitle(title);
+			verifyButtonPresent("Submit In Batch");
+
+			if (reportNameString.equalsIgnoreCase("Space Report")
+					|| reportNameString.equalsIgnoreCase("Range Change Report - Store Item Level")) {
+				sm_store_table.getRandomStore();
+				reportsAllReports.selectStoreStoreListVal("Store", "Store", "Search Dialog", "STORE");
+				sm_general_table.getRandomStoreListItem();
+				reportsAllReports.switchToFrameWithTitle(title);
+				reportsAllReports.selectStoreStoreListVal("Store lIST", "Store List", "Search Dialog", "STORE_LIST");
+				reportsAllReports.switchToFrameWithTitle(title);
+			} else if (reportNameString.equalsIgnoreCase("All Event Report")
+					|| reportNameString.equalsIgnoreCase("Adhoc Price Tag for 1 store")) {
+				sm_store_table.getRandomStore();
+				reportsAllReports.selectStoreStoreListVal("Store", "Store", "Search Dialog", "LIST_ID");
+				reportsAllReports.switchToFrameWithTitle(title);
+			} else if (reportNameString.equalsIgnoreCase("Range Change - POG Comparison")) {
+				reportsAllReports.enterPOGCodesInExtentReportsFrame("POG Code Values");
+			}
+			apexButton.clickOnButton("Reports", buttonName);
+			apexNotification.validateSuccessfulMessage("Request(s) Submitted Successfully.");
+			apexNotification.removeRecordsUpdatedSuccessfullyMessage();
+			result = reportNameString.replace(' ', '_').toUpperCase();
+			ax_program_master.getQueueIDforReportWithoutReportName();
+			storeTempData("QUEUE_ID" + result, "QUEUE_ID");
+			storeTempData(reportNameString, "QUEUE_ID");
+
+		}
+
+		downloadSteps.runBatchJob("batch_report_download");
+
+		downloadSteps.runBatchJob("print_batch_report");
+
+		apexButton.validateButtonIsPresent("All Repors", "Batch Report Output");
+
+		apexButton.clickOnButton("Reports", "Batch Report Output");
+
+		apexFrame.apexSwitchToFrame("Batch Reports");
+
+		int totalRec = Integer.parseInt(getTempData("totalReports"));
+
+		for (int i = 0; i <= totalRec; i++) {
+
+			String seqNum = getTempData("QUEUE_ID" + result).valueOf(i);
+
+			apexTable.filterScrollingTableContent("Batch Reports", "batch_reports", "", seqNum);
+			Thread.sleep(1000);
+
+			apexTable.clickOnTableCell("Batch Reports", "batch_reports", 1, "");
+
+			String report_Path = System.getProperty("user.dir") + File.separator + "Test_Reports" + File.separator
+					+ testCaseId + File.separator + "Download" + File.separator + reportNameString;
+
+			File tempFile = new File(report_Path);
+			int time_to_wait = 20;
+			int time_counter = 0;
+			while (!tempFile.exists()) {
+				Thread.sleep(10000);
+				time_counter += 1;
+				if (time_counter > time_to_wait) {
+					logger.fail("Report " + bold(reportNameString) + " not downloaded");
+					break;
+				} else {
+					logger.pass("Validated that Report " + bold(reportNameString) + "successfully downloaded");
+				}
+			}
+		}
+
+	}
+
+}

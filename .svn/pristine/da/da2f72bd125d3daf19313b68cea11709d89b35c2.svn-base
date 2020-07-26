@@ -1,0 +1,104 @@
+package db;
+
+import java.sql.Connection;
+import java.util.Map;
+
+import utils.AppData;
+
+public class SM_ITEM_MASTER_Table extends CommonDB {
+
+	public SM_ITEM_MASTER_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	private static final String tableName = "sm_item_master";
+
+	public void fetchItemDetails() throws Exception {
+		String item_master_sql = "SELECT sim.item, sim.description AS description, sim.description_secondary AS description_local, sim.short_desc, ( sg.group_no || ' - ' || sg.group_name ) AS group_no, ( sim.dept || ' - ' || sd.dept_name ) AS department, ( sim.class || ' - ' || sc.class_name ) AS class, ( ss.subclass || ' - ' || ss.sub_name ) AS subclass, sim.prim_barcode AS barcode, ( sim.pack_size || '*' || sim.inner_size || '*' ) AS item_size, sim.prim_supplier, ssm.sup_name, sim.prim_supp_country, sim.standard_uom, sim.pack_ind, sim.supp_type FROM "
+				+ tableName
+				+ " sim INNER JOIN sm_dept sd ON ( sim.bu_id = sd.bu_id AND sim.dept = sd.dept ) INNER JOIN sm_groups sg ON ( sd.bu_id = sg.bu_id AND sd.group_no = sg.group_no ) INNER JOIN sm_pog_item spi ON ( sim.bu_id = spi.bu_id AND sim.item = spi.item ) INNER JOIN sm_floor_plan_dtl sfpd ON ( sfpd.bu_id = spi.bu_id AND sfpd.pog_code = spi.pog_code AND sfpd.pog_version = spi.pog_version) INNER JOIN sm_class sc ON ( sc.bu_id = sim.bu_id AND sim.class = sc.class AND sim.dept = sc.dept ) INNER JOIN sm_subclass ss ON ( ss.bu_id = sim.bu_id AND sim.class = ss.class AND sim.dept = ss.dept AND sim.subclass=ss.subclass) INNER JOIN sm_supplier_master ssm ON ( ssm.bu_id = sim.bu_id AND sim.prim_supplier = ssm.supplier ) WHERE sim.bu_id = '"
+				+ AppData.buId
+				+ "' and ax_utility_sql.get_vdate between sfpd.eff_start_date and sfpd.eff_end_date FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(item_master_sql);
+	}
+
+	public String getSystemUDAAttributesCount(String item) throws Exception {
+		String Sys_UDA_Count_SQL = "SELECT COUNT(description) AS attributeset_count FROM ( SELECT u.description, ( CASE WHEN u.display_type = 'LV' THEN ( CASE WHEN u.uda_type = 'S' THEN 1 ELSE 2 END ) WHEN u.display_type = 'FF' THEN ( CASE WHEN u.uda_type = 'S' THEN 1 ELSE 2 END ) WHEN u.display_type = 'DT' THEN ( CASE WHEN u.uda_type = 'S' THEN 1 ELSE 2 END ) END ) indicator FROM ( SELECT bu_id, uda_id, description, display_type, data_type, data_length, required_ind, uda_type FROM sm_uda WHERE bu_id = '"
+				+ AppData.buId
+				+ "' AND module = 'I' ) u LEFT OUTER JOIN sm_item_uda_lov iuf ON ( iuf.bu_id = u.bu_id AND iuf.uda_id = u.uda_id AND iuf.item = '"
+				+ item
+				+ "' ) LEFT OUTER JOIN sm_item_uda_ff iff ON ( iff.bu_id = u.bu_id AND iff.uda_id = u.uda_id AND iff.item = '"
+				+ item
+				+ "' ) LEFT OUTER JOIN sm_item_uda_date ifd ON ( ifd.bu_id = u.bu_id AND ifd.uda_id = u.uda_id AND ifd.item = '"
+				+ item
+				+ "' ) WHERE ( u.uda_type = 'S' OR ( u.uda_type != 'S' AND ( iuf.item IS NOT NULL OR iff.item IS NOT NULL OR ifd.item IS NOT NULL ) ) ) ) WHERE indicator = 2";
+		Map<String, String> UDA_Column = getColumnNameAndValue(Sys_UDA_Count_SQL);
+		String uda_count = UDA_Column.get("ATTRIBUTESET_COUNT");
+		return uda_count;
+	}
+
+	public String getItemUDAAttributesCount(String item) throws Exception {
+		String item_UDA_Count_SQL = " SELECT COUNT(su.description) AS itemuda_count FROM sm_uda su LEFT OUTER JOIN sm_item_uda_ff siuf ON ( su.uda_id = siuf.uda_id AND siuf.item = '"
+				+ item + "' ) LEFT OUTER JOIN sm_item_uda_date siud ON ( su.uda_id = siud.uda_id AND siud.item = '"
+				+ item + "' ) LEFT OUTER JOIN sm_item_uda_lov siul ON ( su.uda_id = siul.uda_id AND siul.item = '"
+				+ item + "' ) WHERE su.uda_type = 'S' AND su.module = 'I' AND su.bu_id = '" + AppData.buId
+				+ "' ORDER BY su.description";
+		Map<String, String> UDA_Column = getColumnNameAndValue(item_UDA_Count_SQL);
+		String item_uda_count = UDA_Column.get("ITEMUDA_COUNT");
+		return item_uda_count;
+	}
+
+	public int getFixtureCount(String store) throws Exception {
+		String Fixture_Count_SQL = " SELECT sfl.fixture_code, sf.description, NVL (scdv.description, sf.family) family, NVL (scdv1.description, sf.fixture_type) fixture_type, NVL (sfl.equiv_meterage, sf.fixture_meterage) meterage, COUNT (1) fixture_count, NVL (sfl.equiv_meterage, sf.fixture_meterage) * COUNT (1) total FROM sm_floor_plan fp INNER JOIN sm_floor_layout sfl ON ( fp.bu_id = sfl.bu_id AND fp.store = sfl.store AND fp.fp_version = sfl.fp_version AND sfl.dummy_ind = 'N') INNER JOIN sm_fixture sf ON (sfl.bu_id = sf.bu_id AND sfl.fixture_code = sf.fixture_code) LEFT OUTER JOIN ax_code_detail_vw scdv ON (scdv.code_type = 'FMFT' AND scdv.code = sf.family) LEFT OUTER JOIN ax_code_detail_vw scdv1 ON ( scdv1.code_type = 'FTY' || sf.family AND scdv1.code = sf.fixture_type) WHERE fp.bu_id = '"
+				+ AppData.buId + "' AND fp.store = " + store
+				+ " AND TO_DATE (TO_CHAR(ax_utility_sql.get_vdate,'YYYY/MM/DD'),'RRRR/MM/DD') BETWEEN fp.eff_start_date AND fp.eff_end_date GROUP BY sfl.fixture_code, sf.description, sf.family, sf.fixture_type, scdv.description, scdv1.description, NVL (sfl.equiv_meterage, sf.fixture_meterage)";
+		return getRowCount(Fixture_Count_SQL);
+	}
+
+	public String storeItemPOGCount(String item) throws Exception {
+		String POG_Count_SQL = "Select count(distinct spi.pog_code) as POG_COUNT from sm_pog_item spi"
+				+ "		inner join sm_floor_plan_dtl sfpd on (spi.bu_id=sfpd.bu_id and sfpd.pog_code=spi.pog_code and sfpd.pog_version=spi.pog_version  AND sfpd.pog_module= spi.pog_module)"
+				+ "		where spi.bu_id='" + AppData.buId + "' and spi.item=" + item
+				+ " and ax_utility_sql.get_vdate BETWEEN sfpd.eff_start_date AND sfpd.eff_end_date";
+		Map<String, String> UDA_Column = getColumnNameAndValue(POG_Count_SQL);
+		String pog_uda_count = UDA_Column.get("POG_COUNT");
+		return pog_uda_count;
+	}
+
+	public String storeItemStoreCount(String item) throws Exception {
+		String Store_Count_SQL = "SELECT count(distinct ss.store) as Store_Count FROM sm_floor_plan_dtl sfpd INNER JOIN sm_floor_layout sfl ON ( sfpd.bu_id = sfl.bu_id AND sfpd.store = sfl.store AND sfpd.fp_version = sfl.fp_version AND sfpd.location_id = sfl.location_id) INNER JOIN sm_store ss ON (sfl.bu_id = ss.bu_id AND sfl.store = ss.store) INNER JOIN sm_pog sp ON ( sp.bu_id = sfpd.bu_id AND sp.pog_code = sfpd.pog_code AND sp.pog_version = sfpd.pog_version) INNER JOIN ax_bu_sysprm sbs ON ( sbs.bu_id = sfpd.bu_id AND sbs.sys_conf_name = 'DUMMY_LOCATION_INCL') WHERE sfpd.bu_id = '"
+				+ AppData.buId
+				+ "' AND ax_utility_sql.get_vdate BETWEEN sfpd.eff_start_date AND sfpd.eff_end_date AND ( (sbs.sys_conf_value = 'N' AND sfl.dummy_ind = 'N') OR sbs.sys_conf_value = 'Y') AND EXISTS (SELECT 1 FROM sm_pog_item spi WHERE sfpd.bu_id = spi.bu_id AND sfpd.pog_code = spi.pog_code AND sfpd.pog_version = spi.pog_version AND sfpd.pog_module = spi.pog_module AND spi.item = "
+				+ item + ")";
+		Map<String, String> UDA_Column = getColumnNameAndValue(Store_Count_SQL);
+		String store_uda_count = UDA_Column.get("STORE_COUNT");
+		return store_uda_count;
+	}
+
+	public String storeItemSegmentCount(String item) throws Exception {
+		String Segment_Count_SQL = "select count(description)+1 as Segment_Count from sm_uda_values where uda_id=12180 and bu_id='"
+				+ AppData.buId + "'";
+		Map<String, String> UDA_Column = getColumnNameAndValue(Segment_Count_SQL);
+		String segment_uda_count = UDA_Column.get("SEGMENT_COUNT");
+		return segment_uda_count;
+	}
+
+	public void storeItemDimensions(String item) throws Exception {
+		String dimensions_SQL = "SELECT" + " nvl(TO_CHAR(sid.item_width),'-') item_width,"
+				+ " nvl(TO_CHAR(sid.item_height),'-') item_height,"
+				+ " nvl(TO_CHAR(sid.item_depth),'-') item_depth " + "FROM" + " sm_item_dim sid,"
+				+ " sm_item_master sim," + " ax_code_detail scd " + " WHERE" + " scd.code = sid.dim_type (+)"
+				+ " AND scd.code_type = 'IMDT'" + " AND sim.item = sid.item (+)" + " AND sim.item = 50028197"
+				+ " AND scd.description = 'Unit Size'";
+		storeColumnNameAndValue(dimensions_SQL);
+	}
+
+	public String storeItemOtherSegmentCount(String item) throws Exception {
+		String other_Segment_SQL = "SELECT count(ssm.supplier) as OSEGMENT_COUNT FROM sm_item_supplier sis, sm_supplier_master ssm WHERE sis.bu_id = ssm.bu_id AND sis.bu_id ='"
+				+ AppData.buId + "' AND sis.item = " + item + " AND sis.supplier = ssm.supplier";
+		Map<String, String> UDA_Column = getColumnNameAndValue(other_Segment_SQL);
+		String osegment_uda_count = UDA_Column.get("OSEGMENT_COUNT");
+		return osegment_uda_count;
+	}
+
+}

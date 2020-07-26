@@ -1,0 +1,43 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexPageHeader extends CommonPage{
+	
+	public ApexPageHeader(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+	
+	public void clickOnLink(String pageName, String linkName) throws Exception {
+		By linkNameLabel 				= By.xpath("//a[contains(@class,'Breadcrumb') and text()='"+linkName+"']");
+		clickOnElement(pageName, linkName+" Link",linkNameLabel);
+	}
+	
+	public void waitForPresenceOfHeader1(String pageName, String headerName) throws Exception {
+		By headerLabel 				= By.xpath("//h1[text()='"+headerName+"']");
+		waitForPresenceOfElement(pageName, headerName,headerLabel);
+	}
+	
+	public void clickOnHeader2Link(String pageName, String linkName) throws Exception {
+		By linkNameLabel 				= By.xpath("//h2[text()='"+linkName+"']");
+		clickOnElement(pageName, linkName+" Link",linkNameLabel);
+	}
+	
+	public void clickOnHeader3Link(String pageName, String linkName) throws Exception {
+		By linkNameLabel 				= By.xpath("//h3[text()='"+linkName+"']");
+		clickOnElement(pageName, linkName+" Link",linkNameLabel);
+	}
+	
+	public void clickOnDivText(String pageName, String text) throws Exception {
+		By linkNameLabel 				= By.xpath("//div[contains(text(),'"+text+"')]");
+		clickOnElement(pageName, text+" Link",linkNameLabel);
+	}
+
+	public void clickOnSpanLink(String pageName, String linkName) throws Exception {
+		By spanLink 			= By.xpath("//a/span[text()='"+linkName+"']");
+		clickOnElement(pageName, linkName+" Link",spanLink);
+	}
+}

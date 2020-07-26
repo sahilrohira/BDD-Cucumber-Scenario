@@ -1,0 +1,275 @@
+package utils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+public class ExcelUtil {
+	
+	XSSFWorkbook workbook;
+	
+	
+	public static int getRowCountFromExcel(String fileName, String sheetName) throws IOException{
+		int rowCount=-1;
+		FileInputStream file = null;
+		XSSFSheet sheet;
+		//File downloadFilePath = new File ( "Test_Reports/"+testCaseId+"/Download/"+fileName+".csv");
+		if (fileName.contains("Regression")){
+			file = new FileInputStream(new File(fileName));
+		}
+		else
+		{
+		file = new FileInputStream(new File(fileName+".xlsx"));}
+
+		XSSFWorkbook workbook = new XSSFWorkbook(file);
+		if (sheetName.equals("")) {
+			sheet = workbook.getSheetAt(0);
+		}
+		else {
+			sheet = workbook.getSheet(sheetName);
+		}
+		if ((fileName+".xlsx").contains("Fixture.xlsx")) {
+			rowCount = sheet.getPhysicalNumberOfRows()-2;
+		}
+		else {
+			rowCount = sheet.getPhysicalNumberOfRows()-1;
+		}
+		
+
+		workbook.close();
+		file.close();
+		return rowCount;
+	}
+	
+	public static int getRowIndexFromExcel(String filePath, String sheetName, String columnsName, String columnsValue) throws IOException{
+		List<String> listColumnsName = new ArrayList<String>();
+		String[] arrColumnsName = columnsName.trim().split(",");
+		for (String tmp : arrColumnsName) {
+			listColumnsName.add(tmp);
+		}
+
+		List<String> listColumnsValue = new ArrayList<String>();
+		String[] arrColumnsValue = columnsValue.trim().split(",");
+		for (String tmp : arrColumnsValue) {
+			listColumnsValue.add(tmp);
+		}
+		
+		int rowCount = getRowCountFromExcel(filePath, sheetName);
+		
+		List<Integer> headersIndex = new ArrayList<Integer>();
+		
+		for (String columnName : listColumnsName) {
+			int hederIndex = getHeaderIndexFromExcel(filePath+".xlsx", sheetName, columnName);
+			headersIndex.add(hederIndex);
+		}
+		
+		for(int currentRow = 2; currentRow <= rowCount; currentRow++) {
+			
+			List<String> rowData = getRowDataFromExcel(filePath+".xlsx", sheetName, currentRow);
+			//System.out.println(rowData);
+			boolean matchingRowFound = true;
+			int colValueIndex =0;
+			for (int headerIndex : headersIndex) {
+				if(! rowData.get(headerIndex).equalsIgnoreCase(listColumnsValue.get(colValueIndex)) ){
+					matchingRowFound = false;
+					break;
+				}
+				colValueIndex++;
+			}
+			
+			if(matchingRowFound==true) {
+				return currentRow-1;
+			}
+			
+		}
+        return -1;
+	}
+	
+	public static int getColumnCountFromExcel(String filePath, String sheetName) throws IOException{
+		int columnCount=-1;
+		XSSFSheet sheet;
+		FileInputStream file = new FileInputStream(new File(filePath));
+        XSSFWorkbook workbook = new XSSFWorkbook(file);
+        if (sheetName.equals("")) {
+			sheet = workbook.getSheetAt(0);
+		}
+		else {
+			sheet = workbook.getSheet(sheetName);
+		}
+        if (filePath.contains("Fixture.xlsx")) {
+        	columnCount = sheet.getRow(1).getPhysicalNumberOfCells();
+		}
+		else {
+			
+			columnCount = sheet.getRow(0).getPhysicalNumberOfCells();
+			System.out.println(columnCount);
+		}
+        
+
+        workbook.close();
+        file.close();
+        return columnCount;
+	}
+	
+	
+	public static int getHeaderIndexFromExcel(String filePath, String sheetName, String columnName) throws IOException{
+		int headerIndex=-1;
+		XSSFSheet sheet;
+		FileInputStream file = new FileInputStream(new File(filePath));
+		XSSFWorkbook workbook = new XSSFWorkbook(file);
+		if (sheetName.equals("")) {
+			sheet = workbook.getSheetAt(0);
+		}
+		else {
+			sheet = workbook.getSheet(sheetName);
+		}
+		for (int ri=0;ri<10;ri++) {
+			Row row = sheet.getRow(ri);
+			if (row != null){    	
+				Iterator<Cell> cellIterator = row.cellIterator();
+				int currentColumnIndex=0;
+				while (cellIterator.hasNext())
+				{
+					Cell cell = cellIterator.next();
+					String cellValue = getCellValue(cell);
+
+					if(cellValue.equalsIgnoreCase(columnName)) {
+						headerIndex=currentColumnIndex;
+						ri=10;
+						break;
+					}
+					currentColumnIndex++;
+				}
+				workbook.close();
+				file.close();
+			}
+		}
+		return headerIndex;
+	}
+	
+	public static String getCellDataFromExcel(String filePath, String sheetName, int columnIndexIndex, int rowIndex) throws IOException{
+		String cellValue=null;
+		XSSFSheet sheet;
+		Row row;
+		FileInputStream file = new FileInputStream(new File(filePath));
+        XSSFWorkbook workbook = new XSSFWorkbook(file);
+        if (sheetName.equals("")) {
+			sheet = workbook.getSheetAt(0);
+		}
+		else {
+			sheet = workbook.getSheet(sheetName);
+		}
+        if (filePath.contains("Fixture.xlsx")) {
+        	 row = sheet.getRow(rowIndex+1);
+		}
+		else {
+			 row = sheet.getRow(rowIndex);
+		}
+        
+        Cell cell = row.getCell(columnIndexIndex);
+        cellValue = getCellValue(cell);
+        workbook.close();
+        file.close();
+        return cellValue;
+	}
+	
+	public static String getCellDataFromExcel(String filePath, String sheetName, String columnName, int rowIndex) throws IOException{
+		int headerIndex = getHeaderIndexFromExcel(filePath, sheetName, columnName);
+        return getCellDataFromExcel(filePath, sheetName, headerIndex, rowIndex);
+	}
+	
+	public void setCellDataToExcel(String filePath, String sheetName, String columnName, int rowIndex, String newCellValue) throws IOException{
+		int headerIndex = getHeaderIndexFromExcel(filePath, sheetName, columnName);
+		XSSFSheet sheet;
+		FileInputStream fis = new FileInputStream(new File(filePath));
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+        if (sheetName.equals("")) {
+			sheet = workbook.getSheetAt(0);
+		}
+		else {
+			sheet = workbook.getSheet(sheetName);
+		}
+        
+        Row row = sheet.getRow(rowIndex);
+        
+        if(row==null) row = sheet.createRow(rowIndex);
+        Cell cell = row.getCell(headerIndex);
+        if(cell==null) cell = row.createCell(headerIndex);
+        cell.setCellValue(newCellValue);
+        fis.close();
+        System.out.println(newCellValue);
+        
+		FileOutputStream fos =new FileOutputStream(new File(filePath));
+	    workbook.write(fos);
+	    workbook.close();
+	    fos.close();
+	}
+
+	
+	
+	
+	public static List<String> getColumDataFromExcel(String filePath, String sheetName, String columnName) throws IOException{
+		List<String> columnData = new ArrayList<String>();
+		int rowCount = getRowCountFromExcel(filePath, sheetName);
+		
+		for (int currentRow = 1; currentRow < rowCount; currentRow++) {
+			String currentRowData = getCellDataFromExcel(filePath, sheetName, columnName, currentRow);
+			columnData.add(currentRowData);
+		}
+		return columnData;
+	}
+	
+	public static List<String> getRowDataFromExcel(String filePath, String sheetName, int rowNo) throws IOException{
+		List<String> rowData = new ArrayList<String>();
+		
+		int columnCount = getColumnCountFromExcel(filePath, sheetName);
+		
+		for (int currentColumnIndex = 0; currentColumnIndex < columnCount; currentColumnIndex++) {
+			String cellData =  getCellDataFromExcel(filePath, sheetName, currentColumnIndex, rowNo-1);
+			rowData.add(cellData);
+		}
+		return rowData;
+	}
+	
+	public static List<String> getHeaderDataFromExcel(String filePath, String sheetName) throws IOException{
+		return getRowDataFromExcel(filePath+".xlsx", sheetName, 1);
+	}
+	
+	public void setNewRowDataToExcel(String filePath, String sheetName, Map<String, String> rowValues) throws IOException{
+		int rowCount = getRowCountFromExcel(filePath, sheetName);
+		
+		Set<String> keySet = rowValues.keySet();
+		
+		for (String key : keySet) {
+			String value = rowValues.get(key);
+			setCellDataToExcel(filePath, sheetName, key, rowCount, value);
+		}
+	}
+	
+	private static String getCellValue(Cell cell) {
+		String cellValue=null;
+		switch (cell.getCellType())
+		{
+		    case Cell.CELL_TYPE_NUMERIC:
+		    	cellValue = cell.getNumericCellValue()+"";
+		    	cellValue = cellValue.replace(".0", "");
+		        break;
+		    case Cell.CELL_TYPE_STRING:
+		        cellValue = cell.getStringCellValue();
+		        break;
+		}
+		return cellValue;
+	}
+	
+}

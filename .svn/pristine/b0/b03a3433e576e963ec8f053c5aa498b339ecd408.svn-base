@@ -1,0 +1,181 @@
+package stepdefs.POGManagement;
+
+import java.io.File;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_GENERAL_Table;
+import pages.POGManagement.Tagging_Template;
+import pages.apex.ApexButton;
+import pages.apex.ApexDatePicker;
+import pages.apex.ApexDropDown;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+import utils.AppDateUtil;
+
+public class POGM_TaggingTemplatePageSteps extends SuperStepdefs {
+
+	private String pageName = "Manage Planogram";
+	private ApexButton apextButton;
+	private Tagging_Template taggingTemp;
+	private ApexTable apexTable;
+	private ApexTextField apexTextField;
+	private ApexDropDown apexDropDown;
+	private ApexDatePicker apexDatePicker;
+	private SM_GENERAL_Table sm_general_table;
+
+	public POGM_TaggingTemplatePageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		taggingTemp = new Tagging_Template(driver, pageName);
+		apexTable = new ApexTable(driver, testCaseId);
+		apexDropDown = new ApexDropDown(driver, testCaseId);
+		sm_general_table = new SM_GENERAL_Table(con, testCaseId);
+		apexDatePicker = new ApexDatePicker(driver, testCaseId);
+		apexTextField = new ApexTextField(driver, testCaseId);
+	}
+
+	@When("^From Manage Planogram Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@Then("^Update the Template with Add_POG Code \"(.*)\", Add_POG_Version \"(.*)\", Add_Module \"(.*)\",Add_POG_Position \"(.*)\",Del_POG Code \"(.*)\",Del_POG Version \"(.*)\",Del_POG Module \"(.*)\",Store \"(.*)\",EffectiveDate \"(.*)\",Location_ID \"(.*)\",From Location_ID \"(.*)\" in row number \"(.*)\"$")
+	public void uploadTaggingTemplatewithparameters(String addPogCode, String addPogVer, String addMod,
+			String addPogPos, String delPogCode, String delPogVer, String delMod, String store, String effDate,
+			String locID, String fromLocID, int rowNo) throws Throwable {
+		if (getTempData(addPogCode) != null) {
+			addPogCode = getTempData(addPogCode);
+		}
+		if (getTempData(addPogVer) != null) {
+			addPogVer = getTempData(addPogVer);
+		}
+		if (getTempData(addMod) != null) {
+			addMod = getTempData(addMod);
+		}
+		if (getTempData(addPogPos) != null) {
+			addPogPos = getTempData(addPogPos);
+		}
+		if (getTempData(delPogCode) != null) {
+			delPogCode = getTempData(delPogCode);
+		}
+		if (getTempData(delPogVer) != null) {
+			delPogVer = getTempData(delPogVer);
+		}
+		if (getTempData(delMod) != null) {
+			delMod = getTempData(delMod);
+		}
+		if (getTempData(store) != null) {
+			store = getTempData(store);
+		}
+		if (getTempData(locID) != null) {
+			locID = getTempData(locID);
+		}
+		if (getTempData(fromLocID) != null) {
+			fromLocID = getTempData(fromLocID);
+		}
+		if (getTempData(effDate) != null) {
+			effDate = getTempData(effDate);
+		}
+
+		if (effDate.toLowerCase().contains("vdate")) {
+			String varindays = effDate.substring(5);
+			effDate = AppDateUtil.getAppdateinPOGVersionFormat(Integer.parseInt(varindays));
+		}
+		String fileName = System.getProperty("user.dir") + File.separator + "Test_Reports" + File.separator + testCaseId
+				+ File.separator + "Download" + File.separator + "Template POG";
+		if (new File(fileName + ".xlsx").exists()) {
+			taggingTemp.updateTaggingTemplate(fileName, addPogCode, addPogVer, addMod, addPogPos, delPogCode, delPogVer,
+					delMod, store, effDate, locID, fromLocID, rowNo);
+		} else {
+			Thread.sleep(5000);
+			taggingTemp.updateTaggingTemplate(fileName, addPogCode, addPogVer, addMod, addPogPos, delPogCode, delPogVer,
+					delMod, store, effDate, locID, fromLocID, rowNo);
+		}
+		if (addPogCode != "") {
+			logger.pass("Updated Tagging Template for addition with pog code as" + bold(addPogCode) + " pog version as "
+					+ bold(addPogVer) + " pog module as " + bold(addMod) + " EffectiveDate as " + bold(effDate)
+					+ " against location id " + bold(locID) + " for store " + bold(store));
+		} else {
+			logger.pass("Updated Tagging Template for deletion with pog code as" + bold(delPogCode) + " pog version as "
+					+ bold(delPogVer) + " pog module as " + bold(delMod) + " EffectiveDate as " + bold(effDate)
+					+ " against location id " + bold(fromLocID) + " for store " + bold(store));
+		}
+
+	}
+
+	@Then("^Validate column \"(.*)\" value as \"(.*)\" for table \"(.*)\"$")
+	public void validateColumnVal(String colummnName, String expVal, String table) throws Exception {
+		if (expVal.toLowerCase().contains("vdate")) {
+			String varindays = expVal.substring(5);
+			expVal = AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));
+		}
+		apexTable.validateScrollingTableCellValue(pageName, table, 1, colummnName, expVal);
+		logger.pass("Validated value for column " + colummnName + " with Value " + expVal);
+	}
+
+	@Then("^Extract any Regular POG with two version having Store Area as \"(.*)\"$")
+	public void ExtractPromotionPOGwith2Version(String storeArea) throws Throwable {
+		sm_general_table.getregularPOGWith2Version(storeArea);
+		logger.pass("Extracted Promotion POG " + bold(getTempData("REGPOG_2VER")) + " with Version V1 as "
+				+ bold(getTempData("REG_VER1")) + " with Version V1 as " + bold(getTempData("REG_VER2")));
+	}
+
+	@Then("^Validate the Tagging Template column \"(.*)\" with value as \"(.*)\" in Row \"(.*)\"$")
+	public void validateSMARTTemplatecolumnValue(String columnName, String expValue, int rowInd) throws Throwable {
+		Thread.sleep(2000);
+		String fileName = System.getProperty("user.dir") + File.separator + "Test_Reports" + File.separator + testCaseId
+				+ File.separator + "Download" + File.separator + "Template POG (1).xlsx";
+		String match = taggingTemp.validateTaggingTemplateColumnValue(fileName, "Sheet1", rowInd, columnName, expValue);
+		if (match.equalsIgnoreCase("pass")) {
+			logger.pass("Expected Value: " + expValue + " matched");
+		} else {
+			throw new Exception(match);
+		}
+	}
+
+	@Then("^From Manage Planogram Page, Enter Date For Field \"(.*)\" As \"(.*)\"$")
+	public void enterText(String fieldName, String value) throws Exception {
+		if (getTempData(value) != null) {
+			value = getTempData(value);
+		}
+		if (value.toLowerCase().contains("sysdate")) {
+			String varindays = value.substring(7);
+			value = AppDateUtil.sysDateInUIFormat(Integer.parseInt(varindays));
+		}
+		apexTextField.enterText(pageName, fieldName, value);
+		logger.pass("From Floor Plan Page, Enter date For field " + bold(fieldName) + " As " + bold(value));
+	}
+
+	@Then("^From Search Planogram, select effDate as \"(.*)\" with pog version as \"(.*)\" and pog code as \"(.*)\"$")
+	public void enterFieldsValueInSearchPlanogram(String effStartDate, String pogVersion, String pogCode)
+			throws Exception {
+		if (getTempData(effStartDate) != null) {
+			effStartDate = getTempData(effStartDate);
+		}
+		if (getTempData(pogCode) != null) {
+			pogCode = getTempData(pogCode);
+		}
+		if (effStartDate.toLowerCase().contains("vdate")) {
+			String varindays = effStartDate.substring(5);
+			effStartDate = AppDateUtil.getAppdateinPOGVersionFormat(Integer.parseInt(varindays));
+		}
+		enterText("P57_EFF_START_DATE", effStartDate);
+		apexDropDown.selectDropDownValue(pageName, "P57_POG_VERSION", pogVersion);
+		apexTextField.enterTextArea(pageName, "P57_POG_CODE", pogCode);
+	}
+
+	@Then("^From Manage Planogram Page, Select Planogram/Store List Description row no. \"(.*)\" from table \"(.*)\"$")
+	public void selectTableRow(String tableLabel, int rowNo) throws Exception {
+		apexTable.selectTableRow(pageName, tableLabel, rowNo);
+	}
+
+	@Then("^From Dialog Box, click on Store Count value \"(.*)\" Link from column \"(.*)\"$")
+	public void clickOnStoreCount(String tableLabel, String columnValue, String columnName) throws Exception {
+		apexTable.clickOnTableCellLinkWithColumnValue(pageName, tableLabel, columnName, columnValue);
+	}
+}

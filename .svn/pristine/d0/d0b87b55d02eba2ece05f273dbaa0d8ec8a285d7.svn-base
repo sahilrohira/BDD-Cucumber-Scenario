@@ -1,0 +1,75 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_GENERAL_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexButton;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+
+public class Masters_RMSOSDMappingPageSteps extends SuperStepdefs {
+
+	private String pageName = "Master_RMSOSDMap";
+	private String tableLabel = "rms_osd_mapping";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_GENERAL_Table sm_general_table;
+	
+
+	public Masters_RMSOSDMappingPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_general_table=new SM_GENERAL_Table(con, testCaseId);
+	}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Master_RMSOSDMap Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+
+	@When("^From Master_RMSOSDMap Page, Validate Record Count from Database")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount= sm_general_table.getRMMSOSDLocCount();
+		if (expectedRowCount!=0) {
+		apexTable.validateTableRowCount(pageName,tableLabel,expectedRowCount);}
+		else {
+		apexTable.validateTableIsEmpty(pageName, tableLabel);	
+		}
+		logger.pass("From RMS OSD Mapping Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+
+	@Then("^From Master_RMSOSDMap Page, For Row \"(.*)\", Select Drop Down Value For Column \"(.*)\" As \"(.*)\"$")
+	public void selectDropDownValue(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		apexTable.selectCellDropDownValue(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_RMSOSDMap Page, For Row "+bold(rowNo)+", Select Drop Down Value For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master_RMSOSDMap Page, For Row \"(.*)\", Enter Text For Column \"(.*)\" As \"(.*)\"$")
+	public void enterText(int rowNo, String headerName, String value) throws Exception {
+		if(headerName.equals("OSD Code")) {
+			int ranNum = AppData.getRandomNumberBetweenRange(1,99999);
+			value= "OSD-"+ranNum;
+			storeTempData("OSD_Code", value);
+		}
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		apexTable.enterCellText(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_RMSOSDMap Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master_RMSOSDMap Page, For Row \"(.*)\", Enter Text Description For Column \"(.*)\" As \"(.*)\"$")
+	public void enterTextDescription(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		apexTable.enterCellTextDescription(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_Fixture Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+}

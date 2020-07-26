@@ -1,0 +1,235 @@
+package stepdefs.Portal;
+
+import java.io.File;
+
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.PORTAL_Table;
+import db.SM_BU_SYSPRM_Table;
+import db.SM_GENERAL_Table;
+import db.SM_SMART_TEMPLATE_Table;
+import pages.apex.ApexButton;
+import pages.apex.ApexTable;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppDateUtil;
+
+public class Portal extends SuperStepdefs {
+
+	private String pageName = "Portal";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_GENERAL_Table sm_general_table;
+	private CommonPageSteps commonPageSteps;
+	private SM_SMART_TEMPLATE_Table smart_template_table;
+	private PORTAL_Table portal_table;
+	private SM_BU_SYSPRM_Table sm_bu_sysprm;
+
+	public Portal(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_general_table = new SM_GENERAL_Table(con, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		smart_template_table=new SM_SMART_TEMPLATE_Table(con, testCaseId);
+		portal_table=new PORTAL_Table(con, testCaseId);
+		sm_bu_sysprm=new SM_BU_SYSPRM_Table(con, testCaseId);
+	}
+
+	@When("^From Portal Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	//	@When("^From Virtual POG Page, Validate Record Count from Database$")
+	//	public void validateRecordCount() throws Exception {
+	//		int expectedRowCount = sm_virtual_pog.getVirtualPOGCount();
+	//		apexTable.validateTableRowCount(pageName, tableLabel, expectedRowCount);
+	//		logger.pass("From Virtual POG Page, Row Count " + bold(expectedRowCount) + " matched");
+	//	}
+
+	@When("^Validate the SMART Template is downloaded$")
+	public void validateSMARTTemplatedownloadedd() throws Exception {
+		smart_template_table.getEmptyLocforStoreWithSingleFP();
+		commonPageSteps.enterTextFieldValue("P46_STORE",  getTempData("SFP_STORE"));
+		commonPageSteps.enterTextFieldValue("P46_AS_OF_DATE", AppDateUtil.newDateInUIFormat(1));
+		commonPageSteps.clickOnButton("Export");
+		commonPageSteps.clickOnButton("Cancel");
+		String fileName=System.getProperty("user.dir") + File.separator +"Test_Reports"+File.separator +testCaseId+File.separator +"Download"+File.separator+"portal_smart_template.pdf";
+		if (new File(fileName).exists()) {
+			logger.pass("SMART Template PDF"+fileName +" downloaded successfully.");}
+		else {
+			logger.fail("SMART Template PDF"+fileName +" not found.");	}
+	}
+	
+
+	@When("^From \"(.*)\" Page, Validate Record Count from Database$")
+	public void validateRecordCount(String portalPageName) throws Exception {
+		int expectedRowCount= portal_table.getPlanogramCount();
+		apexTable.validateTableRowCount(portalPageName,"ig_planogram_ig_grid_vc_pageRange",expectedRowCount);
+		logger.pass("From Planogram Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+	
+	@Then("^In Table \"(.*)\" apply Filter for Column \"(.*)\" with value \"(.*)\"$")
+	public void applyFilter(String tableLabel,String colummnName,String filterVal) throws Exception {
+		apexTable.filterScrollingTableContent(pageName, tableLabel, colummnName, filterVal);
+		logger.pass("Applied Filter for column "+colummnName+" with Value "+ bold(getTempData(filterVal)));
+	}
+	
+	@Then("^In Table \"(.*)\" Select First Filtered checkbox$")
+	public void checkFirstCheckBox(String tableLabel) throws Exception {
+		if (tableLabel.equalsIgnoreCase("ig_planogram_rem")||tableLabel.equalsIgnoreCase("ig_fp_reminder")){
+		apexTable.clickOnTableCheckBox(tableLabel, tableLabel, 1);}
+		else {
+			apexTable.clickOnTableCellwithSpan(pageName, tableLabel, 1, "");}
+		logger.pass("From "+pageName+" Page, Selected first Checkbox");
+	}
+	
+	@Then("^In Table \"(.*)\" Select All Filtered checkbox$")
+	public void checkAllFilteredCheckBox(String tableLabel) throws Exception {
+		apexTable.doubleClickSelectAllCheckBox(pageName, tableLabel);
+		logger.pass("From "+pageName+" Page, Selected first Checkbox");
+	}
+	
+	@Then("Extract the Live Planogram to be Implemented$")
+	public void extractLivePOGtobeImplemented() throws Exception {
+		portal_table.getLivePOGToBeImplemented();
+		logger.pass("Extracted POG to be extracted are "+bold(getTempData("STORE"))+" with Value "+ bold(getTempData("POG_CODE")));
+	}
+	
+	@Then("Extract the Planned Planogram to be Implemented$")
+	public void extractPlannedPOGtobeImplemented() throws Exception {
+		portal_table.getPlannedPOGToBeImplemented();
+		logger.pass("Extracted POG to be extracted are "+bold(getTempData("STORE"))+" with Value "+ bold(getTempData("POG_CODE")));
+	}
+	
+	@Then("Extract the Planned Floor Plan to be Implemented$")
+	public void extractPlannedFloorPlantobeImplemented() throws Exception {
+		portal_table.getPlannedFloorPlanToBeImplemented();
+		logger.pass("Extracted Floor Plan extracted are "+bold(getTempData("STORE"))+" with FP version as "+ bold(getTempData("FP_VERSION")));
+	}
+	
+	@Then("Extract the Live Floor Plan to be Implemented$")
+	public void extractLiveFloorPlantobeImplemented() throws Exception {
+		portal_table.getLiveFloorPlanToBeImplemented();
+		logger.pass("Extracted Floor Plan extracted are "+bold(getTempData("STORE"))+" with FP version as "+ bold(getTempData("FP_VERSION")));
+	}
+	
+	@Then("^Validate all filtered columns for POG Code \"(.*)\" and POG Version \"(.*)\" in Table \"(.*)\"$")
+	public void validatePlanogramTable(String pogCode,String pogVer,String tableLabel) throws Exception {
+		String POG_Name_Ind = sm_bu_sysprm.getSysConfValue("POG_NAME_IND");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store", "STORE");
+		if (POG_Name_Ind.equalsIgnoreCase("Y")) {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Name", "POG_NAME");
+		}
+		String Pog_type = null;
+		switch (getTempData("POG_TYPE")) {
+		case "D":
+			Pog_type = "Dummy";
+			break;
+		case "R":
+			Pog_type = "Regular";
+			break;
+		case "P":
+			Pog_type = "Promotion";
+			break;
+		case "H":
+			Pog_type = "Host";
+			break;
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Type", Pog_type);
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store POG Status", "Planned");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Implemented Date", "-");
+//		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective Start Date", "EFF_START_DATE");
+//		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective End Date", "EFF_END_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "All Locations", "View");
+	}
+	
+	@Then("^Validate the column \"(.*)\" as \"(.*)\" in table \"(.*)\"$")
+	public void validateTableCol(String columnName,String colValue,String tableLabel) throws Exception {
+		if (colValue.equalsIgnoreCase("VDATE")){
+			colValue=AppDateUtil.newDateInUIFormat(0);
+		}
+		if (colValue.equalsIgnoreCase("SYSDATE")){
+			colValue=AppDateUtil.sysDateInUIFormat(0);
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, columnName, colValue);
+		logger.pass("Validated column "+columnName+" with Value "+ colValue);
+	}
+	
+	@Then("Validate the downloaded file as \"(.*)\"$")
+	public void validateDownloadedFile(String fileName) throws Exception {
+		String fileFound="Y";
+		if(getTempData(fileName)!=null) 
+		{fileName=getTempData(fileName);}
+		String download_Path = System.getProperty("user.dir") + File.separator + "Test_Reports" + File.separator
+				+ testCaseId + File.separator + "Download" + File.separator + fileName;
+
+		File tempFile = new File(download_Path);
+		int time_to_wait = 5;
+		int time_counter = 0;
+		while (!tempFile.exists()) {
+			time_counter += 1;
+			if (time_counter > time_to_wait) {
+				fileFound="N";
+				logger.fail("File "+fileName +"not downloaded suceesfully");
+				break;
+			} else {
+				Thread.sleep(10000);
+			}
+		}
+		if (fileFound=="Y") {
+				logger.pass("File "+fileName +"downloaded suceesfully");
+		}
+		
+	}
+	
+	@Then("^Validate all filtered columns for POG Code \"(.*)\" and POG Version \"(.*)\" in Table \"(.*)\" for Planogram Reminder$")
+	public void validatePlanogramReminderTable(String pogCode,String pogVer,String tableLabel) throws Exception {
+		String POG_Name_Ind = sm_bu_sysprm.getSysConfValue("POG_NAME_IND");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store", "STORE");
+		if (POG_Name_Ind.equalsIgnoreCase("Y")) {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Name", "POG_NAME");
+		}
+		String Pog_type = null;
+		switch (getTempData("POG_TYPE")) {
+		case "D":
+			Pog_type = "Dummy";
+			break;
+		case "R":
+			Pog_type = "Regular";
+			break;
+		case "P":
+			Pog_type = "Promotion";
+			break;
+		case "H":
+			Pog_type = "Host";
+			break;
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "POG Type", Pog_type);
+		if (getTempData("REAL_POG_IND").equalsIgnoreCase("Y")){
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Virtual", "N");}
+		else {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Virtual", "Y");
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Store POG Status", "Live");
+//		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective Start Date", "EFF_START_DATE");
+//		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective End Date", "EFF_END_DATE");
+	}
+	
+	@Then("Validate all filtered columns for Store \"(.*)\" and FP Version \"(.*)\" in Table \"(.*)\"$")
+	public void validateFloorPlanTable(String store,String fpVersion,String tableLabel) throws Exception {
+		if (tableLabel.equalsIgnoreCase("ig_floorplan")){
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Status", "Planned");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Implemented Date", "-");}
+		else {
+			apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Status", "Live");
+		}
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective Start Date", "EFF_START_DATE");
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Effective End Date", "EFF_END_DATE");
+		//apexTable.validateScrollingTableCellValue(pageName, tableLabel, 1, "Remarks", "REMARKS");
+	}
+}

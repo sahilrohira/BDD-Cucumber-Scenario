@@ -1,0 +1,39 @@
+
+Feature: Validating Functionality Related To Store POG under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Store POG" Link
+@run
+Scenario Outline: POGM_StorePOG_TC001#Store POG 
+   
+		When From Store POG Page, Click On "Cancel" Button
+		And From Store POG Page, Click On "Modify Search" Button
+		And Retreive the Store POG details from DB with Status as "<Status>"
+		When Type the parameters to search for the Store POG with status as "<Status>"
+		And From Store POG Page, Click On "Reset" Button
+		Then Validate all fields set to Default on Search Popup for Store POG
+		When Enter Text Field "P100_STORE" Value As "974586543848846585"
+		And From Store POG Page, Click On "Search" Button
+	  Then Validate No data Found on Screen "Store POG" for table "store_pog"
+	  When From Store POG Page, Click On "Modify Search" Button
+	  And From Store POG Page, Click On "Reset" Button
+		And Type the parameters to search for the Store POG with status as "<Status>"
+		And From Store POG Page, Click On "Search" Button
+		And Apply Filter for Column Floor Plan Version to get unique record
+		And Click On Link with text "STORE"
+		Then Validate Breadcrumb Header with Value as "Store Master Details"
+		And From Store POG Page, Click On "Back" Button
+		And Click On Link with text "STORE_NAME"
+		And Switch To Frame with Title "Floor Plan PDF Management"
+		And From Master_Store Page, Click On "Cancel" Button
+		Then Validate all Store POG details from database for selected "POG_CODE" with status as "<Status>"
+		
+			Examples:-
+		| Status |
+    | H  |
+		

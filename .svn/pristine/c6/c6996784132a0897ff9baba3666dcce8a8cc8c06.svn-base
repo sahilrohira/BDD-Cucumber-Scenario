@@ -1,0 +1,208 @@
+Feature: Validating Functionality Related To Smart Template under POG Management in POG Detail
+
+  Background: 
+    Given Open DB Connection
+    And Open Browser
+    And Log In To Application With Provided Credential
+    And From Home Page, Click On "POG Management" Link
+    And From Masters Page, Click On "POG Details" Link
+
+  @run
+  Scenario: POGM_SMARTTemplate_TC001#Validate that No Promotion POG,Child Promotion,Child Dummy POG and ChildSpace is extracted in SMART Template.--Also Validate POG Level 1 Page
+    And Extract the Promotion POG details
+    When Switch To Frame with Title "POG Detail Store Search"
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "PROM_STORE"
+    And Add Store with Filter Location "PROM_LOCID", AsofDate "vdate+1" and FixtureLabel ""
+    Then Validate that single record is extracted
+    And From POG Details Page, Click On "Export" Button
+    Then Validate that no record is extracted in SMART Template with vdate as "vdate+1"
+    And Clear the download folder
+    And From POG Details Page, Click On "Modify Search" Button
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Wait For "5" Second
+    And From POG Details Page, Click On "Reset" Button
+    And Extract the Child Promotion POG details
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "CHILD_PROM_STORE"
+    And Add Store with Filter Location "CHILD_PROM_LOCID", AsofDate "vdate+1" and FixtureLabel ""
+    Then Validate the extracted record count at location "CHILD_PROM_LOCID" for store "CHILD_PROM_STORE"
+    And Click On Link with text "CHILD_PROM_LOCID"
+    And Validate Breadcrumb Header with Value as "POG Details Level 1"
+    And Wait For "2" Second
+    And Validate Hidden Text Field "P70_STORE" Value As "CHILD_PROM_STORE"
+    And Validate Hidden Text Field "P70_STORE_NAME" Value As "STORE_NAME"
+    And Validate Hidden Text Field "P70_FP_VERSION" Value As "FP_VERSION"
+    And Validate Hidden Text Field "P70_LOCATION_ID" Value As "CHILD_PROM_LOCID"
+    And Validate Parent Record Count at POG Detail Level 1 at location "CHILD_PROM_LOCID" for store "CHILD_PROM_STORE"
+    Then From POG Details Level 1 Click on Parent Module "PARENT_POG_FIXTURE_LABEL"
+    And Validate Child POG Details record count for Parent module "PARENT_POG_FIXTURE_LABEL" at location "CHILD_PROM_LOCID" for store "CHILD_PROM_STORE"
+    And From POG Details Page, Click On "Back" Button
+    And From POG Detail Page, Filter Table content for Column "POG Code" With Value "POG_CODE"
+    And From POG Details Page, Click On "Export" Button
+    Then Validate that no record is extracted in SMART Template with vdate as "vdate+1"
+    And Remove Existing Filter
+    And Clear the download folder
+    And From POG Details Page, Click On "Modify Search" Button
+    And Switch To Frame with Title "POG Detail Store Search"
+    And From POG Details Page, Click On "Reset" Button
+    And Extract the Child Dummy POG details
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "CHILD_DUMMY_STORE"
+    And Add Store with Filter Location "CHILD_DUMMY_LOCID", AsofDate "vdate+1" and FixtureLabel ""
+    And From POG Detail Page, Filter Table content for Column "POG Code" With Value "DUMMYCHILD_POG"
+    And From POG Details Page, Click On "Export" Button
+    Then Validate that no record is extracted in SMART Template with vdate as "vdate+1"
+    And Remove Existing Filter
+    And Clear the download folder
+    And From POG Details Page, Click On "Modify Search" Button
+    And Switch To Frame with Title "POG Detail Store Search"
+    And From POG Details Page, Click On "Reset" Button
+    And Extract the Empty Child Space POG details
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "EMPTYCHILDSPACE_STORE"
+    And Add Store with Filter Location "EMPTYCHILDSPACE_LOCATIONID", AsofDate "vdate+1" and FixtureLabel ""
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "EMPTYCHILDSPACE_MODULE"
+    And From POG Details Page, Click On "Export" Button
+    Then Validate that no record is extracted in SMART Template with vdate as "vdate+1"
+
+  @skip
+  Scenario: POGM_SMARTTemplate_TC002#Single Floor Plan SMART_TEMP_OVERW_PLANNED_ASSIG=N and Tag same POG with Planned POG should give error and other POG2 should be tagged
+    And Update Query to change sys_conf_name "SMART_TEMP_OVERW_PLANNED_ASSIG"  value to "N"
+    And Refresh Current Window
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Extract empty location for a single floor plan store
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "SFP_STORE"
+    And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+20" and FixtureLabel ""
+    And From POG Details Page, Click On "Export" Button
+    And Extract the POG with ChildSpace
+    Then Update the Template with vdate as "vdate+20", FixLabel "TEST123",POG Code "POGID_CS", Version "POGVER_CS", Module "",Meterage "",InsideDisp "INTEST",OutsideDisp "OUTTEST" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+20"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "PARENT_MOD"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "TEST123", Start Date as "vdate+20", End date as "MAX_END_DATE", Inside Display as "INTEST" and Outside Display as "OUTTEST"
+    And Remove Existing Filter
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "POGMOD_CS"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "POGMOD_CS", Start Date as "vdate+20", End date as "MAX_END_DATE", Inside Display as "INTEST" and Outside Display as "OUTTEST"
+    And Remove Existing Filter
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+20"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "PARENT_MOD"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "TEST123", Start Date as "vdate+20", End date as "MAX_END_DATE", Inside Display as "INTEST" and Outside Display as "OUTTEST"
+    And Remove Existing Filter
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "POGMOD_CS"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "POGMOD_CS", Start Date as "vdate+20", End date as "MAX_END_DATE", Inside Display as "INTEST" and Outside Display as "OUTTEST"
+    And Remove Existing Filter
+    And From POG Details Page, Click On "Modify Search" Button
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Wait For "5" Second
+    And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+15" and FixtureLabel ""
+    And From POG Details Page, Click On "Export" Button
+    Then Update the Template with vdate as "vdate+15", FixLabel "TEST123",POG Code "", Version "", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+15"
+    Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+    And From Apex Error Dialog, Validate Error Message Content As "Record(s) Import Failed. Please review the error file downloaded automatically."
+    And Remove Apex Error Dialog
+    Then Update the Template with vdate as "vdate+15", FixLabel "",POG Code "POGID_CS", Version "POGVER_CS", Module "",Meterage "",InsideDisp "INTEST",OutsideDisp "OUTTEST" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+15"
+    Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+    And From Apex Error Dialog, Validate Error Message Content As "Record(s) Import Failed. Please review the error file downloaded automatically."
+    And Remove Apex Error Dialog
+    And Extract POG with single module
+    Then Update the Template with vdate as "vdate+15", FixLabel "",POG Code "POG_SM", Version "POGV_SM", Module "",Meterage "",InsideDisp "INTEST1",OutsideDisp "OUTTEST1" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+15"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And From POG Details Page, Click On "Modify Search" Button
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+20" and FixtureLabel ""
+    And From POG Detail Page, Filter Table content for Column "POG Code" With Value "POG_SM"
+    And Validate POG Code as "POG_SM", POG Version as "POGV_SM", FixLabel as "TEST123", Start Date as "vdate+15", End date as "MAX_END_DATE", Inside Display as "INTEST1" and Outside Display as "OUTTEST1"
+    And Remove Existing Filter
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "POGMOD_CS"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "POGMOD_CS", Start Date as "vdate+20", End date as "MAX_END_DATE", Inside Display as "INTEST" and Outside Display as "OUTTEST"
+    And Remove Existing Filter
+    Then Update the Template with vdate as "vdate+20", FixLabel "",POG Code "", Version "", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+20"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And Validate POG Code as "", POG Version as "-", FixLabel as "-", Start Date as "-", End date as "-", Inside Display as "-" and Outside Display as "-"
+    And From POG Details Page, Click On "Modify Search" Button
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+15" and FixtureLabel ""
+    Then Update the Template with vdate as "vdate+15", FixLabel "",POG Code "", Version "", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And Validate POG Code as "POG_SM", POG Version as "POGV_SM", FixLabel as "-", Start Date as "vdate+15", End date as "vdate+19", Inside Display as "INTEST1" and Outside Display as "OUTTEST1"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+15"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And Validate POG Code as "", POG Version as "-", FixLabel as "-", Start Date as "-", End date as "-", Inside Display as "-" and Outside Display as "-"
+
+    @skip
+  Scenario: POGM_SMARTTemplate_TC003#Single Floor Plan SMART_TEMP_OVERW_PLANNED_ASSIG=Y and Tag same POG with Planned POG and other POG2 should be tagged
+    And Update Query to change sys_conf_name "SMART_TEMP_OVERW_PLANNED_ASSIG"  value to "Y"
+    And Refresh Current Window
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Extract empty location for a single floor plan store
+    And From POG Detail Page, Filter Table content for Column "Store" ascending With Value "SFP_STORE"
+    And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+20" and FixtureLabel ""
+    And From POG Details Page, Click On "Export" Button
+    And Extract the POG with ChildSpace
+    Then Update the Template with vdate as "vdate+20", FixLabel "TEST123",POG Code "POGID_CS", Version "POGVER_CS", Module "",Meterage "",InsideDisp "INTEST",OutsideDisp "OUTTEST" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+20"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "PARENT_MOD"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "TEST123", Start Date as "vdate+20", End date as "MAX_END_DATE", Inside Display as "INTEST" and Outside Display as "OUTTEST"
+    And Remove Existing Filter
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "POGMOD_CS"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "POGMOD_CS", Start Date as "vdate+20", End date as "MAX_END_DATE", Inside Display as "INTEST" and Outside Display as "OUTTEST"
+    And Remove Existing Filter
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+20"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "PARENT_MOD"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "TEST123", Start Date as "vdate+20", End date as "MAX_END_DATE", Inside Display as "INTEST" and Outside Display as "OUTTEST"
+    And Remove Existing Filter
+    And From POG Detail Page, Filter Table content for Column "POG Module" With Value "POGMOD_CS"
+    And Validate POG Code as "POGID_CS", POG Version as "POGVER_CS", FixLabel as "POGMOD_CS", Start Date as "vdate+20", End date as "MAX_END_DATE", Inside Display as "INTEST" and Outside Display as "OUTTEST"
+    And Remove Existing Filter
+    And From POG Details Page, Click On "Modify Search" Button
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Wait For "5" Second
+    And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+15" and FixtureLabel ""
+    And From POG Details Page, Click On "Export" Button
+    Then Update the Template with vdate as "vdate+15", FixLabel "TEST123",POG Code "", Version "", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+15"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    Then Update the Template with vdate as "vdate+15", FixLabel "",POG Code "POGID_CS", Version "POGVER_CS", Module "",Meterage "",InsideDisp "INTEST",OutsideDisp "OUTTEST" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+15"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And Extract POG with single module
+    Then Update the Template with vdate as "vdate+15", FixLabel "TEST1234",POG Code "POG_SM", Version "POGV_SM", Module "",Meterage "",InsideDisp "INTEST1",OutsideDisp "OUTTEST1" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+15"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And Wait For "2" Second
+    And From POG Details Page, Click On "Modify Search" Button
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+20" and FixtureLabel ""
+    And From POG Detail Page, Filter Table content for Column "POG Code" With Value "POG_SM"
+    And Validate POG Code as "POG_SM", POG Version as "POGV_SM", FixLabel as "TEST1234", Start Date as "vdate+15", End date as "MAX_END_DATE", Inside Display as "INTEST1" and Outside Display as "OUTTEST1"
+    And Remove Existing Filter
+    Then Update the Template with vdate as "vdate+20", FixLabel "",POG Code "", Version "", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+20"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And Validate POG Code as "", POG Version as "-", FixLabel as "-", Start Date as "-", End date as "-", Inside Display as "-" and Outside Display as "-"
+    And From POG Details Page, Click On "Modify Search" Button
+    And Switch To Frame with Title "POG Detail Store Search"
+    And Add Store with Filter Location "SFP_EMPTY_LOC", AsofDate "vdate+15" and FixtureLabel ""
+    Then Update the Template with vdate as "vdate+15", FixLabel "",POG Code "", Version "", Module "",Meterage "",InsideDisp "",OutsideDisp "" against Store "SFP_STORE" and LocID "SFP_EMPTY_LOC"
+    And Validate POG Code as "POG_SM", POG Version as "POGV_SM", FixLabel as "TEST1234", Start Date as "vdate+15", End date as "vdate+19", Inside Display as "INTEST1" and Outside Display as "OUTTEST1"
+    And From POG Details Page, Click On "Import" Button
+    And Enter File Path in Window Popup for Screen "POG Details" with filename as "vdate+15"
+    And Validate Successful Message As "Record(s) Imported Successfully."
+    And Validate POG Code as "", POG Version as "-", FixLabel as "-", Start Date as "-", End date as "-", Inside Display as "-" and Outside Display as "-"
+    

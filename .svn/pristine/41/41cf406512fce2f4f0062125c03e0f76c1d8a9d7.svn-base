@@ -1,0 +1,37 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexWindow extends CommonPage {
+	
+	public ApexWindow(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+
+	public void apexRefreshCurrentWindow() throws Exception {
+		refreshCurrentWindow();
+	}
+	
+	public void closePopupWindow() throws Exception {
+		By closeIcon = By.xpath("//span[@class='ui-button-icon ui-icon ui-icon-closethick']");
+		switchToDefaultContent();
+		clickOnElement("Window Pop Up", "Close Button", closeIcon);
+	}
+	
+	public void inputPopupWindow(String pageName,String text) throws Exception {
+		enterTextinWinBrowsePopup(pageName, text);
+	}
+	
+	public void clickPopupWindow(String pageName) throws Exception {
+		clickOnWinBrowsePopup(pageName);
+	}
+	
+	public void closePopupWindowwithTitle(String title) throws Exception {
+		By closeIcon = By.xpath("//span[text()='"+title+"']//following-sibling::button//span[@class='ui-button-icon ui-icon ui-icon-closethick']");
+		switchToDefaultContent();
+		clickOnElement("Window Pop Up", "Close Button", closeIcon);
+	}
+}

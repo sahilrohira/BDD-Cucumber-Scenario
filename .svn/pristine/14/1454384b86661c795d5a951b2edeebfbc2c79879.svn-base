@@ -1,0 +1,31 @@
+
+Feature: Validating Functionality Related To Floor Plan under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Floor Plan" Link
+@run
+Scenario: POGM_FloorPlan_TC001#Floor Plan
+		When From Floor Plan Page, Validate Record Count from Database
+		And From Floor Plan Page, Click On "Add" Button
+		And Switch To Frame with Title "Manage Dummy Floor Plan"
+		And From Floor Plan Page, Enter Date For Field "P41_EFF_START_DATE" As "sysdate+1"
+		And From Floor Plan Page, Enter Date For Field "P41_EFF_END_DATE" As "sysdate+11"
+		Then Select Store from DB for which Dummy Floor Plan can be added
+		And From Floor Plan Page, Click On "Add" Button
+		#And From Alert Dialog, Validate title As "Record(s) Added Successfully."
+		And From Floor Plan Page, Click On "Refresh" Button
+		And From Floor Plan Page, Filter Table content for Column "Store" ascending With Value "STORE_NUM"
+		And Click On Link with text "Manage"
+		Then Switch To Frame with Title "Floor Plan PDF Management"
+		And From Floor Plan Page, Enter Date For Field "P80_PDF_DATE" As "sysdate+1"
+		And From Floor Plan Page, Click On "Upload" Button
+		Then Enter File Path in Window Popup for Screen "Floor Plan" with filename as "Test_File.pdf"
+		And Delete the Floor Plan PDF added
+		And Validate added Dummy Floor Plan dates
+		Then Delete the added Dummy Floor Plan
+		

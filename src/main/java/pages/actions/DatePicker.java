@@ -1,0 +1,27 @@
+package pages.actions;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class DatePicker extends CommonPage {
+	
+	public DatePicker(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+
+	public void selectDate(String pageName, String fieldName, String dateVal) throws Exception {
+		By datePickerLabel	= By.xpath("//input[contains(@id,'"+fieldName+"')]/parent::div/button");
+		selectDateInDateField(pageName, fieldName, datePickerLabel, dateVal);
+		Thread.sleep(500);
+	}
+	
+	public void validateSelectedDate(String pageName, String fieldName, String expDate) throws Exception {
+		
+		By datePickerLabel	= By.xpath("//input[contains(@id,'"+fieldName+"')]");
+		validateTextEquals(pageName, fieldName, datePickerLabel, expDate);
+	}
+
+	
+}

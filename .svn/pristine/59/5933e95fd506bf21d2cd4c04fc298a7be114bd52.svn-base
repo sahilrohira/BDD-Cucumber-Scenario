@@ -1,0 +1,29 @@
+package pages.Master;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import pages.commom.CommonPage;
+
+public class POGHierarchy extends CommonPage {
+	
+	private String pageName = "POGHierarchy";
+	
+	public POGHierarchy(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+	
+	public void validateElementExist(String fieldname,String flag) throws Exception {
+		By param= By.xpath("//li[contains(@id,'pog_tree')]//a[@aria-expanded='"+flag+"']");
+		validateElementPresent(pageName, fieldname, param);
+	}
+	
+	public void validateElementnotExist(String fieldname,String flag) throws Exception {
+		By param= By.xpath("//li[contains(@id,'pog_tree')]//a[@aria-expanded='"+flag+"']");
+		validateElementIsNotPresent(pageName, fieldname, param);
+	}
+	
+	public void clickontoggleElementwithText(String text) throws Exception {
+		By param= By.xpath("//a[contains(.,'"+text+"')]/../../span[@class='a-TreeView-toggle']");
+		clickOnElement(pageName, "Tagglewithtext"+text, param);
+	}
+}

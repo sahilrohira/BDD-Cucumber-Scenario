@@ -1,0 +1,89 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_DEFAULT_LOC_Table;
+import db.SM_FIXTURELABEL_Table;
+import db.SM_FIXTURE_Table;
+import db.SM_GENERAL_Table;
+import pages.apex.ApexTable;
+import pages.apex.ApexButton;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+
+public class Masters_LocationConfigPageSteps extends SuperStepdefs {
+
+	private String pageName = "Masters_LocationConfig";
+	private String tableLabel = "ig";
+	private ApexButton apextButton;
+	private ApexTable apexTable;
+	private SM_FIXTURE_Table sm_fixture_table;
+	private SM_DEFAULT_LOC_Table sm_default_loc_table;
+	private SM_GENERAL_Table sm_general_table;
+	private SM_FIXTURELABEL_Table sm_fixturelabel_table;
+	
+
+	public Masters_LocationConfigPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_fixture_table=new SM_FIXTURE_Table(con, testCaseId);
+		sm_default_loc_table=new SM_DEFAULT_LOC_Table(con, testCaseId);
+		sm_general_table=new SM_GENERAL_Table(con, testCaseId);
+		sm_fixturelabel_table=new SM_FIXTURELABEL_Table(con, testCaseId);
+	}
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Master_LocationConfig Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+
+	@When("^From Master_LocationConfig Page, Validate Record Count from Database")
+	public void validateRecordCount() throws Exception {
+		int expectedRowCount= sm_default_loc_table.getLocCount();
+		apexTable.validateTableRowCount(pageName,tableLabel,expectedRowCount);
+		logger.pass("From Masters LocationConfig Page, Row Count " + bold(expectedRowCount) + " matched");
+	}
+
+	@Then("^From Master_LocationConfig Page, For Row \"(.*)\", Select Drop Down Value For Column \"(.*)\" As \"(.*)\"$")
+	public void selectDropDownValue(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		apexTable.selectCellDropDownValue(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_LocationConfig Page, For Row "+bold(rowNo)+", Select Drop Down Value For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master_LocationConfig Page, For Row \"(.*)\", Enter Text For Column \"(.*)\" As \"(.*)\"$")
+	public void enterText(int rowNo, String headerName, String value) throws Exception {
+		if(headerName.equals("Location ID")) {
+			int ranNum = AppData.getRandomNumberBetweenRange(1,999);
+			storeTempData("Location_ID", "AutoLoc"+ranNum);
+			value= "AutoLoc"+ranNum;
+		}
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		apexTable.enterCellText(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_LocationConfig Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+
+	@Then("^Fetch the values from database for Fixture Code")
+	public void storeFixtureCode() throws Exception {
+		sm_fixture_table.getFixtureCode();
+		logger.pass("Successfully stored the values for Fixture Code");
+	}
+	
+	@Then("^Fetch the values from database for Division, Department, Sub Department and Fixture Label")
+	public void storeDivDepSubDepFixLabel() throws Exception {
+		sm_general_table.getDivisionName();
+		sm_general_table.getDepartmentName();
+		sm_general_table.getSubDepartmentName();
+		sm_fixturelabel_table.getFixtureLabel();
+		logger.pass("Successfully stored the values for Division,Department,Sub Department and Fixture Label");
+	}
+	
+}

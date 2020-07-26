@@ -1,0 +1,158 @@
+package db;
+
+import java.sql.Connection;
+import java.util.Map;
+
+import utils.AppData;
+
+public class SM_SMART_TEMPLATE_Table extends CommonDB {
+
+	public SM_SMART_TEMPLATE_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	public void getEmptyLocforStoreWithMultipleFP(String store) throws Exception {
+	/*	String StorewithPlannedFP_sql = "SELECT store as MFP_STORE FROM ( SELECT * FROM sm_floor_plan WHERE ax_utility_sql.get_vdate BETWEEN least(eff_start_date,ax_utility_sql.get_vdate) "
+				+ "AND nvl(eff_end_date,ax_utility_sql. get_vdate) AND bu_id = '"+AppData.buId+"' ) GROUP BY store HAVING COUNT(fp_version) = 2 FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(StorewithPlannedFP_sql);*/
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		String EmptyLocwithPlannedFP_sql = "SELECT sfl.location_id AS MFP_EMPTY_LOC FROM sm_floor_plan sfp INNER JOIN sm_floor_layout sfl ON ( sfp.bu_id = sfl.bu_id AND sfp.store = sfl.store AND sfp.fp_version = sfl.fp_version ) "
+				+ "INNER JOIN ax_bu_sysprm sbsp ON ( sbsp.bu_id = sfp.bu_id AND sbsp.sys_conf_name = 'UNASSIGNED_PROM_LOCATION_ID' ) "
+				+ "INNER JOIN ax_bu_sysprm sbsnp ON ( sbsnp.bu_id = sfp.bu_id AND sbsnp.sys_conf_name = 'UNASSIGNED_NONPROM_LOCATION_ID' ) LEFT OUTER JOIN sm_floor_plan_dtl sfpd ON "
+				+ "( sfl.bu_id = sfpd.bu_id AND sfl.store = sfpd.store AND sfl.fp_version = sfpd.fp_version AND sfl.location_id = sfpd.location_id AND ax_utility_sql.get_vdate + 1 BETWEEN "
+				+ "sfpd.eff_start_date AND sfpd.eff_end_date) LEFT OUTER JOIN sm_fixture_labels sfls ON ( sfls.bu_id = sfpd.bu_id AND sfls.label_type = 'F' AND sfls.fixture_label = "
+				+ "sm_pog_sql.get_fixture_label_prefix(nvl(sfpd.PARENT_POG_FIXTURE_LABEL ,sfl.fixture_label) ) ) WHERE sfp.bu_id = '"+AppData.buId+"' AND sfl.store ="+store+" AND ax_utility_sql.get_vdate + 1 "
+				+ "BETWEEN sfp.eff_start_date AND sfp.eff_end_date AND sfpd.pog_code IS NULL AND ( sfpd.PARENT_POG_FIXTURE_LABEL IS NULL OR ( sfpd.PARENT_POG_FIXTURE_LABEL IS NOT NULL "
+				+ "AND nvl(sfls.pog_ind,'Y') = 'N' AND nvl(sfls.prom_ind,'Y') = 'N' ) ) AND sfl.location_id NOT LIKE sbsp.sys_conf_value || '%' AND sfl.location_id NOT LIKE sbsnp.sys_conf_value || '_%' "
+				+ "AND sfl.dummy_ind='N' FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(EmptyLocwithPlannedFP_sql);
+	}
+
+	public void getEmptyLocforStoreWithSingleFP() throws Exception {
+		String StorewithSingleFP_sql = "SELECT sfl.location_id AS SFP_EMPTY_LOC, sfp.store as SFP_STORE FROM sm_floor_plan sfp INNER JOIN sm_floor_layout sfl ON ( sfp.bu_id = sfl.bu_id AND sfp.store = sfl.store AND sfp.fp_version = sfl.fp_version )"
+				+ " INNER JOIN ax_bu_sysprm sbsp ON ( sbsp.bu_id = sfp.bu_id AND sbsp.sys_conf_name = 'UNASSIGNED_PROM_LOCATION_ID' ) INNER JOIN ax_bu_sysprm sbsnp ON ( sbsnp.bu_id = sfp.bu_id AND sbsnp.sys_conf_name = 'UNASSIGNED_NONPROM_LOCATION_ID' ) "
+				+ "LEFT OUTER JOIN sm_floor_plan_dtl sfpd ON ( sfl.bu_id = sfpd.bu_id AND sfl.store = sfpd.store AND sfl.fp_version = sfpd.fp_version AND sfl.location_id = sfpd.location_id AND ax_utility_sql.get_vdate+1 BETWEEN sfpd.eff_start_date AND sfpd.eff_end_date )"
+				+ " LEFT OUTER JOIN sm_fixture_labels sfls ON ( sfls.bu_id = sfpd.bu_id AND sfls.label_type = 'F' AND sfls.fixture_label = sm_pog_sql.get_fixture_label_prefix(nvl(sfpd.parent_pog_fixture_label ,sfl.fixture_label) ) ) WHERE sfp.bu_id = '"+AppData.buId+"' AND "
+				+ "ax_utility_sql.get_vdate+1 BETWEEN sfp.eff_start_date AND sfp.eff_end_date AND sfpd.pog_code IS NULL AND ( sfpd.parent_pog_fixture_label IS NULL OR ( sfpd.parent_pog_fixture_label IS NOT NULL AND nvl(sfls.pog_ind,'Y') = 'N' AND nvl(sfls.prom_ind,'Y') = 'N' ) )"
+				+ " AND sfl.location_id NOT LIKE sbsp.sys_conf_value || '%' AND sfl.location_id NOT LIKE sbsnp.sys_conf_value || '_%' AND sfl.dummy_ind = 'N' GROUP BY sfp.store, sfl.location_id HAVING COUNT(sfp.fp_version) = 1 ORDER BY dbms_random.value FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(StorewithSingleFP_sql);
+	}
+
+	public void getLocForPromotionPOGInStore() throws Exception {
+		String StorewithPromotionPOG_sql = "SELECT Store as PROM_STORE,Location_ID as PROM_LOCID FROM sm_floor_plan_dtl sfpd INNER JOIN sm_pog spm ON ( sfpd.bu_id = spm.bu_id AND sfpd.pog_code = spm.pog_code AND sfpd.pog_version = spm.pog_version ) "
+				+ "WHERE sfpd.bu_id = '"+AppData.buId+"'  AND ax_utility_sql.get_vdate+1 BETWEEN sfpd.eff_start_date AND sfpd.eff_end_date AND spm.pog_type = 'P' AND sfpd.parent_pog_info IS NULL AND "
+				+ "sfpd.orig_action_source = 'PROMOTION' AND ROWNUM <= 1";
+		storeColumnNameAndValue(StorewithPromotionPOG_sql);	
+	}
+
+	public void getLocForChildPromotionPOGInStore() throws Exception {
+		String StorewithChildPromotionPOG_sql = "SELECT sfpd.location_id as CHILD_PROM_LOCID,sfpd.store as CHILD_PROM_STORE, sfpd.pog_code ,sfpd.PARENT_POG_FIXTURE_LABEL,sfpd.FP_VERSION,ss.store_name FROM sm_floor_plan_dtl sfpd INNER JOIN sm_pog spm ON "
+				+ "( sfpd.bu_id = spm.bu_id AND sfpd.pog_code = spm.pog_code AND sfpd.pog_version = spm.pog_version ) INNER JOIN sm_store ss ON (sfpd.bu_id=ss.bu_id and sfpd.store=ss.store) WHERE sfpd.bu_id = '"+AppData.buId+"' AND ax_utility_sql.get_vdate+1 BETWEEN "
+				+ "sfpd.eff_start_date AND sfpd.eff_end_date AND spm.pog_type = 'P' AND sfpd.parent_pog_info IS NOT NULL AND ROWNUM <= 1";
+		storeColumnNameAndValue(StorewithChildPromotionPOG_sql);	
+	}	
+
+	public void getLocForChildDummyPOGInStore() throws Exception {
+		String StorewithChildPromotionPOG_sql = "SELECT sfpd.location_id as CHILD_DUMMY_LOCID,sfpd.store as CHILD_DUMMY_STORE, sfpd.pog_code as DUMMYCHILD_POG,sfpd.PARENT_POG_FIXTURE_LABEL FROM sm_floor_plan_dtl sfpd INNER JOIN sm_pog spm ON "
+				+ "( sfpd.bu_id = spm.bu_id AND sfpd.pog_code = spm.pog_code AND sfpd.pog_version = spm.pog_version ) WHERE sfpd.bu_id = '"+AppData.buId+"' AND ax_utility_sql.get_vdate+1 BETWEEN "
+				+ "sfpd.eff_start_date AND sfpd.eff_end_date AND spm.pog_type = 'D' AND sfpd.parent_pog_info IS NOT NULL AND ROWNUM <= 1";
+		storeColumnNameAndValue(StorewithChildPromotionPOG_sql);	
+	}	
+
+	public void getLocForEmptyChildSpacePOGInStore() throws Exception {
+		String StorewithEmptyChildSpacePOG_sql = "SELECT sfpd.location_id as EMPTYCHILDSPACE_LOCATIONID,sfpd.store EMPTYCHILDSPACE_STORE,sfpd.pog_module as EMPTYCHILDSPACE_MODULE FROM sm_floor_plan_dtl sfpd INNER JOIN "
+				+ "sm_pog_module spm ON ( sfpd.bu_id = spm.bu_id AND sfpd.pog_code = spm.pog_code AND sfpd.pog_version = spm.pog_version AND sfpd.pog_module=spm.pog_module) WHERE sfpd.bu_id = '"+AppData.buId+"' AND "
+				+ "ax_utility_sql.get_vdate BETWEEN sfpd.eff_start_date AND sfpd.eff_end_date AND sfpd.parent_pog_info IS NULL AND spm.module_type!='RG' AND ROWNUM <= 1";
+		storeColumnNameAndValue(StorewithEmptyChildSpacePOG_sql);	
+	}	
+	
+	public void getStoreWithSingleFloorPlan() throws Exception {
+		String StorewithSingleFP_sql = "SELECT store as SFP_STORE FROM ( SELECT * FROM sm_floor_plan WHERE ax_utility_sql.get_vdate BETWEEN least(eff_start_date,ax_utility_sql.get_vdate) "
+				+ "AND nvl(eff_end_date,ax_utility_sql. get_vdate) AND bu_id = '"+AppData.buId+"' ) GROUP BY store HAVING COUNT(fp_version) = 1 FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(StorewithSingleFP_sql);
+	}
+	
+	public void getStoreWithDoubleFloorPlan() throws Exception {
+		String StorewithSinglePlannedFP_sql = "Select store as mfp_store,TO_CHAR(eff_end_date,'"+AppData.appDateFormat+"' ) as MFP_ENDDATE1,TO_CHAR(eff_end_date+10,'"+AppData.appDateFormat+"') as MFP_PROMENDDATE from sm_floor_plan where store =( SELECT store FROM ( SELECT * FROM sm_floor_plan WHERE ax_utility_sql.get_vdate "
+				+ "BETWEEN least(eff_start_date,ax_utility_sql.get_vdate) AND nvl(eff_end_date,ax_utility_sql.get_vdate ) AND bu_id = '"+AppData.buId+"' ) GROUP BY store HAVING COUNT(fp_version) = 2 FETCH FIRST 1 ROWS ONLY) "
+				+ "and ax_utility_sql.get_vdate BETWEEN least(eff_start_date,ax_utility_sql.get_vdate) AND nvl(eff_end_date,ax_utility_sql.get_vdate) order by 2";
+		storeColumnNameAndValue(StorewithSinglePlannedFP_sql);
+	}
+	
+	public void getLocForEmptyChildSpacePOGInStoreForPromTaggingInStore(String store) throws Exception {
+		if(getTempData(store)!=null) {store=getTempData(store);}
+		String StorewithEmptyChildSpacePOG_sql = "SELECT location_id as EMPTY_CSLOC,pog_code PARENT_POG,pog_module CS_MODULE FROM sm_floor_plan_dtl WHERE bu_id ='"+AppData.buId+"'  AND store = "+store+" AND "
+				+ "ax_utility_sql.get_vdate + 1 BETWEEN eff_start_date AND eff_end_date AND (pog_module LIKE '%HS_%' or pog_module LIKE '%TS_%') AND PARENT_POG_INFO is null AND ROWNUM <= 1";
+		storeColumnNameAndValue(StorewithEmptyChildSpacePOG_sql);	
+	}	
+	
+	public String getRecordCountInStoreOnLocForTaggedPOG(String location,String store) throws Exception {
+		String recCountAtLoc = " SELECT count(*) as Count FROM sm_floor_plan_dtl sfpd WHERE location_id = '"+location+"' AND bu_id = '"+AppData.buId+"' AND store = "+store+" AND ax_utility_sql.get_vdate+1 BETWEEN sfpd.eff_start_date "
+				+ "AND sfpd.eff_end_date AND NOT exists ( SELECT 1 FROM sm_floor_plan_dtl WHERE location_id = '"+location+"' AND bu_id = '"+AppData.buId+"' AND store = "+store+" AND ax_utility_sql.get_vdate+1 BETWEEN eff_start_date "
+				+ "AND eff_end_date AND parent_pog_info LIKE '%'||'#'||sfpd.pog_module||'#'||'%' )";
+		Map<String, String> rec_Count=getColumnNameAndValue(recCountAtLoc);
+		String recCount = rec_Count.get("COUNT");
+		return recCount;	
+	}		
+
+	public String getChildRecordCountInStoreOnLocForParentPOGModuleinPOGLevel1(String moduleName,String location,String store) throws Exception {
+		String childRecCountAtLoc = " SELECT count(*) as ChildRecordCount FROM sm_floor_plan_dtl sfpd WHERE location_id = '"+location+"' AND bu_id = '"+AppData.buId+"' AND store =  "+store+" AND ax_utility_sql.get_vdate+1 BETWEEN sfpd.eff_start_date "
+				+ "AND sfpd.eff_end_date and sfpd.parent_pog_fixture_label ='"+moduleName+"'";
+		Map<String, String> child_Rec_Count=getColumnNameAndValue(childRecCountAtLoc);
+		String childRecCount = child_Rec_Count.get("CHILDRECORDCOUNT");
+		return childRecCount;	
+	}		
+
+
+	public String getRecordCountInStoreOnLocForTaggedPOGinPOGLevel1(String location,String store) throws Exception {
+		String recCountAtLocPOGLvl1 = " SELECT count(*) as POGLVEL1COUNT FROM sm_floor_plan_dtl sfpd WHERE location_id = '"+location+"' AND bu_id = '"+AppData.buId+"' AND store =  "+store+" AND ax_utility_sql.get_vdate+1 BETWEEN sfpd.eff_start_date AND "
+				+ "sfpd.eff_end_date and sfpd.parent_pog_fixture_label is null";
+		Map<String, String> rec_Count=getColumnNameAndValue(recCountAtLocPOGLvl1);
+		String recCount = rec_Count.get("POGLVEL1COUNT");
+		return recCount;	
+	}
+
+	public void getPOGwithChildSpace() throws Exception {
+		String pogWithChildSpace = " SELECT sp.pog_code AS POGID_CS,sp.pog_version POGVER_CS, spm.pog_module POGMOD_CS,spm.parent_pog_module PARENT_MOD, TO_CHAR(TO_DATE('20491231','YYYYMMDD'),'"+AppData.appDateFormat+"') as MAX_END_DATE FROM sm_pog sp INNER JOIN sm_pog_module spm ON ( sp.bu_id = spm.bu_id AND sp.pog_code = spm.pog_code AND sp.pog_version = spm.pog_version ) "
+				+ "WHERE sp.bu_id = '"+AppData.buId+"' and sp.pog_type not in ('P','D') and spm.module_type!='RG' and (sp.EFF_END_DATE is null or TO_CHAR(sp.eff_end_date,'YYYY/MM/DD') ='2049/12/31')";
+		storeColumnNameAndValue(pogWithChildSpace);	
+	}
+	
+	public void getPOGwithMultipleChildSpace() throws Exception {
+		String pogWithMultipleChildSpace = " select pog_code as POGID_MCS, pog_version POGVER_MCS from ( select * from sm_pog_module where bu_id='"+AppData.buId+"' and module_type<>'RG' and (pog_module "
+				+ "like 'HS_%' or pog_module LIKE ('TS_%')) )  where bu_id='"+AppData.buId+"' group by pog_code, pog_version having count(distinct pog_module)=2";
+		storeColumnNameAndValue(pogWithMultipleChildSpace);
+		String childSpaceModules2_sql="Select min(pog_module) as CPOG_MOD1 ,max(pog_module) as CPOG_MOD2 from sm_pog_module where bu_id='"+AppData.buId+"' and pog_code='"+getTempData("POGID_MCS")+"' and pog_version="+getTempData("POGVER_MCS")+" and (pog_module like 'HS_%' or pog_module LIKE 'TS_%')";
+		storeColumnNameAndValue(childSpaceModules2_sql);
+	}
+	
+	public void getPOGwithChildSpaceforPromTag() throws Exception {
+		String pogWithChildSpaceforPromtag = " SELECT sp.pog_code AS POGID_PCS,sp.pog_version POGVER_PCS, spm.pog_module POGMOD_PCS,spm.parent_pog_module PARENT_PMOD, TO_CHAR(TO_DATE('20491231','YYYYMMDD'),'"+AppData.appDateFormat+"') as MAX_END_DATE FROM sm_pog sp INNER JOIN sm_pog_module spm ON ( sp.bu_id = spm.bu_id AND sp.pog_code = spm.pog_code AND sp.pog_version = spm.pog_version ) "
+				+ "WHERE sp.bu_id = '"+AppData.buId+"' and sp.pog_type not in ('P','D') and spm.module_type!='RG' AND (spm.pog_module LIKE 'HS_%' or spm.pog_module LIKE 'TS_%') and (sp.EFF_END_DATE is null or TO_CHAR(sp.eff_end_date,'YYYY/MM/DD') ='2049/12/31')";
+		storeColumnNameAndValue(pogWithChildSpaceforPromtag);	
+		}
+	
+	public void getPOGwithChildSpaceforPromTagexceptPOG(String pogCode,String pogVer) throws Exception {
+		String pogWithChildSpaceforPromtag = " SELECT sp.pog_code AS POGID2_PCS,sp.pog_version POGVER2_PCS, spm.pog_module POGMOD2_PCS,spm.parent_pog_module PARENT2_PMOD, TO_CHAR(TO_DATE('20491231','YYYYMMDD'),'"+AppData.appDateFormat+"') as MAX_END_DATE FROM sm_pog sp INNER JOIN sm_pog_module spm ON ( sp.bu_id = spm.bu_id AND sp.pog_code = spm.pog_code AND sp.pog_version = spm.pog_version ) "
+				+ "WHERE sp.bu_id = '"+AppData.buId+"' and sp.pog_type not in ('P','D') and spm.module_type!='RG' AND (spm.pog_module LIKE 'HS_%' or spm.pog_module LIKE 'TS_%') and (sp.EFF_END_DATE is null or TO_CHAR(sp.eff_end_date,'YYYY/MM/DD') ='2049/12/31') AND sp.pog_code!='"+getTempData(pogCode)+"' and sp.pog_version!="+ getTempData(pogVer) ;
+		storeColumnNameAndValue(pogWithChildSpaceforPromtag);	
+		}
+
+	public void getPOGwithSingleMod() throws Exception {
+		String pogWithSingleMod = " SELECT sp.pog_code as POG_SM,sp.pog_version as POGV_SM FROM sm_pog sp INNER JOIN sm_pog_module spm on (sp.bu_id = spm.bu_id AND sp.pog_code = spm.pog_code AND sp.pog_version = spm.pog_version) WHERE sp.bu_id = '"+AppData.buId+"' and "
+				+ "sp.pog_type NOT IN ('P','D') group by sp.pog_code, sp.pog_version having count(spm.pog_module)=1";
+		storeColumnNameAndValue(pogWithSingleMod);
+	}
+	
+	public void getPOGwithSingleModforStoreArea(String storeArea) throws Exception {
+		String pogWithStoreAreaSingleMod = "  SELECT sp.pog_code AS pog_sm, sp.pog_version   AS pogv_sm FROM sm_pog sp INNER JOIN sm_pog_module spm ON ( sp.bu_id = spm.bu_id" + 
+				" AND sp.pog_code = spm.pog_code AND sp.pog_version = spm.pog_version ) INNER JOIN sm_area sa ON ( sp.bu_id = sa.bu_id) WHERE sp.bu_id = '"+AppData.buId+"' AND sp.pog_type NOT IN ('P','D') AND (sa.area="+storeArea +" or sa.area is null) AND sp.pog_region="+storeArea +" AND ROWNUM <= 1 GROUP BY sp.pog_code,sp.pog_version HAVING COUNT(spm.pog_module) = 1";
+		storeColumnNameAndValue(pogWithStoreAreaSingleMod);
+	}
+	
+	public void getPOGwithoutSingleModforStoreArea(String storeArea) throws Exception {
+		String pogWithStoreAreaSingleMod = "SELECT sp.pog_code AS pog_sm, sp.pog_version   AS pogv_sm FROM sm_pog sp INNER JOIN sm_pog_module spm ON ( sp.bu_id = spm.bu_id" + 
+				" AND sp.pog_code = spm.pog_code AND sp.pog_version = spm.pog_version ) INNER JOIN sm_area sa ON ( sp.bu_id = sa.bu_id) WHERE sp.bu_id = '"+AppData.buId+"' AND sp.pog_type NOT IN ('P','D') AND sp.pog_region IS NOT NULL AND sp.pog_region!="+storeArea +" AND ROWNUM <= 1 GROUP BY sp.pog_code,sp.pog_version HAVING COUNT(spm.pog_module) = 1";
+		storeColumnNameAndValue(pogWithStoreAreaSingleMod);
+	}
+}

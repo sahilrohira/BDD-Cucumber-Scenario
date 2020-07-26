@@ -1,0 +1,320 @@
+package stepdefs.Masters;
+
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import db.SM_GENERAL_Table;
+import db.SM_POG_CATEGORY_Table;
+import pages.Master.POGHierarchy;
+import pages.apex.ApexButton;
+import pages.apex.ApexItemOption;
+import pages.apex.ApexNotification;
+import pages.apex.ApexPageHeader;
+import pages.apex.ApexTable;
+import pages.apex.ApexTextField;
+import stepdefs.common.CommonPageSteps;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+import utils.AppData;
+import utils.AppDateUtil;
+
+public class Masters_POGHierarchyPageSteps extends SuperStepdefs {
+
+	private String pageName = "Masters_POGHierarchy";
+	private String tableLabelPogDivision = "pog_division";
+	private String tableLabelPogDepartment = "pog_department";
+	private String tableLabelPogSubDepartment = "pog_subdepartment";
+	private CommonPageSteps commonPageSteps;
+	private ApexButton apextButton;
+	private POGHierarchy pogHierarchy;
+	private ApexTextField apexTextField;
+	private SM_POG_CATEGORY_Table sm_pog_category_table;
+	private ApexPageHeader apexPageHeader;
+	private ApexNotification apexNotification;
+	private ApexTable apexTable;
+	private SM_GENERAL_Table sm_general_table;
+	private ApexItemOption apexItemOption;
+
+	public Masters_POGHierarchyPageSteps(Hook hook) {
+		super(hook);
+		apextButton = new ApexButton(driver, testCaseId);
+		apexTextField = new ApexTextField(driver, testCaseId);
+		commonPageSteps = new CommonPageSteps(hook);
+		pogHierarchy = new POGHierarchy(driver, testCaseId);
+		sm_pog_category_table = new SM_POG_CATEGORY_Table(con, testCaseId);
+		apexPageHeader = new ApexPageHeader(driver, testCaseId);
+		apexNotification = new ApexNotification(driver, testCaseId);
+		apexTable = new ApexTable(driver, testCaseId);
+		sm_general_table = new SM_GENERAL_Table(con, testCaseId);
+		apexItemOption = new ApexItemOption(driver, testCaseId);
+	}   
+
+	/**
+	 * @author Shubhank.garg
+	 * 
+	 */
+	@When("^From Master POGHierarchy Page, Click On \"(.*)\" Button$")
+	public void clickOnButton(String buttonName) throws Exception {
+		apextButton.clickOnButton(pageName, buttonName);
+		logger.pass("From " + pageName + ", Click On " + bold(buttonName) + " Button");
+	}
+
+	@Then("^Validate all hierarchy expanded")
+	public void validateelementpresentforexpandedandnotcollapsed() throws Exception {
+		pogHierarchy.validateElementExist("all expanded", "true");
+		pogHierarchy.validateElementnotExist("all copalsed", "false");
+		logger.pass("Validated all Hierarchy is expanded and no Single Collpased Hirarchy is present");
+	}
+
+	@Then("^Validate all hierarchy collapsed")
+	public void validateelementpresentforcollapsedandnotexpanded() throws Exception {
+		pogHierarchy.validateElementExist("all collapsed", "false");
+		pogHierarchy.validateElementnotExist("all expanded", "true");
+		logger.pass("Validated all Hierarchy is collpsed and no Single expanded Hirarchy is present");
+	}
+	
+	@Then("^Validate for tabel \"(.*)\" for row \"(.*)\" with column \"(.*)\" have value \"(.*)\"$")
+	public void validateTableContentVal(String tableLabel, int rowNo, String columnName, String expCellValue) throws Exception{
+		if (getTempData(expCellValue) != null)
+			expCellValue = getTempData(expCellValue);
+		apexTable.validateScrollingTableCellValue(pageName, tableLabel, rowNo, columnName, expCellValue);
+		logger.pass("The value" + bold(expCellValue) + "is successfully matched with Searched Value");
+	}
+
+	@Then("Add Division with Division ID as \"(.*)\" and Division Name as \"(.*)\" and Usage Type as \"(.*)\" and default Exclude Indicator$")
+	public void addDivision(String divID, String divName, String usageType) throws Exception {
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 9999);
+		storeTempData("DIVISION_ID", divID + ranNum);
+		storeTempData("DIVISION_NAME", divName + ranNum);
+		apexTextField.enterText(pageName, "P27_DIVISION", "DIVISION_ID");
+		apexTextField.enterText(pageName, "P27_DIVISION_NAME", "DIVISION_NAME");
+		commonPageSteps.selectDropDownValue("P27_USAGE_TYPE", usageType);
+		// commonPageSteps.selectDropDownValue("P27_MET_DIS_UNIT", usageType);
+		commonPageSteps.clickOnButton("Add");
+		logger.pass("New Division added with Division ID as " + bold(divID + ranNum) + " Division Name as "
+				+ bold(divName + ranNum));
+	}
+
+	@Then("Add Department with Department ID as \"(.*)\",Department Name as \"(.*)\",Category from Database and Display Indicator as \"(.*)\" and other default values$")
+	public void addDepartment(String departID, String departName, String disInd) throws Exception {
+		String division = getTempData("DIVISION_ID") + "-" + getTempData("DIVISION_NAME");
+		commonPageSteps.selectDropDownValue("P30_DIVISION", division.toUpperCase());
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 9999);
+		storeTempData("DEPARTMENT_ID", departID + ranNum);
+		storeTempData("DEPARTMENT_NAME", departName + ranNum);
+		String category = sm_pog_category_table.getPOGCatCodeandCatName();
+		apexTextField.enterText(pageName, "P30_DEPT", "DEPARTMENT_ID");
+		apexTextField.enterText(pageName, "P30_DEPT_NAME", "DEPARTMENT_NAME");
+		commonPageSteps.selectDropDownValue("P30_CATEGORY", category);
+		apexTextField.enterText(pageName, "P30_DEPT_SHORT_DESC", "Auto_Script_short_desc_dept");
+		// commonPageSteps.selectDropDownValue("P27_USAGE_TYPE", usageType);
+		commonPageSteps.selectDropDownValue("P30_DEFAULT_DISPLAY_IND", disInd);
+		// commonPageSteps.selectDropDownValue("P30_DEFAULT_DISPLAY_TYPE", "Dept Name");
+		commonPageSteps.clickOnButton("Add");
+		logger.pass("New Department added with Department as " + bold(departID + ranNum) + " Department Name as "
+				+ bold(departName + ranNum) + " and Category as " + bold(category));
+	}
+
+	@Then("Add Sub Department with Sub Department as \"(.*)\",Sub Department Name as \"(.*)\" and other default values$")
+	public void addSubDepartment(String subdepartID, String subdepartName) throws Exception {
+		String division = getTempData("DIVISION_ID") + "-" + getTempData("DIVISION_NAME");
+		commonPageSteps.selectDropDownValue("P36_DIVISION", division.toUpperCase());
+		String department = getTempData("DEPARTMENT_ID") + "-" + getTempData("DEPARTMENT_NAME");
+		commonPageSteps.selectDropDownValue("P36_DEPARTMENT", department.toUpperCase());
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 9999);
+		storeTempData("SUBDEPARTMENT_ID", subdepartID + ranNum);
+		storeTempData("SUBDEPARTMENT_NAME", subdepartName + ranNum);
+		apexTextField.enterText(pageName, "P36_SUBDEPT", "SUBDEPARTMENT_ID");
+		apexTextField.enterText(pageName, "P36_SUBDEPT_NAME", "SUBDEPARTMENT_NAME");
+		apexTextField.enterText(pageName, "P36_SUBDEPT_SHORT_DESC", "Auto_Script_short_desc_subDept");
+		// commonPageSteps.selectDropDownValue("P36_USAGE_TYPE", usageType);
+		// commonPageSteps.selectDropDownValue("P36_DEFAULT_DISPLAY_IND", disInd);
+		// commonPageSteps.selectDropDownValue("P36_DEFAULT_DISPLAY_TYPE", "Dept Name");
+		// commonPageSteps.selectDropDownValue("P36_MET_DIS_UNIT", "");
+		apexTextField.enterText(pageName, "P36_REFERENCE_VALUE", "SUBDEPARTMENT_ID");
+		// apexTextField.enterText(pageName, "P36_MIN_METERAGE", "1");
+		// apexTextField.enterText(pageName, "P36_MAX_METERAGE", "10");
+		commonPageSteps.clickOnButton("Add");
+		logger.pass("New Sub Department added with Department as " + bold(subdepartID + ranNum) + " Department Name as "
+				+ bold(subdepartName + ranNum));
+	}
+
+	@When("^Click on toggle Element for \"(.*)\"$")
+	public void clickOntaggleButton(String text) throws Exception {
+		if (getTempData(text) != null)
+			text = getTempData(text);
+		pogHierarchy.clickontoggleElementwithText(text);
+		logger.pass("From " + pageName + ", Click On toggle button with text as" + bold(text));
+	}
+
+	@Then("Validate that select Category From DB should not be deleted in POG Category")
+	public void validateCategorycannotbeDeleted() throws Exception {
+		String category = getTempData("CATEGORY");
+		String[] catCodeName = category.split(" - ");
+		String catCode = catCodeName[0];
+		commonPageSteps.clickOnTopMenuLink("Masters");
+		apexPageHeader.clickOnHeader3Link(category, "POG Category");
+		apexTextField.enterText(pageName, "search_field", catCode);
+		apextButton.clickOnButton(pageName, "Go");
+		commonPageSteps.deleteRowinTable(1, "ig_grid");
+		apexNotification.verifyErrorMessageContent("APEX - SM-0001 Child Record Exists, Cannot Delete Parent Record.");
+		commonPageSteps.clickOnTopMenuLink("Masters");
+		apexPageHeader.clickOnHeader3Link(category, "POG Hierarchy");
+		logger.pass("Successfully Validated that Category cannot be removed onced added in Department.");
+	}
+
+	
+	/**
+	 * @author Sahil.Rohira
+	 * 
+	 */
+	
+	@Then("^Uncheck the checkbox for the row \"(.*)\"$")
+	public void uncheckClosedStorechkbox(int rowNum) throws Exception {
+		apexTable.clickOnTableCheckBox(pageName, tableLabelPogDivision, rowNum);
+		Thread.sleep(4000);
+		logger.pass("Uncheck the Checkbox for selected Row");
+	}
+
+	@Then("^Add Row \"(.*)\" in the pog division table$")
+	public void addTableRowPogDivision(int rowNum) throws Exception {
+		apexTable.addTableRowHavingSpan(pageName, tableLabelPogDivision, rowNum);
+		Thread.sleep(4000);
+		logger.pass("Row added in the table successfully");
+	}
+	
+	@Then("^Add Row \"(.*)\" in the pog department table$")
+	public void addTableRowPogDepartmet(int rowNum) throws Exception {
+		apexTable.addTableRowHavingSpan(pageName, tableLabelPogDepartment, rowNum);
+		Thread.sleep(4000);
+		logger.pass("Row added in the table successfully");
+	}
+	
+	@Then("^Add Row \"(.*)\" in the pog Sub-department table$")
+	public void addTableRowPogSubDepartmet(int rowNum) throws Exception {
+		apexTable.addTableRowHavingSpan(pageName, tableLabelPogSubDepartment, rowNum);
+		Thread.sleep(4000);
+		logger.pass("Row added in the table successfully");
+	}
+	
+	@Then("^Update Query to change sys_conf_name \"(.*)\"  value to \"(.*)\"$")
+	public void updatePOGSubDeptMandIndicator(String sys_Conf_Name, String flagVal) throws Exception {
+		sm_general_table.updateSystemConfValue(flagVal, sys_Conf_Name);
+	}
+	
+	@Then("^Delete the row number \"(.*)\" from table \"(.*)\"$")
+	public void deleteRowinTable(int rowNo, String tableLabel) throws Exception {
+		apexTable.deleteTableRow(pageName, tableLabel, rowNo);
+		logger.pass("Deleted Row" + bold(rowNo) + " from table "+bold(tableLabel));
+	}  
+	
+	@Then("^Refresh the row number \"(.*)\" from table \"(.*)\"$")
+	public void refreshRowinTable(int rowNo, String tableLabel) throws Exception {
+		apexTable.refreshTableRow(pageName, tableLabel, rowNo);
+		logger.pass("Refresh Row" + bold(rowNo) + " from table "+bold(tableLabel));
+	}  
+	
+	@Then("^From POG Hierarchy Page, For Row \"(.*)\", Add Division with Division ID For Column \"(.*)\" As \"(.*)\" and Division Name For Column \"(.*)\" As \"(.*)\" and Usage Type For Column \"(.*)\" As \"(.*)\" and default Exclude Indicator$")
+	public void addDivision(int rowNo, String headerName, String divID, String headerName1, String divName, String headerName2, String usageType) throws Exception {
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 9999);
+		storeTempData("DIVISION_ID", divID + ranNum);
+		storeTempData("DIVISION_NAME", divName + ranNum);
+		apexTable.enterCellText(pageName, tableLabelPogDivision, rowNo, headerName, "DIVISION_ID");
+		apexTable.enterCellText(pageName, tableLabelPogDivision, rowNo, headerName1, "DIVISION_NAME");
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, tableLabelPogDivision, rowNo, headerName2, usageType);
+		logger.pass("New Division added with Division ID as " + bold(divID + ranNum) + " Division Name as "
+				+ bold(divName + ranNum));
+	}
+	
+	@Then("^From POG Hierarchy Page, For Row \"(.*)\",Add Department with Department ID For Column \"(.*)\" As \"(.*)\" and Department Name For Column \"(.*)\" As \"(.*)\" and Short Description For Column \"(.*)\" As \"(.*)\" and Category from database for Column \"(.*)\" and ExcludeInd for column \"(.*)\" as \"(.*)\" and DisableInd for Column \"(.*)\" as \"(.*)\"$")  
+	public void addDepartment(int rowNo, String headerName, String deptID, String headerName1, String deptName, String headerName2, String shortDesc, String headerName3,String headerName4, String excludeInd,String headerName5, String disableInd) throws Exception{
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 9999);
+		storeTempData("DEPARTMENT_ID", deptID + ranNum);
+		storeTempData("DEPARTMENT_NAME", deptName + ranNum);
+		storeTempData("DEPARTMENT_SHORT_DESC", shortDesc + ranNum);
+		String category = sm_pog_category_table.getPOGCatCodeandCatName();
+		apexTable.enterCellText(pageName, tableLabelPogDepartment, rowNo, headerName, "DEPARTMENT_ID");
+		apexTable.enterCellText(pageName, tableLabelPogDepartment, rowNo, headerName1, "DEPARTMENT_NAME");
+		apexTable.enterCellText(pageName, tableLabelPogDepartment, rowNo, headerName2, "DEPARTMENT_SHORT_DESC");
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, tableLabelPogDepartment, rowNo, headerName3, category);
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, tableLabelPogDepartment, rowNo, headerName4, excludeInd);
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, tableLabelPogDepartment, rowNo, headerName5, disableInd);
+		logger.pass("New Department added with Department as " + bold(deptID + ranNum) + " Department Name as "
+				+ bold(deptName + ranNum) + " and Category as " + bold(category));
+	}
+	
+	@Then("^From POG Hierarchy Page, For Row \"(.*)\",Add SubDepartment with SubDepartment ID For Column \"(.*)\" As \"(.*)\" and SubDepartment Name For Column \"(.*)\" As \"(.*)\" and Short Description For Column \"(.*)\" As \"(.*)\" and ExcludeInd for column \"(.*)\" as \"(.*)\" and DisableInd for Column \"(.*)\" as \"(.*)\"$")  
+	public void addSubDepartment(int rowNo, String headerName, String subDeptID, String headerName1, String subDeptName, String headerName2, String shortDesc,String headerName3, String excludeInd,String headerName4, String disableInd) throws Exception{
+		int ranNum = AppData.getRandomNumberBetweenRange(1, 9999);
+		storeTempData("SUB_DEPARTMENT_ID", subDeptID + ranNum);
+		storeTempData("SUB_DEPARTMENT_NAME", subDeptName + ranNum);
+		storeTempData("SUB_DEPARTMENT_SHORT_DESC", shortDesc + ranNum);
+		apexTable.enterCellText(pageName, tableLabelPogSubDepartment, rowNo, headerName, "SUB_DEPARTMENT_ID");
+		apexTable.enterCellText(pageName, tableLabelPogSubDepartment, rowNo, headerName1, "SUB_DEPARTMENT_NAME");
+		apexTable.enterCellText(pageName, tableLabelPogSubDepartment, rowNo, headerName2, "SUB_DEPARTMENT_SHORT_DESC");
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, tableLabelPogSubDepartment, rowNo, headerName3, excludeInd);
+		apexTable.selectCellDropDownValueAfterdoubleClick(pageName, tableLabelPogSubDepartment, rowNo, headerName4, disableInd);
+		logger.pass("New Sub Department added with Sub Department as " + bold(subDeptID + ranNum) + " Sub Department Name as "
+				+ bold(subDeptName + ranNum));
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*@Then("^From Master_UDA Page, For Row \"(.*)\", Enter Text For Column \"(.*)\" As \"(.*)\"$")
+	public void enterText(int rowNo, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {
+			value=getTempData(value);
+			}
+		if(value.toLowerCase().contains("vdate")) {
+			String varindays=value.substring(5);
+			value=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));
+			}
+		apexTable.enterCellText(pageName, tableLabel, rowNo, headerName, value);
+		logger.pass("From Master_UDA Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master_UDA Page, For Row \"(.*)\", in table \"(.*)\" Enter Text For Column \"(.*)\" As \"(.*)\"$")
+	public void enterTextinUDATableValue(int rowNo,String tableName1, String headerName, String value) throws Exception {
+		if(getTempData(value)!=null) {value=getTempData(value);}
+		if(value.toLowerCase().contains("vdate")) 
+		{String varindays=value.substring(5);
+			value=AppDateUtil.newDateInUIFormat(Integer.parseInt(varindays));}
+		apexTable.enterCellTextinFrozenTable(pageName, tableName1, rowNo, headerName, value);
+		logger.pass("From Master_UDA Page, For Row "+bold(rowNo)+", Enter Text Description For Column "+bold(headerName)+" As "+bold(value));
+	}
+	
+	@Then("^From Master UDA Page, Filter UDA Table content for Column \"(.*)\" With Value \"(.*)\"$")
+    public void filterTableContent(String columnName, String filterValue) throws Exception {
+	   Thread.sleep(3000);
+    	apexTable.filterScrollingTableContent(pageName,tableLabel, columnName, filterValue);
+    	Thread.sleep(1000);
+    	logger.pass("From Masters UDA Page, Filter UDA Table content for Column "+bold(columnName)+" With Value  "+bold(filterValue));
+    }
+	
+	@Then("^From Master_UDA Page, For Row \"(.*)\", Validate column \"(.*)\" Value As \"(.*)\"$")	    	
+	   public void validateTableCellValue(int rowNo, String headerName, String value) throws Exception {
+			if(getTempData(value)!=null) {value=getTempData(value);}
+			if (headerName.equalsIgnoreCase("Data Length") & value.equalsIgnoreCase("Free Text")) {
+				apexTable.validateScrollingTableCellValue(pageName, tableLabel, rowNo, headerName, "34");
+			}
+			if (headerName.equalsIgnoreCase("Data Length") & value.equalsIgnoreCase("Date")) {
+				apexTable.validateScrollingTableCellValue(pageName, tableLabel, rowNo, headerName, "10");
+			}
+			logger.pass("From Masters UDA Page, Validated UDA Table content for Column "+bold(headerName)+" With Value  "+bold(value));
+ }*/
+}

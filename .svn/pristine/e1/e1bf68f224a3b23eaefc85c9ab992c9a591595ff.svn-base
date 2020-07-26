@@ -1,0 +1,30 @@
+package utils;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+
+import dataProviders.EnvironmentFileReader;
+import db.CommonDB;
+
+public class SPACE_DB_SetUp {
+
+	public static void main(String[] args) throws Exception {
+
+		//String buId =new EnvironmentFileReader().getBU_ID();
+
+
+		String dbUrl = new EnvironmentFileReader().getDB_URL();
+		String dbUserName = new EnvironmentFileReader().getDB_UserName();
+		String dbPassword = new EnvironmentFileReader().getDB_Password();
+		Connection con;
+
+		//String testCaseId = "DB_SetUp";
+
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+
+		con = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
+		CommonDB.executeQuerry(con, "ALTER SESSION SET nls_date_format='dd/mm/yyyy'");
+	}
+}
+

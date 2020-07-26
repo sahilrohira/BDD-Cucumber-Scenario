@@ -1,0 +1,46 @@
+package db;
+
+import java.sql.Connection;
+
+import utils.AppData;
+
+public class SM_VIRTUAL_Table extends CommonDB {
+
+	public SM_VIRTUAL_Table(Connection con, String testCaseId) {
+		super(con, testCaseId);
+	}
+
+	public int getVirtualPOGCount() throws Exception {
+		String VPOG_Count_SQL = "SELECT * FROM sm_virtual_pog vp INNER JOIN sm_pog_dept pd ON ( vp.bu_id = pd.bu_id AND vp.pog_dept = pd.dept AND vp.pog_division = pd.division ) WHERE vp.bu_id = '"
+				+ AppData.buId + "'";
+		int VPOG_Count = getRowCount(VPOG_Count_SQL);
+		return VPOG_Count;
+	}
+
+	public int getVirtualHostCount() throws Exception {
+		String VHOST_Count_SQL = " select * from sm_virtual_host WHERE bu_id = '" + AppData.buId + "'";
+		int VHOST_Count = getRowCount(VHOST_Count_SQL);
+		return VHOST_Count;
+	}
+
+	public void storeItemAndRequiredDepartment() throws Exception {
+		String Item_SQL = "SELECT ( sg.group_no|| ' - ' || sg.group_name ) AS group_name, ( sd.dept || '-'|| sd.dept_name ) AS department_name, ( smc.class|| '-'|| smc.class_name ) AS class_name, ( sms.subclass || '-'|| sms.sub_name ) AS subclass_name,item as ITEM_NAME, (sim.item || ' - ' || sim.description) AS item_desc FROM sm_groups sg INNER JOIN sm_dept sd ON ( sg.bu_id = sd.bu_id AND sg.group_no = sd.group_no ) INNER JOIN sm_class smc ON ( sd.bu_id = smc.bu_id AND sd.dept = smc.dept ) INNER JOIN sm_subclass sms ON ( smc.bu_id = sms.bu_id AND smc.class = sms.class AND sd.dept = sms.dept ) INNER JOIN sm_item_master sim ON ( sim.bu_id = sd.bu_id AND sim.dept = sd.dept AND sim.class = smc.class AND sim.subclass = sms.subclass ) WHERE sg.bu_id = '"
+				+ AppData.buId + "' FETCH FIRST 1 ROWS ONLY";
+		storeColumnNameAndValue(Item_SQL);
+	}
+
+	public void storeVirtualItemDetails(String item) throws Exception {
+		if (getTempData(item) != null) {
+			item = getTempData(item);
+		}
+		String virtual_Added_Item_SQL = "Select description from sm_item_master where bu_id='" + AppData.buId
+				+ "' and item=" + item;
+		storeColumnNameAndValue(virtual_Added_Item_SQL);
+	}
+
+	public void getVirtualPOG() throws Exception {
+		String VPOG_val = "select pog_code as VIRTUAL_POG_CODE from sm_virtual_pog where bu_id = '" + AppData.buId
+				+ "' ORDER BY dbms_random.value fetch first 1 rows only";
+		storeColumnNameAndValue(VPOG_val);
+	}
+}

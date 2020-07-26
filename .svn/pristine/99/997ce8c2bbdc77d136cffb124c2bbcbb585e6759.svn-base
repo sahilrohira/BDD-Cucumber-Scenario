@@ -1,0 +1,30 @@
+package pages.Master;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import pages.commom.CommonPage;
+
+public class Product extends CommonPage {
+	
+	private String pageName = "Master Product";
+	private String UnitSizewidth="//div[contains(@class,'apex-rds-element-selected')]//div[@class='a-GV-w-scroll']//td[contains(text(),'Unit Size')]/following-sibling::td[1]";
+	private String UnitSizeheight="//div[contains(@class,'apex-rds-element-selected')]//div[@class='a-GV-w-scroll']//td[contains(text(),'Unit Size')]/following-sibling::td[2]";
+	private String UnitSizedepth="//div[contains(@class,'apex-rds-element-selected')]//div[@class='a-GV-w-scroll']//td[contains(text(),'Unit Size')]/following-sibling::td[3]";
+	
+	public Product(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+	
+	public void validateUnitSizeDim() throws Exception {
+		By UnitSizeWidth 		= By.xpath(UnitSizewidth);
+		String width=getTempData("ITEM_WIDTH");
+		validateTextEquals(pageName, "Unit Size width", UnitSizeWidth, width);
+		By UnitSizeHeight 		= By.xpath(UnitSizeheight);
+		String height=getTempData("ITEM_HEIGHT");
+		validateTextEquals(pageName, "Unit Size width", UnitSizeHeight, height);
+		By UnitSizeDepth		= By.xpath(UnitSizedepth);
+		String depth=getTempData("ITEM_DEPTH");
+		validateTextEquals(pageName, "Unit Size width", UnitSizeDepth, depth);
+	}
+
+}

@@ -1,0 +1,68 @@
+Feature: Validating Functionality Related To UserDefinedAttributes under Master
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "Masters" Link
+		And From Masters Page, Click On "User Defined Attributes" Link
+@run
+Scenario:  Masters_UDA_TC001#Validate Excel
+		When From Master_UDA Page, Validate Record Count from Database
+		Then Validate Downloaded XLSX File Content with File Name As "UDA Report" and Tablename as "uda_report"
+		When From Master_UDA Page, Click On "Add Row" Button
+		And From Master_UDA Page, For Row "2", Enter Text For Column "Description" As "Auto_Test"
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Module" As "Item"
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Display Type" As "List Of Values" 
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Data Type" As "Numeric"
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Required?" As "Yes"
+		And From Master_UDA Page, For Row "2", Validate column "UDA Type" Value As "Space Master"
+		And From Master_UDA Page, For Row "2", Enter Text For Column "System Code" As "AUTO_TEST"
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Show" As "No"
+		And From Master_UDA Page, Click On "Actions" Button
+		And From Master_UDA Page, Click On "Save" Button
+		Then From Apex Error Dialog, Validate Error Message Header As "1 error has occurred"
+		And From Apex Error Dialog, Validate Error Message Content As "Master List must have atleast one child value defined"
+		And From Master_UDA Page, Click On "Actions" Button
+		And Click On "Add Row" Button with tableName "ig_uda_values"
+		And From Master_UDA Page, For Row "1", in table "ig_uda_values" Enter Text For Column "Description" As "Auto_Test_Value"
+		And From Master_UDA Page, Click On "Actions" Button
+		And From Master_UDA Page, Click On "Save" Button
+		Then Validate Successful Message As "Record(s) Updated Successfully."
+		And Remove Successful Message Notification
+		When Get the UDA ID for Description As "Auto_Test"
+		And From Master UDA Page, Filter UDA Table content for Column "UDA ID" With Value "UDA_ID"
+		And Delete Row number "1" from table "uda_report"
+		
+@run		
+Scenario Outline: Masters_UDA_TC002#Validate all Combinations of UDA's
+		When From Master_UDA Page, Click On "Add Row" Button
+		And From Master_UDA Page, For Row "2", Enter Text For Column "Description" As "<Description>"
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Module" As "<Module>"
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Display Type" As "<DisplayType>" 
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Data Type" As "<DataType>"
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Required?" As "Yes"
+		#And From Master_UDA Page, For Row "2", Enter Text For Column "Data Length" As "20"
+		And From Master_UDA Page, For Row "2", Validate column "UDA Type" Value As "Space Master"
+		And From Master_UDA Page, For Row "2", Enter Text For Column "System Code" As "AUTO_TEST"
+		And From Master_UDA Page, For Row "2", Select Drop Down Value For Column "Show" As "No"
+		And From Master_UDA Page, Click On "Actions" Button
+		And From Master_UDA Page, Click On "Save" Button
+		#Then Validate Successful Message As "Changes saved"
+		When Get the UDA ID for Description As "<Description>"
+		And From Master UDA Page, Filter UDA Table content for Column "UDA ID" With Value "UDA_ID"
+		And From Master_UDA Page, For Row "1", Validate column "Data Length" Value As "<DisplayType>"
+		And Delete Row number "1" from table "uda_report"
+		#And Validate Successful Message As "Changes saved"
+		And Remove Existing Filter
+		And Wait For "2" Second
+	  And From Master UDA Page, Filter UDA Table content for Column "UDA ID" With Value "UDA_ID"
+		Then Validate No data Found on Screen "Master UDA" for table "uda_report"
+		
+		Examples:-
+		| Description			   | Module			| DisplayType					| DataType		|
+    | Auto_Test_Script1  | Store      |	Free Text           | Alphanumeric|
+    | Auto_Test_Script2  | Floor Plan |	Date                | Date				|
+    | Auto_Test_Script3  | Store      |	Free Text           | Percent			|
+		

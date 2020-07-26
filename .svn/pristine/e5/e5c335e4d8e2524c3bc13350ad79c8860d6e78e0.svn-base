@@ -1,0 +1,65 @@
+package utils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class CSV_Util {
+	
+	
+	public static List<Map<String, String>> getCSVFileContent(String testCaseId, String fileName) throws IOException {
+		List<Map<String, String>> fileContents = new ArrayList<Map<String, String>>();
+		Map<String, String> fileContent = null;
+		File downloadFilePath = new File ( "Test_Reports/"+testCaseId+"/Download/"+fileName+".csv");
+		
+		BufferedReader csvReader = new BufferedReader(new FileReader(downloadFilePath));  
+		String row = csvReader.readLine();
+		String[] arrHeader = row.split(",");
+		
+		while ((row = csvReader.readLine()) != null) {  
+		    String[] data = row.split(",");
+		    fileContent = new HashMap<String, String>();
+		    for(int i=0;i < arrHeader.length; i++) {
+			    fileContent.put(arrHeader[i].toUpperCase(), data[i]);
+		    }
+		    fileContents.add(fileContent);
+		}
+		csvReader.close();
+		return fileContents;
+		
+	}
+	
+	public static List<String> getCSV_HeaderList(String testCaseId, String fileName) throws IOException {
+		List<String> headerList = new ArrayList<String>();
+		File downloadFilePath = new File ( "Test_Reports/"+testCaseId+"/Download/"+fileName+".csv");
+		
+		BufferedReader csvReader = new BufferedReader(new FileReader(downloadFilePath));  
+		String row = csvReader.readLine();
+		String[] arrHeader = row.split(",");
+		for(int i=0;i < arrHeader.length; i++) {
+			headerList.add(arrHeader[i]);
+	    }
+		csvReader.close();
+		return headerList;
+	}
+	
+	public static int getRecordCount(String testCaseId, String fileName) throws IOException {
+		int recordCount=0;
+		File downloadFilePath = new File ( "Test_Reports/"+testCaseId+"/Download/"+fileName+".csv");
+		
+		BufferedReader csvReader = new BufferedReader(new FileReader(downloadFilePath));  
+		csvReader.readLine();  // to read Header First
+		
+		while (csvReader.readLine() != null) {  
+			recordCount++;
+		}
+		csvReader.close();
+		return recordCount;
+	}
+
+}

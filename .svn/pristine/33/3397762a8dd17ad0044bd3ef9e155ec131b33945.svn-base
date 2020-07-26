@@ -1,0 +1,44 @@
+
+Feature: Validating Functionality Related To Manage Floor Plan PDF under POG Management
+
+Background:
+
+		Given Open DB Connection
+		And Open Browser
+		And Log In To Application With Provided Credential
+		And From Home Page, Click On "POG Management" Link
+		And From Masters Page, Click On "Floor Plan" Link
+@run
+Scenario: POGM_ManageFloorPlanPDF_TC001#Mange Floor Plan PDF 
+		And From Floor Plan Page, Click On "Add" Button
+		And Switch To Frame with Title "Manage Dummy Floor Plan"
+		And From Floor Plan Page, Enter Date For Field "P41_EFF_START_DATE" As "sysdate+1"
+		And From Floor Plan Page, Enter Date For Field "P41_EFF_END_DATE" As "sysdate+11"
+		Then Select Store from DB for which Dummy Floor Plan can be added
+		And From Floor Plan Page, Click On "Add" Button
+		#And From Alert Dialog, Validate title As "Record(s) Added Successfully."
+		And From Floor Plan Page, Click On "Refresh" Button
+		And From Floor Plan Page, Filter Table content for Column "Store" ascending With Value "STORE_NUM"
+		And Wait For "4" Second
+		And Click On Link with text "Manage"
+		Then Switch To Frame with Title "Floor Plan PDF Management"
+		And From Floor Plan Page, Enter Date For Field "P80_PDF_DATE" As "sysdate+1"
+		And From Floor Plan Page, Click On "Upload" Button
+		Then Enter File Path in Window Popup for Screen "Floor Plan" with filename as "Test_File.pdf"
+		And From Manage Floor Plan Page, Click On "Cancel" Button
+		And From Top Menu, Click On "Home" Link
+		And From Home Page, Click On "POG Management" Link	
+		And From Masters Page, Click On "Manage Floor Plan PDF" Link
+		And From Floor Plan Page, Filter Table content for Column "Store" ascending With Value "STORE_NUM"
+		And Click On Link with text "STORE_NUM"
+		Then Validate Breadcrumb Header with Value as "Store Master Details"
+		And From Store POG Page, Click On "Back" Button
+		And Click On Link with text "STORE_NAME"
+		And Switch To Frame with Title "Floor Plan PDF Management"
+		And Validate the Floor Plan PDF Count from database for store "STORE_NUM"
+		And From Manage Floor Plan Page, Click On "Cancel" Button
+		And Click on Checkbox to delete PDF
+		And From Manage Floor Plan Page, Click On "Delete" Button
+		And From Message Dialog, Click On "Ok" Button
+		And Validate PDF Version and FileName is Blank
+		

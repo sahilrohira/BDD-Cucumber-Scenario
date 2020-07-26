@@ -1,0 +1,30 @@
+package stepdefs.MSO;
+
+import cucumber.api.java.en.Then;
+import pages.apex.ApexPageHeader;
+import stepdefs.common.Hook;
+import stepdefs.common.SuperStepdefs;
+
+public class Optimization extends SuperStepdefs {
+
+	public ApexPageHeader apexPageHeader;
+	
+	public Optimization(Hook hook) {
+		super(hook);
+		apexPageHeader = new ApexPageHeader(driver,testCaseId);
+	}
+    
+    /**
+     * @author Chitresh.Goyal
+     	
+     	From Home Page, Click On "Benchmark Store Locator" Link
+     	From Home Page, Click On "Optimization Generator" Link
+     	
+     */
+    @Then("^From Optimization Page, Click On \"(.*)\" Link$")
+    public void clickOnLink(String linkName) throws Exception {
+    	apexPageHeader.clickOnHeader3Link("Optimization Page", linkName);
+    	logger.pass("From Optimization Page, Click On "+bold(linkName)+" Link");
+    }      
+
+}

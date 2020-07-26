@@ -1,0 +1,39 @@
+package pages.apex;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import pages.commom.CommonPage;
+
+public class ApexMessage extends CommonPage{
+	
+	public By messageHeader 		= 	By.xpath("//div[@class='ax-message-dialog']//p[not(contains(@class,'message'))][1]");
+
+	public ApexMessage(WebDriver driver, String testCaseId) {
+		super(driver,testCaseId);
+	}
+
+	public void verifyMessageHeader(String txt) throws Exception {
+		validateTextEquals("ApexMessage", "MessageHeader", messageHeader, txt);
+	}
+	
+	public void verifyMessageContent(int messageNo, String txt) throws Exception {
+		By messageContent 		= 	By.xpath("//div[@class='ax-message-dialog']//p[not(contains(@class,'message'))]["+(messageNo+1)+"]");
+		validateTextEquals("ApexMessage", "MessageContent", messageContent, txt);
+	}
+	
+	public void verifyMessageContent(String txt) throws Exception {
+		By messageContent 		= 	By.xpath("//div[@class='ax-message-dialog']//p");
+		validateTextEquals("ApexMessage", "MessageContent", messageContent, txt);
+	}
+	
+	
+	public void clickOnButton(String buttonName) throws Exception {
+		By buttonLabel = By.xpath("//div[@class='ax-message-dialog']//button[text()='"+buttonName+"']");
+		
+		clickOnElement("ApexMessage", buttonName+"_Button", buttonLabel);
+	}
+	
+	
+	
+}
